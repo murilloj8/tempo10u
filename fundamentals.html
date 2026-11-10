@@ -112,7 +112,7 @@ const SKILLS = [
 ];
 
 (async function () {
-  const user = await TEMPO.boot("fundamentals");
+  const user = await TEMPO.boot("fundamentals", { study: true });
   if (!user) return;
   const esc = TEMPO.esc, wk = TEMPO.weekNumber();
   const KEY = `tempo_practiced_${user.uid}_w${wk}`;

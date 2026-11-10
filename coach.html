@@ -43,9 +43,30 @@
   <div class="table-wrap"><table id="scoreTable"></table></div>
 
   <div class="section">
+    <h2>Daily check-ins (Mon–Fri)</h2>
+    <p class="muted">A day is complete when a player opened a study page, finished a quiz <b>and</b> did her affirmation.</p>
+    <div class="table-wrap"><table id="checkTable"></table></div>
+  </div>
+
+  <div class="section">
+    <h2>Team code</h2>
+    <div class="card" style="max-width:560px">
+      <p style="margin-bottom:6px">Current code: <span class="pill b" id="curCode">…</span></p>
+      <p class="small muted">New players need this code to sign up. Changing it doesn't affect players who already joined.</p>
+      <label for="newCode">New team code</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <input id="newCode" maxlength="20" autocapitalize="characters" spellcheck="false" placeholder="e.g. TEMPO2027" style="flex:1;min-width:180px">
+        <button id="saveCode">Change code</button>
+      </div>
+      <div class="hint">4–20 letters or numbers, no spaces. Players can type it in any case.</div>
+      <div id="codeMsg"></div>
+    </div>
+  </div>
+
+  <div class="section">
     <h2>Roster &amp; accounts</h2>
     <div class="card" style="margin-bottom:14px">
-      <b>How players join:</b> share the website link and the team code <span class="pill b" id="codePill"></span>. They tap <b>New player</b>, pick a username and password, and type the code.
+      <b>How players join:</b> share the website link and the team code (see <b>Team code</b> above). They tap <b>New player</b>, pick a username and password, and type the code.
       <p class="small muted" style="margin:8px 0 0">Forgot password? Remove the player below, delete their login in Firebase (Authentication → Users), and have them sign up again. Their old scores are removed with them.</p>
     </div>
     <div class="table-wrap"><table id="rosterTable"></table></div>
@@ -61,16 +82,30 @@
   if (!me) return;
   const esc = TEMPO.esc, CFG = TEMPO.cfg, topics = window.TEMPO_QUIZ.topics;
   const curWk = TEMPO.weekNumber();
-  document.getElementById("codePill").textContent = TEMPO.mode === "demo" ? CFG.teamCode : "the code in your firestore.rules";
+  async function showCode() {
+    try { const c = await TEMPO.getTeamCode(); document.getElementById("curCode").textContent = c || "the original code (not changed here yet)"; }
+    catch (e) { document.getElementById("curCode").textContent = "couldn't load"; }
+  }
+  showCode();
+  document.getElementById("saveCode").onclick = async () => {
+    const m = document.getElementById("codeMsg"), b = document.getElementById("saveCode");
+    b.disabled = true; m.innerHTML = "";
+    try {
+      const c = await TEMPO.setTeamCode(document.getElementById("newCode").value);
+      m.innerHTML = `<div class="msg ok">Team code changed to <b>${esc(c)}</b>. Share the new code with new players.</div>`;
+      document.getElementById("newCode").value = ""; showCode();
+    } catch (e) { m.innerHTML = `<div class="msg error">${esc(e.message || "Couldn't change the code.")}</div>`; }
+    b.disabled = false;
+  };
   if (TEMPO.mode === "demo") document.getElementById("modeNote").innerHTML =
     '<div class="msg info">Demo mode: this dashboard only shows accounts created in this browser. Connect Firebase (see the setup guide) so you can see every player\'s scores.</div>';
 
   const sel = document.getElementById("weekSel");
   sel.innerHTML = Array.from({ length: curWk }, (_, i) => curWk - i).map((w) => `<option value="${w}">Week ${w} (${TEMPO.weekDates(w)})${w === curWk ? " — this week" : ""}</option>`).join("");
 
-  let users = [], results = [];
+  let users = [], results = [], activity = [];
   async function load() {
-    try { [users, results] = await Promise.all([TEMPO.allUsers(), TEMPO.allResults()]); }
+    try { [users, results, activity] = await Promise.all([TEMPO.allUsers(), TEMPO.allResults(), TEMPO.allActivity().catch(() => [])]); }
     catch (e) { console.error(e); document.getElementById("modeNote").innerHTML = '<div class="msg error">Could not load team data. Make sure your account is listed as a coach in config.js and firestore.rules.</div>'; }
     render();
   }
@@ -100,6 +135,22 @@
       return `<tr><td><b>${esc(p.displayName)}</b>${p.jersey ? " #" + esc(p.jersey) : ""}<div class="small muted">@${esc(p.username)}</div></td>${cells}<td class="sc">${tot ? Math.round(100 * got / tot) + "%" : "—"}</td></tr>`;
     }).join("");
     document.getElementById("scoreTable").innerHTML = head + (rows || `<tr><td colspan="${topics.length + 2}" class="muted">No players have joined yet.</td></tr>`);
+
+    const days = TEMPO.schoolWeek(), today = TEMPO.dayKey();
+    const dn = (d) => d.toLocaleDateString(undefined, { weekday: "short", month: "numeric", day: "numeric" });
+    const dot = (on) => `<span title="" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 1px;background:${on ? "var(--good)" : "var(--line)"}"></span>`;
+    document.getElementById("checkTable").innerHTML = `<tr><th>Player</th>${days.map((d) => `<th class="c">${dn(d)}</th>`).join("")}<th class="c">Days complete</th></tr>` +
+      (ps.map((p) => {
+        let full = 0;
+        const cells = days.map((d) => {
+          const k = TEMPO.dayKey(d), a = activity.find((x) => x.uid === p.uid && x.date === k);
+          const all = a && a.study && a.quiz && a.affirm; if (all) full++;
+          if (!a && k > today) return `<td class="sc none"></td>`;
+          return `<td class="sc ${all ? "hi" : a ? "mid" : "none"}" style="font-weight:600">${all ? "★" : ""} ${dot(a && a.study)}${dot(a && a.quiz)}${dot(a && a.affirm)}</td>`;
+        }).join("");
+        return `<tr><td><b>${esc(p.displayName)}</b></td>${cells}<td class="sc">${full}/5</td></tr>`;
+      }).join("") || `<tr><td colspan="7" class="muted">No players yet.</td></tr>`) +
+      `<tr><td colspan="7" class="small muted">Dots: study · quiz · affirmation. ★ = all three done.</td></tr>`;
 
     document.getElementById("rosterTable").innerHTML = `<tr><th>Name</th><th>Username</th><th>Jersey</th><th>Quizzes taken (all weeks)</th><th></th></tr>` +
       (users.slice().sort((a, b) => a.displayName.localeCompare(b.displayName)).map((u) => `<tr>

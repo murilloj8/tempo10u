@@ -161,6 +161,7 @@
       document.getElementById("back").onclick = async () => { history.replaceState(null, "", "quizzes.html"); await loadResults(); renderList(); };
       try {
         const saved = await TEMPO.saveResult(topicKey, wk, score, qs.length);
+        TEMPO.logActivity("quiz");
         document.getElementById("saveMsg").className = "msg ok";
         document.getElementById("saveMsg").textContent = `Saved! Your best this week: ${saved.best}/${saved.total}`;
       } catch (e) {

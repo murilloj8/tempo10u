@@ -56,7 +56,7 @@
 <script src="js/app.js"></script>
 <script>
 (async function () {
-  if (!(await TEMPO.boot("court"))) return;
+  if (!(await TEMPO.boot("court", { study: true }))) return;
 
   /* Units: 1 foot = 10 SVG units. High-school court 84 ft x 50 ft.
      Left basket: baseline at x=0, rim center at (52.5, 250). */
@@ -79,7 +79,7 @@
   }
   function courtSVG() {
     return `
-      <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#6B1E3A" stroke="#fff" stroke-width="1"/></marker><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
       <rect x="-60" y="-60" width="960" height="620" fill="#2B1520"/>
       <rect x="0" y="0" width="${W}" height="${H}" fill="${FLOOR}"/>
       ${Array.from({ length: 24 }, (_, i) => `<line x1="0" y1="${i * 21}" x2="${W}" y2="${i * 21}" stroke="#C99558" stroke-width="1" opacity=".5"/>`).join("")}
@@ -109,7 +109,7 @@
   const SLIDES = [
     { view: "full", kicker: "Start here", title: "Welcome to the court!", aka: "",
       text: "A basketball court is a rectangle with a basket at each end. Our team attacks one basket and defends the other, then we switch at halftime. Let's learn the name of every line and spot.",
-      tip: "Press Next →. Each new spot lights up in blue. Spots you've already learned stay labeled in white.", hl: "", labels: [] },
+      tip: "Press Next →. Each new spot lights up in blue, with its name and an arrow pointing to it.", hl: "", labels: [] },
     { view: "full", kicker: "Lines", title: "Sidelines", aka: "The two long lines on the sides",
       text: "The sidelines run the long way down the court. The line itself is OUT of bounds — if you step on it while holding or dribbling the ball, it's the other team's ball.",
       tip: "When you catch near the sideline, keep your feet inside and pivot toward the middle of the court.",
@@ -185,6 +185,30 @@
       hl: "", labels: "recap" }
   ];
 
+  /* What each slide shows: only the parts being explained.
+     [x, y, text, rotate, arrowToX, arrowToY] — arrow is optional. */
+  const SHOW = [
+    [],
+    [[250, -16, "Sideline"], [590, 522, "Sideline"]],
+    [[-28, 250, "Baseline", -90], [868, 250, "Baseline", 90]],
+    [[420, -16, "Half-court line"], [560, 385, "Center circle", 0, 466, 292]],
+    [[300, 420, "Frontcourt"], [630, 420, "Backcourt"]],
+    [[150, 135, "Basket", 0, 64, 241]],
+    [[120, 250, "Paint"]],
+    [[238, 170, "Free-throw line", 0, 194, 222]],
+    [[345, 150, "Top of the key", 0, 270, 240], [300, 345, "Free-throw circle", 0, 240, 292]],
+    [[245, 166, "Elbow", 0, 199, 186], [245, 334, "Elbow", 0, 199, 314]],
+    [[140, 165, "Block", 0, 85, 181], [140, 335, "Block", 0, 85, 319]],
+    [[232, 162, "Lane spaces", 0, 168, 180], [232, 338, "Lane spaces", 0, 168, 320]],
+    [[175, 112, "Low post", 0, 100, 148], [175, 388, "Low post", 0, 100, 352]],
+    [[320, 150, "High post", 0, 220, 210]],
+    [[125, 40, "Short corner", 0, 40, 110], [125, 460, "Short corner", 0, 40, 390]],
+    [[330, 445, "3-point line", 0, 214, 367]],
+    [[150, -15, "Corner", 0, 42, 18], [150, 515, "Corner", 0, 42, 482]],
+    [[345, 55, "Wing", 0, 240, 86], [345, 445, "Wing", 0, 240, 414]],
+    "recap"
+  ];
+
   const svg = document.getElementById("court");
   svg.innerHTML = courtSVG();
   const hlLayer = document.getElementById("hlLayer"), lblLayer = document.getElementById("lblLayer");
@@ -222,15 +246,22 @@
     measure(VIEW[s.view]);
     animateTo(VIEW[s.view]);
     hlLayer.innerHTML = s.hl;
-    let labels = "";
-    if (s.labels === "recap") {
+    let labels = "", arrows = "";
+    if (SHOW[idx] === "recap") {
+      // Review slide: every spot at once
       SLIDES.forEach((sl) => Array.isArray(sl.labels) && sl.labels.forEach((l) => { if (l[4]) labels += labelSVG(l[0], l[1], l[2], l[3], "cur"); }));
     } else {
-      // Labels learned on earlier slides (one of each), then the current ones on top
-      SLIDES.slice(1, idx).forEach((sl) => Array.isArray(sl.labels) && sl.labels.forEach((l) => { if (l[4]) labels += labelSVG(l[0], l[1], l[2], l[3], "old"); }));
-      s.labels.forEach((l) => labels += labelSVG(l[0], l[1], l[2], l[3], "cur"));
+      // Only the part(s) explained on this slide, with arrows pointing to them
+      (SHOW[idx] || []).forEach(([x, y, t, rot, tx, ty]) => {
+        if (tx !== undefined) {
+          const w = 3 * unitsPerPx;
+          arrows += `<line x1="${x}" y1="${y}" x2="${tx}" y2="${ty}" stroke="#fff" stroke-width="${w * 2.2}" stroke-linecap="round"/>` +
+                    `<line x1="${x}" y1="${y}" x2="${tx}" y2="${ty}" stroke="#6B1E3A" stroke-width="${w}" stroke-linecap="round" marker-end="url(#arr)"/>`;
+        }
+        labels += labelSVG(x, y, t, rot, "cur");
+      });
     }
-    lblLayer.innerHTML = labels;
+    lblLayer.innerHTML = arrows + labels;
     document.getElementById("sKicker").textContent = s.kicker;
     document.getElementById("sTitle").textContent = s.title;
     document.getElementById("sAka").textContent = s.aka;

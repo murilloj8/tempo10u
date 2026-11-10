@@ -86,7 +86,7 @@ const STORIES = [
 ];
 
 (async function () {
-  if (!(await TEMPO.boot("stories"))) return;
+  if (!(await TEMPO.boot("stories", { study: true }))) return;
   const esc = TEMPO.esc, wk = TEMPO.weekNumber();
   const f = STORIES[(wk - 1) % STORIES.length];
   document.getElementById("feature").innerHTML = `<div class="feature">

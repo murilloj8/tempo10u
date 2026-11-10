@@ -2,7 +2,7 @@
 
 A free team website for the Tempo 10U girls (SBMSA Junior League, 2026–27).
 
-**What's inside:** Home · The Court (step-through presentation) · Refs & Rules (signals + SBMSA rules) · Fundamentals · Team Culture (TEMPO creed + affirmations) · Stories · Weekly Quizzes · Coach Dashboard.
+**What's inside:** Home · The Court (step-through presentation) · Refs (referee signals) · Rules (basic + SBMSA league rules) · Fundamentals · Team Culture (TEMPO creed + affirmations) · Stories · Weekly Quizzes · Coach Dashboard.
 
 **How it works**
 - The website lives on **GitHub Pages** (free).
@@ -87,7 +87,7 @@ Players can install it like an app: on iPhone open the link in Safari → Share 
 
 **A player forgot her password:** Coach tab → **Remove** her. Then in Firebase → Authentication → Users → find `username@tempo10u.team` → ⋮ → **Delete account**. She can sign up again with the same username. (Old scores are removed.)
 
-**Change the team code:** edit it in Firestore → Rules → Publish. Existing players aren't affected.
+**Change the team code:** Coach tab → Team code → Change code. Existing players aren't affected.
 
 **Quiz weeks:** Week 1 starts on `quizStartDate` in `js/config.js` (set to Mon Nov 16, 2026, the first practice week). Quizzes change every Monday. Each quiz has 8 questions (`questionsPerQuiz`).
 
@@ -97,7 +97,7 @@ Players can install it like an app: on iPhone open the link in Safari → Share 
 ```
 `a` is the number of the correct choice, counting from 0 (so `a: 1` = Choice B).
 
-**Edit page content:** stories are in `stories.html`, skills in `fundamentals.html`, court slides in `court.html` (the `SLIDES` list), signals in `js/signals.js`, league rules table in `rules.html`.
+**Edit page content:** stories are in `stories.html`, skills in `fundamentals.html`, court slides in `court.html` (the `SLIDES` list), signals in `js/signals.js` (shown on `refs.html`), rules in the `RULES` list in `rules.html`.
 
 **League rules:** the Refs & Rules page summarizes the **SBMSA 2024–25 rule book** for the **Junior Girls National League** (section 5.03 plus the general rules: man-to-man only, no backcourt defense except the last 60 seconds, 12-minute running quarters, no isolation plays). Two things to confirm with the league: (1) the free-throw distance — the book says "13 feet for Junior League girls and 14 feet for National League"; the site teaches 13 feet; (2) any changes in the 2026–27 rule book.
 

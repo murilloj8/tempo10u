@@ -5,6 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Team Home</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 14px 0 10px; }
+  .day { border: 2px solid var(--line); border-radius: 14px; padding: 10px 6px; text-align: center; background: #fff; }
+  .day.today { border-color: var(--bordeaux); box-shadow: 0 0 0 3px var(--bordeaux-soft); }
+  .day.full { background: #E6F4EA; border-color: var(--good); }
+  .day .dn { font-weight: 800; font-size: 14px; }
+  .day .dd { font-size: 12px; color: var(--muted); }
+  .day .icons { display: flex; justify-content: center; gap: 6px; margin: 8px 0 4px; }
+  .ic { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-style: normal; font-weight: 900; font-size: 12px; background: var(--line); color: #fff; }
+  .ic.s::after { content: "S"; } .ic.q::after { content: "Q"; } .ic.a::after { content: "A"; }
+  .ic.on.s { background: var(--blue-dark); } .ic.on.q { background: var(--bordeaux); } .ic.on.a { background: var(--gold); }
+  .legend .ic { width: 18px; height: 18px; font-size: 9px; vertical-align: -4px; }
+  .legend .ic.s { background: var(--blue-dark); } .legend .ic.q { background: var(--bordeaux); } .legend .ic.a { background: var(--gold); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; }
+  .day .star { font-size: 18px; color: var(--good); min-height: 22px; }
+  .zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .zone { display: flex; align-items: center; gap: 12px; padding: 18px 16px; background: #fff; border: 2px solid var(--line); border-radius: 14px;
+          text-decoration: none; color: var(--bordeaux); font-family: var(--display); font-size: 18px; box-shadow: var(--shadow); transition: transform .12s, border-color .12s; }
+  .zone:hover { transform: translateY(-2px); border-color: var(--blue); }
+  .zone span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--blue-soft); font-size: 16px; flex: none; }
+  .zone.done { border-color: var(--good); }
+  @media (max-width: 700px) { .zones { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 12px; } }
+  @media (max-width: 480px) { .week { gap: 5px; } .ic { width: 20px; height: 20px; font-size: 10px; } .day .icons { gap: 3px; } }
+</style>
 </head>
 <body>
 <main>
@@ -58,29 +82,40 @@
       <div class="stripe"></div>
       <div class="kicker" style="color:var(--blue)">Week <span id="wk"></span> · <span id="wkDates"></span></div>
       <h1>Welcome back, <span id="hiName"></span>!</h1>
-      <p id="affirm"></p>
+      <p>Every school day: <b>study</b> one zone, take a <b>quiz</b>, and say your <b>affirmation</b>.</p>
+    </div>
+
+    <div class="card accent" style="margin-bottom:22px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <h3 style="margin:0">My week</h3>
+        <span class="small muted" id="weekCount"></span>
+      </div>
+      <div class="week" id="week"></div>
+      <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>★ = day complete</span></div>
     </div>
 
     <div class="grid grid-2" style="margin-bottom:26px">
-      <div class="card accent">
+      <div class="card blue">
+        <h3>Today's affirmation</h3>
+        <p id="affirm" style="font-size:18px;font-weight:600"></p>
+        <button id="saidIt">I said it! ✓</button>
+        <span id="saidMsg" class="small muted" style="margin-left:8px"></span>
+      </div>
+      <div class="card blue">
         <h3>This week's quizzes</h3>
         <div id="quizStatus" class="muted">Loading…</div>
         <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
       </div>
-      <div class="card blue">
-        <h3>Creed letter of the day</h3>
-        <div id="creedDay"></div>
-      </div>
     </div>
 
-    <h2 style="color:var(--bordeaux)">Study zone</h2>
-    <div class="grid grid-3">
-      <a class="tile" href="court.html"><div class="ico">1</div><h3>The Court</h3><p>Step through every spot: paint, elbows, blocks, short corner and more.</p></a>
-      <a class="tile" href="rules.html"><div class="ico">2</div><h3>Refs &amp; Rules</h3><p>Learn the referee signals and our SBMSA league rules.</p></a>
-      <a class="tile" href="fundamentals.html"><div class="ico">3</div><h3>Fundamentals</h3><p>Stances, footwork, passing, shooting form and boxing out.</p></a>
-      <a class="tile" href="culture.html"><div class="ico">4</div><h3>Team Culture</h3><p>The TEMPO creed and our "I Am TEMPO" affirmations.</p></a>
-      <a class="tile" href="stories.html"><div class="ico">5</div><h3>Stories</h3><p>Real people who never gave up — and what they teach us.</p></a>
-      <a class="tile" href="quizzes.html"><div class="ico">6</div><h3>Quizzes</h3><p>A new quiz every Monday on each topic. Beat your best score!</p></a>
+    <h2 style="color:var(--bordeaux)">Study zones</h2>
+    <div class="zones">
+      <a class="zone" href="court.html"><span>1</span>The Court</a>
+      <a class="zone" href="refs.html"><span>2</span>Referee Signals</a>
+      <a class="zone" href="rules.html"><span>3</span>Rules</a>
+      <a class="zone" href="fundamentals.html"><span>4</span>Fundamentals</a>
+      <a class="zone" href="culture.html"><span>5</span>Team Culture</a>
+      <a class="zone" href="stories.html"><span>6</span>Stories</a>
     </div>
   </section>
 </main>
@@ -137,18 +172,32 @@
       "I lift my teammates. I cheer the loudest when they shine and pick them up when they fall."
     ];
     const day = Math.floor(Date.now() / 86400000);
-    $("#affirm").innerHTML = "<b>Today's affirmation:</b> " + T.esc(affirmations[day % affirmations.length]);
+    $("#affirm").textContent = affirmations[day % affirmations.length];
 
-    const creed = [
-      ["T", "Tough Defense", "Every stop starts with me."],
-      ["E", "Effort — Everyone, Every Play", "Hustle is a skill. I bring it every time."],
-      ["M", "Motion — Never Stand Still", "Pass, cut, screen, fill — keep it moving."],
-      ["P", "Pass First", "The extra pass is the best pass."],
-      ["O", "Own the Boards", "Every rebound is OURS."]
-    ][day % 5];
-    $("#creedDay").innerHTML = `<div style="display:flex;gap:14px;align-items:center">
-      <div style="font-family:var(--display);font-size:58px;color:var(--bordeaux);line-height:1">${creed[0]}</div>
-      <div><b>${T.esc(creed[1])}</b><br><i>"${T.esc(creed[2])}"</i></div></div>`;
+    let activity = [];
+    async function renderWeek() {
+      try { activity = await T.myActivity(); } catch (e) { activity = []; }
+      const today = T.dayKey(); let full = 0;
+      $("#week").innerHTML = T.schoolWeek().map((d) => {
+        const k = T.dayKey(d), a = activity.find((x) => x.date === k) || {};
+        const all = a.study && a.quiz && a.affirm; if (all) full++;
+        return `<div class="day ${k === today ? "today" : ""} ${all ? "full" : ""}">
+          <div class="dn">${d.toLocaleDateString(undefined, { weekday: "short" })}</div>
+          <div class="dd">${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>
+          <div class="icons"><i class="ic s ${a.study ? "on" : ""}" title="Study zone"></i><i class="ic q ${a.quiz ? "on" : ""}" title="Quiz"></i><i class="ic a ${a.affirm ? "on" : ""}" title="Affirmation"></i></div>
+          <div class="star">${all ? "★" : ""}</div></div>`;
+      }).join("");
+      $("#weekCount").textContent = `${full} of 5 days complete`;
+      const t = activity.find((x) => x.date === today) || {};
+      if (t.affirm) { $("#saidIt").disabled = true; $("#saidIt").textContent = "Done today ✓"; }
+    }
+    $("#saidIt").onclick = async () => {
+      $("#saidIt").disabled = true;
+      await T.logActivity("affirm");
+      $("#saidMsg").textContent = "Nice! Affirmation checked off for today.";
+      renderWeek();
+    };
+    renderWeek();
 
     try {
       const res = await T.myResults();

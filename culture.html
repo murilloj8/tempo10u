@@ -48,6 +48,7 @@
       <button id="sayBtn">Say it with me ▶</button>
       <button class="ghost" id="printBtn">Print this page</button>
     </div>
+    <div id="affDone"></div>
     <div class="affirm" id="affirm"></div>
     <p class="closing">Today I will be a little better than I was yesterday.<br>I am TEMPO. We set the pace.</p>
   </div>
@@ -82,7 +83,7 @@ const AFFIRM = [
   ["I lift my teammates.", "I cheer the loudest when they shine and pick them up when they fall."]
 ];
 (async function () {
-  if (!(await TEMPO.boot("culture"))) return;
+  if (!(await TEMPO.boot("culture", { study: true }))) return;
   const esc = TEMPO.esc;
   document.getElementById("creed").innerHTML = CREED.map(([l, w, s, looks]) => `
     <div class="letter"><div class="L">${l}</div><div class="body">
@@ -96,11 +97,15 @@ const AFFIRM = [
     document.querySelectorAll(".affirm .card").forEach((c) => c.classList.remove("on"));
     step = (step + 1) % (AFFIRM.length + 1);
     const btn = document.getElementById("sayBtn");
-    if (step === AFFIRM.length) { btn.textContent = "Start again ↺"; step = -1; return; }
+    if (step === AFFIRM.length) { btn.textContent = "Start again ↺"; step = -1; TEMPO.logActivity("affirm"); showDone(); return; }
     const el = document.getElementById("af" + step);
     el.classList.add("on"); el.scrollIntoView({ behavior: "smooth", block: "center" });
     btn.textContent = step === AFFIRM.length - 1 ? "Finish ✓" : `Next line ▶ (${step + 2}/${AFFIRM.length})`;
   };
+  function showDone() {
+    const m = document.getElementById("affDone");
+    if (m) m.innerHTML = '<div class="msg ok">Affirmation done for today — great job! It counts on your weekly check-in.</div>';
+  }
   document.getElementById("printBtn").onclick = () => { try { window.print(); } catch (e) {} };
 })();
 </script>

@@ -2,7 +2,7 @@
    a = index of the correct option (0-based). Add more questions any time! */
 window.TEMPO_QUIZ = {
   topics: [
-    { key: "rules", name: "Rules & Signals", blurb: "Referee signals, basic rules and our SBMSA league rules.", study: "rules.html" },
+    { key: "rules", name: "Rules & Signals", blurb: "Referee signals, basic rules and our SBMSA league rules.", study: "refs.html" },
     { key: "court", name: "The Court", blurb: "Every line and spot on the floor.", study: "court.html" },
     { key: "fundamentals", name: "Fundamentals", blurb: "Stances, footwork, passing, shooting and rebounding.", study: "fundamentals.html" },
     { key: "culture", name: "Team Culture", blurb: "The TEMPO creed, affirmations and our stories.", study: "culture.html" }

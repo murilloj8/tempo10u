@@ -11,9 +11,10 @@
   const NAV = [
     { href: "index.html", label: "Home", key: "home" },
     { href: "court.html", label: "Court", key: "court" },
-    { href: "rules.html", label: "Refs & Rules", key: "rules" },
+    { href: "refs.html", label: "Refs", key: "refs" },
+    { href: "rules.html", label: "Rules", key: "rules" },
     { href: "fundamentals.html", label: "Fundamentals", key: "fundamentals" },
-    { href: "culture.html", label: "Team Culture", key: "culture" },
+    { href: "culture.html", label: "Culture", key: "culture" },
     { href: "stories.html", label: "Stories", key: "stories" },
     { href: "quizzes.html", label: "Quizzes", key: "quizzes" },
     { href: "coach.html", label: "Coach", key: "coach", coachOnly: true }
@@ -27,6 +28,15 @@
   const validUsername = (u) => /^[a-z0-9][a-z0-9._-]{2,19}$/.test(u);
   const isCoachName = (u) => CFG.coachUsernames.map(cleanUsername).includes(cleanUsername(u));
 
+  function dayKey(d = new Date()) {
+    const z = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`;
+  }
+  // Monday..Friday of the week containing d
+  function schoolWeek(d = new Date()) {
+    const mon = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
+    return Array.from({ length: 5 }, (_, i) => new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i));
+  }
   function weekNumber(d = new Date()) {
     const start = new Date(CFG.quizStartDate + "T00:00:00");
     const diff = Math.floor((d - start) / (7 * 24 * 3600 * 1000));
@@ -104,10 +114,18 @@
     async myResults(uid) { return Object.values(this._db().results).filter((r) => r.uid === uid); },
     async allUsers() { return Object.values(this._db().users).map(publicUser); },
     async allResults() { return Object.values(this._db().results); },
+    async getTeamCode() { return (this._db().settings || {}).teamCode || CFG.teamCode || null; },
+    async setTeamCode(code) { const db = this._db(); db.settings = { teamCode: code }; this._save(db); },
+    async checkTeamCode(code) { return code === String((this._db().settings || {}).teamCode || CFG.teamCode).toUpperCase(); },
+    async getActivity(id) { return (this._db().activity || {})[id] || null; },
+    async setActivity(id, data) { const db = this._db(); db.activity = db.activity || {}; db.activity[id] = data; this._save(db); },
+    async myActivity(uid) { return Object.values(this._db().activity || {}).filter((a) => a.uid === uid); },
+    async allActivity() { return Object.values(this._db().activity || {}); },
     async removePlayer(uid) {
       const db = this._db();
       for (const k of Object.keys(db.users)) if (db.users[k].uid === uid) delete db.users[k];
       for (const k of Object.keys(db.results)) if (db.results[k].uid === uid) delete db.results[k];
+      for (const k of Object.keys(db.activity || {})) if (db.activity[k].uid === uid) delete db.activity[k];
       this._save(db);
     }
   };
@@ -182,7 +200,18 @@
       return (await this.F.getDocs(this.F.collection(this.db, "users"))).docs.map((d) => publicUser({ uid: d.id, ...d.data() }));
     },
     async allResults() { return (await this.F.getDocs(this.F.collection(this.db, "results"))).docs.map((d) => d.data()); },
+    async getTeamCode() { const s = await this.F.getDoc(this.F.doc(this.db, "settings", "team")); return s.exists() ? s.data().teamCode : null; },
+    async setTeamCode(code) { await this.F.setDoc(this.F.doc(this.db, "settings", "team"), { teamCode: code, updatedAt: Date.now() }); },
+    async getActivity(id) { const s = await this.F.getDoc(this.F.doc(this.db, "activity", id)); return s.exists() ? s.data() : null; },
+    async setActivity(id, data) { await this.F.setDoc(this.F.doc(this.db, "activity", id), data); },
+    async myActivity(uid) {
+      const q = this.F.query(this.F.collection(this.db, "activity"), this.F.where("uid", "==", uid));
+      return (await this.F.getDocs(q)).docs.map((d) => d.data());
+    },
+    async allActivity() { return (await this.F.getDocs(this.F.collection(this.db, "activity"))).docs.map((d) => d.data()); },
     async removePlayer(uid) {
+      const as = await this.F.getDocs(this.F.query(this.F.collection(this.db, "activity"), this.F.where("uid", "==", uid)));
+      for (const d of as.docs) await this.F.deleteDoc(d.ref);
       const rs = await this.F.getDocs(this.F.query(this.F.collection(this.db, "results"), this.F.where("uid", "==", uid)));
       for (const d of rs.docs) await this.F.deleteDoc(d.ref);
       await this.F.deleteDoc(this.F.doc(this.db, "users", uid));
@@ -207,7 +236,7 @@
       const code = String(teamCode || "").trim().toUpperCase();
       if (!code) throw new Error("Type the team code from Coach.");
       // Demo mode checks the code here; Firebase mode checks it on the server (firestore.rules).
-      if (backend.mode === "demo" && code !== String(CFG.teamCode).toUpperCase()) throw new Error("The team code is not right. Ask Coach for the code.");
+      if (backend.mode === "demo" && !(await backend.checkTeamCode(code))) throw new Error("The team code is not right. Ask Coach for the code.");
       this.user = await backend.signUp({ username, password, displayName: displayName.trim().slice(0, 24), jersey: String(jersey || "").trim().slice(0, 3), teamCode: code });
       return this.user;
     },
@@ -235,6 +264,31 @@
       return data;
     },
     myResults() { return backend.myResults(this.user.uid); },
+
+    /* Daily check-ins: kind = "study" | "quiz" | "affirm" */
+    dayKey, schoolWeek,
+    async logActivity(kind) {
+      if (!this.user || !["study", "quiz", "affirm"].includes(kind)) return;
+      const day = dayKey(), id = `${this.user.uid}_${day}`, memo = `tempo_act_${id}_${kind}`;
+      if (store.get(memo)) return;
+      try {
+        const prev = (await backend.getActivity(id)) || {};
+        const data = { uid: this.user.uid, username: this.user.username, displayName: this.user.displayName, date: day,
+          study: !!prev.study, quiz: !!prev.quiz, affirm: !!prev.affirm, updatedAt: Date.now() };
+        data[kind] = true;
+        await backend.setActivity(id, data);
+        store.set(memo, true);
+      } catch (e) { console.error("activity", e); }
+    },
+    myActivity() { return backend.myActivity(this.user.uid); },
+    allActivity() { return backend.allActivity(); },
+    getTeamCode() { return backend.getTeamCode(); },
+    async setTeamCode(code) {
+      code = String(code || "").trim().toUpperCase();
+      if (!/^[A-Z0-9]{4,20}$/.test(code)) throw new Error("Use 4–20 letters or numbers, no spaces.");
+      await backend.setTeamCode(code);
+      return code;
+    },
     allUsers() { return backend.allUsers(); },
     allResults() { return backend.allResults(); },
     removePlayer(uid) { return backend.removePlayer(uid); },
@@ -250,6 +304,7 @@
       if (opts.coachOnly && !this.user.isCoach) { location.href = "index.html"; return null; }
       renderTopbar(pageKey);
       if (main) main.classList.remove("hidden");
+      if (opts.study && this.user) this.logActivity("study");
       return this.user;
     }
   };
