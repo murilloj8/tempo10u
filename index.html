@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Team Home</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <!-- Logged-out view -->
+  <section id="authView" class="auth-wrap hidden">
+    <div class="auth-card card">
+      <div class="auth-hero">
+        <div class="kicker">10U Girls Basketball</div>
+        <div class="big">TEMPO</div>
+        <p class="muted" style="margin-top:6px">We set the pace. Log in to study, practice and take your weekly quizzes.</p>
+      </div>
+      <div class="tabs" role="tablist">
+        <button id="tabLogin" class="on" type="button">Log in</button>
+        <button id="tabSignup" type="button">New player</button>
+      </div>
+
+      <form id="loginForm" autocomplete="on">
+        <label for="liUser">Username</label>
+        <input id="liUser" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="example: maya23">
+        <label for="liPass">Password</label>
+        <input id="liPass" type="password" autocomplete="current-password">
+        <div id="liMsg"></div>
+        <button type="submit" style="width:100%;justify-content:center;margin-top:14px">Log in</button>
+        <p class="hint" style="margin-top:12px">Forgot your password? Tell Coach — Coach can reset your account.</p>
+      </form>
+
+      <form id="signupForm" class="hidden" autocomplete="off">
+        <label for="suName">First name or nickname</label>
+        <input id="suName" maxlength="24" placeholder="Maya">
+        <label for="suJersey">Jersey number <span class="muted">(optional)</span></label>
+        <input id="suJersey" maxlength="3" inputmode="numeric" placeholder="23">
+        <label for="suUser">Pick a username</label>
+        <input id="suUser" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="maya23">
+        <div class="hint">3–20 letters or numbers, no spaces. Don't use your last name.</div>
+        <label for="suPass">Make a password</label>
+        <input id="suPass" type="password" autocomplete="new-password">
+        <div class="hint">At least 6 characters. Ask a parent to help you remember it.</div>
+        <label for="suPass2">Type the password again</label>
+        <input id="suPass2" type="password" autocomplete="new-password">
+        <label for="suCode">Team code</label>
+        <input id="suCode" autocapitalize="characters" spellcheck="false" placeholder="from Coach">
+        <div id="suMsg"></div>
+        <button type="submit" style="width:100%;justify-content:center;margin-top:14px">Join the team</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Logged-in view -->
+  <section id="homeView" class="hidden">
+    <div class="hero">
+      <div class="stripe"></div>
+      <div class="kicker" style="color:var(--blue)">Week <span id="wk"></span> · <span id="wkDates"></span></div>
+      <h1>Welcome back, <span id="hiName"></span>!</h1>
+      <p id="affirm"></p>
+    </div>
+
+    <div class="grid grid-2" style="margin-bottom:26px">
+      <div class="card accent">
+        <h3>This week's quizzes</h3>
+        <div id="quizStatus" class="muted">Loading…</div>
+        <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
+      </div>
+      <div class="card blue">
+        <h3>Creed letter of the day</h3>
+        <div id="creedDay"></div>
+      </div>
+    </div>
+
+    <h2 style="color:var(--bordeaux)">Study zone</h2>
+    <div class="grid grid-3">
+      <a class="tile" href="court.html"><div class="ico">1</div><h3>The Court</h3><p>Step through every spot: paint, elbows, blocks, short corner and more.</p></a>
+      <a class="tile" href="rules.html"><div class="ico">2</div><h3>Refs &amp; Rules</h3><p>Learn the referee signals and our SBMSA league rules.</p></a>
+      <a class="tile" href="fundamentals.html"><div class="ico">3</div><h3>Fundamentals</h3><p>Stances, footwork, passing, shooting form and boxing out.</p></a>
+      <a class="tile" href="culture.html"><div class="ico">4</div><h3>Team Culture</h3><p>The TEMPO creed and our "I Am TEMPO" affirmations.</p></a>
+      <a class="tile" href="stories.html"><div class="ico">5</div><h3>Stories</h3><p>Real people who never gave up — and what they teach us.</p></a>
+      <a class="tile" href="quizzes.html"><div class="ico">6</div><h3>Quizzes</h3><p>A new quiz every Monday on each topic. Beat your best score!</p></a>
+    </div>
+  </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+(async function () {
+  const T = window.TEMPO, $ = T.$;
+  const user = await T.boot("home", { public: true });
+  if (user === null && !document.querySelector(".msg.error")) showAuth();
+  else if (user) showHome(user);
+
+  function showAuth() {
+    $("#authView").classList.remove("hidden");
+    const login = $("#loginForm"), signup = $("#signupForm");
+    $("#tabLogin").onclick = () => { $("#tabLogin").classList.add("on"); $("#tabSignup").classList.remove("on"); login.classList.remove("hidden"); signup.classList.add("hidden"); };
+    $("#tabSignup").onclick = () => { $("#tabSignup").classList.add("on"); $("#tabLogin").classList.remove("on"); signup.classList.remove("hidden"); login.classList.add("hidden"); };
+    login.onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = login.querySelector("button[type=submit]"); btn.disabled = true;
+      $("#liMsg").innerHTML = "";
+      try { await T.signIn($("#liUser").value, $("#liPass").value); location.reload(); }
+      catch (err) { $("#liMsg").innerHTML = `<div class="msg error">${T.esc(err.message)}</div>`; btn.disabled = false; }
+    };
+    signup.onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = signup.querySelector("button[type=submit]"); btn.disabled = true;
+      $("#suMsg").innerHTML = "";
+      try {
+        await T.signUp({
+          displayName: $("#suName").value, jersey: $("#suJersey").value, username: $("#suUser").value,
+          password: $("#suPass").value, password2: $("#suPass2").value, teamCode: $("#suCode").value
+        });
+        location.reload();
+      } catch (err) { $("#suMsg").innerHTML = `<div class="msg error">${T.esc(err.message)}</div>`; btn.disabled = false; }
+    };
+  }
+
+  async function showHome(u) {
+    $("#homeView").classList.remove("hidden");
+    $("#hiName").textContent = u.displayName;
+    const wk = T.weekNumber();
+    $("#wk").textContent = wk; $("#wkDates").textContent = T.weekDates(wk);
+
+    const affirmations = [
+      "I belong. I have unique characteristics, and my team needs what I bring.",
+      "Mistakes make me better. I try, I learn, I grow. Next play!",
+      "Together we are more. My best plus your best adds up to something bigger.",
+      "My defense wears down anyone. I stay low, I talk, I contest every shot.",
+      "I share the ball. The extra pass shows I trust my teammates.",
+      "Every rebound is ours. I find a body, box out, and go get it with two hands.",
+      "I control what I can. My effort and my attitude are always up to me.",
+      "I lift my teammates. I cheer the loudest when they shine and pick them up when they fall."
+    ];
+    const day = Math.floor(Date.now() / 86400000);
+    $("#affirm").innerHTML = "<b>Today's affirmation:</b> " + T.esc(affirmations[day % affirmations.length]);
+
+    const creed = [
+      ["T", "Tough Defense", "Every stop starts with me."],
+      ["E", "Effort — Everyone, Every Play", "Hustle is a skill. I bring it every time."],
+      ["M", "Motion — Never Stand Still", "Pass, cut, screen, fill — keep it moving."],
+      ["P", "Pass First", "The extra pass is the best pass."],
+      ["O", "Own the Boards", "Every rebound is OURS."]
+    ][day % 5];
+    $("#creedDay").innerHTML = `<div style="display:flex;gap:14px;align-items:center">
+      <div style="font-family:var(--display);font-size:58px;color:var(--bordeaux);line-height:1">${creed[0]}</div>
+      <div><b>${T.esc(creed[1])}</b><br><i>"${T.esc(creed[2])}"</i></div></div>`;
+
+    try {
+      const res = await T.myResults();
+      const topics = [["rules", "Rules & Signals"], ["court", "The Court"], ["fundamentals", "Fundamentals"], ["culture", "Team Culture"]];
+      $("#quizStatus").innerHTML = topics.map(([k, label]) => {
+        const r = res.find((x) => x.topic === k && x.week === wk);
+        return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line)">
+          <span>${label}</span>${r ? `<span class="pill g">Best ${r.best}/${r.total}</span>` : '<span class="pill b">Not taken</span>'}</div>`;
+      }).join("");
+    } catch (e) { $("#quizStatus").textContent = "Could not load your scores."; }
+  }
+})();
+</script>
+</body>
+</html>

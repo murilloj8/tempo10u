@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Coach Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+  .stat .n { font-family: var(--display); font-size: 34px; color: var(--bordeaux); line-height: 1.1; }
+  .stat .l { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .toolbar { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 14px; }
+  .toolbar label { margin: 0 0 4px; font-size: 14px; }
+  .toolbar select { width: auto; min-width: 200px; }
+  td.sc { text-align: center; font-weight: 800; }
+  td.sc.hi { background: #E6F4EA !important; color: var(--good); }
+  td.sc.mid { background: #FFF6E5 !important; color: #8A5A00; }
+  td.sc.lo { background: #FCE8E6 !important; color: var(--bad); }
+  td.sc.none { color: #bbb; font-weight: 400; }
+  th.c { text-align: center; }
+  .danger { background: transparent; color: var(--bad); border: 2px solid var(--bad); padding: 5px 10px; font-size: 13px; }
+  .danger:hover { background: #FCE8E6; }
+</style>
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <span class="kicker">Coach only</span>
+    <h1>Coach Dashboard</h1>
+    <p>Best quiz scores for each player, by week. Players can retake quizzes; this shows their best score and number of tries.</p>
+  </div>
+
+  <div id="modeNote"></div>
+  <div class="stats" id="stats"></div>
+
+  <div class="toolbar">
+    <div><label for="weekSel">Week</label><select id="weekSel"></select></div>
+    <button class="secondary" id="refresh">Refresh</button>
+    <button class="ghost" id="copyCsv">Copy as spreadsheet (CSV)</button>
+    <span id="copyMsg" class="small muted"></span>
+  </div>
+  <div class="table-wrap"><table id="scoreTable"></table></div>
+
+  <div class="section">
+    <h2>Roster &amp; accounts</h2>
+    <div class="card" style="margin-bottom:14px">
+      <b>How players join:</b> share the website link and the team code <span class="pill b" id="codePill"></span>. They tap <b>New player</b>, pick a username and password, and type the code.
+      <p class="small muted" style="margin:8px 0 0">Forgot password? Remove the player below, delete their login in Firebase (Authentication → Users), and have them sign up again. Their old scores are removed with them.</p>
+    </div>
+    <div class="table-wrap"><table id="rosterTable"></table></div>
+  </div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/quiz-data.js"></script>
+<script>
+(async function () {
+  const me = await TEMPO.boot("coach", { coachOnly: true });
+  if (!me) return;
+  const esc = TEMPO.esc, CFG = TEMPO.cfg, topics = window.TEMPO_QUIZ.topics;
+  const curWk = TEMPO.weekNumber();
+  document.getElementById("codePill").textContent = TEMPO.mode === "demo" ? CFG.teamCode : "the code in your firestore.rules";
+  if (TEMPO.mode === "demo") document.getElementById("modeNote").innerHTML =
+    '<div class="msg info">Demo mode: this dashboard only shows accounts created in this browser. Connect Firebase (see the setup guide) so you can see every player\'s scores.</div>';
+
+  const sel = document.getElementById("weekSel");
+  sel.innerHTML = Array.from({ length: curWk }, (_, i) => curWk - i).map((w) => `<option value="${w}">Week ${w} (${TEMPO.weekDates(w)})${w === curWk ? " — this week" : ""}</option>`).join("");
+
+  let users = [], results = [];
+  async function load() {
+    try { [users, results] = await Promise.all([TEMPO.allUsers(), TEMPO.allResults()]); }
+    catch (e) { console.error(e); document.getElementById("modeNote").innerHTML = '<div class="msg error">Could not load team data. Make sure your account is listed as a coach in config.js and firestore.rules.</div>'; }
+    render();
+  }
+  const players = () => users.filter((u) => !u.isCoach).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  function cls(r) { if (!r) return "none"; const p = r.best / r.total; return p >= .8 ? "hi" : p >= .5 ? "mid" : "lo"; }
+
+  function render() {
+    const wk = +sel.value, ps = players();
+    const wr = results.filter((r) => r.week === wk);
+    const taken = wr.length, possible = ps.length * topics.length;
+    const avg = wr.length ? Math.round(100 * wr.reduce((s, r) => s + r.best / r.total, 0) / wr.length) : 0;
+    const allDone = ps.filter((p) => topics.every((t) => wr.some((r) => r.uid === p.uid && r.topic === t.key))).length;
+    document.getElementById("stats").innerHTML = `
+      <div class="stat"><div class="n">${ps.length}</div><div class="l">Players joined</div></div>
+      <div class="stat"><div class="n">${taken}<span style="font-size:18px">/${possible}</span></div><div class="l">Quizzes taken (week ${wk})</div></div>
+      <div class="stat"><div class="n">${allDone}</div><div class="l">Finished all ${topics.length}</div></div>
+      <div class="stat"><div class="n">${avg}%</div><div class="l">Team average</div></div>`;
+
+    const head = `<tr><th>Player</th>${topics.map((t) => `<th class="c">${esc(t.name)}</th>`).join("")}<th class="c">Total</th></tr>`;
+    const rows = ps.map((p) => {
+      let got = 0, tot = 0;
+      const cells = topics.map((t) => {
+        const r = wr.find((x) => x.uid === p.uid && x.topic === t.key);
+        if (r) { got += r.best; tot += r.total; }
+        return `<td class="sc ${cls(r)}">${r ? `${r.best}/${r.total}<div class="small" style="font-weight:500">${r.attempts} ${r.attempts === 1 ? "try" : "tries"}</div>` : "—"}</td>`;
+      }).join("");
+      return `<tr><td><b>${esc(p.displayName)}</b>${p.jersey ? " #" + esc(p.jersey) : ""}<div class="small muted">@${esc(p.username)}</div></td>${cells}<td class="sc">${tot ? Math.round(100 * got / tot) + "%" : "—"}</td></tr>`;
+    }).join("");
+    document.getElementById("scoreTable").innerHTML = head + (rows || `<tr><td colspan="${topics.length + 2}" class="muted">No players have joined yet.</td></tr>`);
+
+    document.getElementById("rosterTable").innerHTML = `<tr><th>Name</th><th>Username</th><th>Jersey</th><th>Quizzes taken (all weeks)</th><th></th></tr>` +
+      (users.slice().sort((a, b) => a.displayName.localeCompare(b.displayName)).map((u) => `<tr>
+        <td><b>${esc(u.displayName)}</b>${u.isCoach ? ' <span class="pill b">Coach</span>' : ""}</td>
+        <td>@${esc(u.username)}</td><td>${esc(u.jersey) || "—"}</td>
+        <td>${results.filter((r) => r.uid === u.uid).length}</td>
+        <td>${u.isCoach ? "" : `<button class="danger" data-rm="${esc(u.uid)}" data-name="${esc(u.displayName)}">Remove</button>`}</td></tr>`).join("") ||
+       '<tr><td colspan="5" class="muted">No accounts yet.</td></tr>');
+  }
+
+  document.getElementById("rosterTable").onclick = async (e) => {
+    const b = e.target.closest("button[data-rm]"); if (!b) return;
+    if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = `Really remove ${b.dataset.name}?`; return; }
+    b.disabled = true; b.textContent = "Removing…";
+    try { await TEMPO.removePlayer(b.dataset.rm); await load(); }
+    catch (err) { console.error(err); b.textContent = "Couldn't remove"; }
+  };
+  sel.onchange = render;
+  document.getElementById("refresh").onclick = load;
+  document.getElementById("copyCsv").onclick = async () => {
+    const wk = +sel.value, wr = results.filter((r) => r.week === wk);
+    const lines = [["Player", "Username", "Jersey", ...topics.map((t) => t.name + " (best)"), ...topics.map((t) => t.name + " (tries)")].join(",")];
+    players().forEach((p) => {
+      const rs = topics.map((t) => wr.find((x) => x.uid === p.uid && x.topic === t.key));
+      lines.push([`"${p.displayName.replace(/"/g, '""')}"`, p.username, p.jersey, ...rs.map((r) => r ? `${r.best}/${r.total}` : ""), ...rs.map((r) => r ? r.attempts : "")].join(","));
+    });
+    try { await navigator.clipboard.writeText(lines.join("\n")); document.getElementById("copyMsg").textContent = "Copied! Paste into Excel or Google Sheets."; }
+    catch (err) { document.getElementById("copyMsg").textContent = "Copy didn't work in this browser."; }
+  };
+  load();
+})();
+</script>
+</body>
+</html>

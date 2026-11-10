@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Fundamentals</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 18px; }
+  .filters button { background: #fff; color: var(--bordeaux); border: 2px solid var(--bordeaux); padding: 7px 14px; }
+  .filters button.on { background: var(--bordeaux); color: #fff; }
+  .skill h3 { margin: 6px 0 4px; font-size: 22px; }
+  .why { color: var(--muted); font-size: 15px; }
+  .cue { font-family: var(--display); font-style: italic; color: var(--bordeaux); background: var(--bordeaux-soft); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 16px; text-align: center; letter-spacing: .02em; }
+  .practiced { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; margin-top: 10px; cursor: pointer; }
+  .practiced input { width: 20px; height: 20px; accent-color: var(--bordeaux); }
+  .progress { height: 12px; background: var(--line); border-radius: 999px; overflow: hidden; margin-top: 6px; }
+  .progress > div { height: 100%; background: linear-gradient(90deg, var(--bordeaux), var(--blue-dark)); transition: width .3s; }
+</style>
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <span class="kicker">Fundamentals</span>
+    <h1>Stances, Footwork &amp; Skills</h1>
+    <p>Great players do the simple things right every single time. Read each skill, say the cue words out loud, and try the at-home drill. Check the box when you've practiced it this week!</p>
+  </div>
+  <div class="card" style="margin-bottom:18px">
+    <b>This week I practiced <span id="pCount">0</span> of <span id="pTotal">0</span> skills</b>
+    <div class="progress"><div id="pBar" style="width:0%"></div></div>
+  </div>
+  <div class="filters no-print" id="filters"></div>
+  <div class="grid grid-2" id="skills"></div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+const SKILLS = [
+  { id: "ready", cat: "Stances", name: "Athletic (ready) stance",
+    why: "The base for everything — offense, defense and rebounding. From here you can move in any direction fast.",
+    steps: ["Feet a little wider than your shoulders.", "Bend your knees and push your hips back, like sitting in a chair.", "Chest up, back straight, eyes forward.", "Weight on the balls of your feet (not your heels).", "Hands up and ready."],
+    cue: "Feet wide · knees bent · chest up",
+    mistake: "Standing straight up with locked knees. If your knees aren't bent, you can't move quickly.",
+    drill: "Hold your ready stance for 30 seconds while someone says \"left / right / jump\" and you react." },
+  { id: "triple", cat: "Stances", name: "Triple threat",
+    why: "When you catch the ball, you are a threat to SHOOT, PASS or DRIVE. The defense can't guess what you'll do.",
+    steps: ["Catch and face the basket.", "Hold the ball tight at your hip on your shooting-hand side, shooting hand on top.", "Knees bent, feet wide, pivot foot planted.", "Eyes up: look at the rim and see the floor."],
+    cue: "Shoot · pass · drive",
+    mistake: "Putting the ball over your head or dribbling right away. That takes away two of your three threats.",
+    drill: "Toss the ball to yourself, catch, and snap into triple threat. Hold it and check: ball at hip, knees bent, eyes on the rim. Do 20." },
+  { id: "defense", cat: "Stances", name: "Defensive stance",
+    why: "TOUGH DEFENSE — every stop starts with me! A good stance keeps you between your player and the basket.",
+    steps: ["Feet wide, knees bent, butt down, back straight.", "One hand up to bother passes and shots, the other hand out to the side.", "Stay ball-you-basket: you stand between your player and our basket.", "Slide your feet — step and slide, never cross your feet.", "Talk! Say \"Ball!\" when you guard the ball handler."],
+    cue: "Low · wide · slide · talk",
+    mistake: "Reaching for the ball with your hands instead of moving your feet. Reaching = fouls.",
+    drill: "Defensive slides across a room: 5 slides left, 5 slides right, staying low the whole time. 3 rounds." },
+  { id: "jumpstop", cat: "Footwork", name: "Jump stop (land on both feet)",
+    why: "Landing on both feet at the same time keeps you balanced and lets you use EITHER foot as your pivot foot. It's the best way to avoid traveling.",
+    steps: ["As the pass comes, take a small hop toward the ball.", "Catch the ball in the air with two hands.", "Land on BOTH feet at the same time, knees bent, feet shoulder-width.", "Chin the ball (elbows out) and look at the basket."],
+    cue: "Hop · catch · land on two · balance",
+    mistake: "Landing one foot then the other (1-2 step) and then switching pivot feet. That's a travel!",
+    drill: "Toss the ball ahead, run, catch it and jump stop. Freeze for 2 seconds — no wobbling. Do 15." },
+  { id: "pivot", cat: "Footwork", name: "Pivoting",
+    why: "Pivoting lets you turn away from pressure and find an open teammate without traveling.",
+    steps: ["Pick a pivot foot. Keep the ball of that foot glued to the floor.", "Step around with your other foot — forward (front pivot) or backward (reverse pivot).", "Stay low and keep the ball chinned or tight to your body.", "Look for the open pass while you pivot."],
+    cue: "Glue the foot · stay low · chin it",
+    mistake: "Lifting or sliding the pivot foot before you pass or dribble.",
+    drill: "Hold a ball and do 10 front pivots and 10 reverse pivots on each foot. Keep your eyes up!" },
+  { id: "jab", cat: "Footwork", name: "Jab step",
+    why: "A quick fake step that makes the defender move — then you take what she gives you.",
+    steps: ["Start in triple threat with your pivot foot planted.", "Take a short, quick step straight at the defender with your other foot (about one shoe length).", "Read her: if she backs up → shoot. If she doesn't move → drive right past her with that same foot. If she jumps toward the jab → cross over and drive the other way.", "Keep your pivot foot planted the whole time."],
+    cue: "Jab · read · go",
+    mistake: "Taking a giant jab step. You lose your balance and your speed.",
+    drill: "Jab, come back to triple threat. Jab, then drive (one dribble). Jab, then crossover step. 10 of each." },
+  { id: "crossover", cat: "Ball handling", name: "Crossover dribble",
+    why: "Changes direction quickly to get past a defender.",
+    steps: ["Dribble low, below your knees, with your eyes up.", "Push the ball hard and low across your body to your other hand — a V shape in front of you.", "Step with the opposite foot to change direction.", "Protect the ball with your off arm and explode past the defender."],
+    cue: "Low · quick · across · explode",
+    mistake: "A high, wide crossover in front of the defender. Keep it low and tight so she can't steal it.",
+    drill: "Stationary crossovers: 30 seconds, then 30 seconds as fast as you can while keeping your eyes up." },
+  { id: "chest", cat: "Passing", name: "Chest pass",
+    why: "PASS FIRST — the extra pass is the best pass! The chest pass is the fastest, straightest pass.",
+    steps: ["Hold the ball at your chest, thumbs behind the ball, elbows in.", "Look at your target — your teammate's chest.", "Step toward your teammate.", "Push the ball out and snap your thumbs down. Finish with thumbs down and palms out."],
+    cue: "Step · push · thumbs down",
+    mistake: "A soft, loopy pass with no step. Step into it and pass with snap!",
+    drill: "Chest passes against a wall from 3 big steps away: 25 in a row. Aim at a spot (tape an X)." },
+  { id: "bounce", cat: "Passing", name: "Bounce pass",
+    why: "Great for passing under a defender's arms or into the post.",
+    steps: ["Hold the ball at your chest like a chest pass.", "Step toward your teammate.", "Push the ball so it bounces about 2/3 of the way to her.", "It should bounce up to her waist. Finish with thumbs down."],
+    cue: "Step · 2/3 bounce · waist high",
+    mistake: "Bouncing it too close to yourself (it arrives at her ankles) or too close to her.",
+    drill: "Put a cup or sock on the floor as the 2/3 spot. Bounce-pass off the wall hitting the spot 20 times." },
+  { id: "shoot", cat: "Shooting", name: "Shooting form (B.E.E.F.)",
+    why: "Good form = a shot that goes in again and again. Shoot with confidence when you're open!",
+    steps: ["B — Balance: feet shoulder-width, toes to the rim, knees bent.", "E — Eyes: lock onto the rim before, during and after the shot.", "E — Elbow: shooting elbow in, under the ball. Ball on your finger pads, not your palm. Guide hand on the side.", "F — Follow-through: push up and out, snap your wrist, hold your hand like you're reaching into a cookie jar on a high shelf until the ball hits the rim."],
+    cue: "Balance · Eyes · Elbow · Follow-through",
+    mistake: "Elbow sticking out to the side or shooting with two hands pushing. Guide hand only guides!",
+    drill: "Form shooting: lie on your back and shoot the ball straight up to yourself 25 times with perfect follow-through." },
+  { id: "layup", cat: "Shooting", name: "Layup",
+    why: "The closest, highest-percentage shot in basketball. Use the backboard!",
+    steps: ["From the right side: last steps go RIGHT foot, LEFT foot, then jump off your LEFT foot.", "Drive your RIGHT knee up as you jump.", "Shoot with your RIGHT hand, aiming at the top corner of the small square on the backboard.", "From the left side, flip it: jump off your RIGHT foot and shoot with your LEFT hand."],
+    cue: "Right-left-UP (right side) · Left-right-UP (left side)",
+    mistake: "Jumping off the wrong foot or running under the basket. Jump up, not forward.",
+    drill: "No ball needed: practice the footwork — \"right, left, UP!\" 10 times each side, then add a ball." },
+  { id: "boxout", cat: "Rebounding", name: "Box-out (block-out) stance",
+    why: "OWN THE BOARDS — every rebound is OURS! The team that boxes out gets the rebound.",
+    steps: ["When the shot goes up, find your player (\"Shot!\").", "Pivot and put your back (your seat) against her.", "Wide stance, low hips, arms up and out with elbows bent.", "Hold her back and feel where she goes.", "Go get the ball with TWO hands and chin it, elbows out."],
+    cue: "Find · hit · hold · go get it",
+    mistake: "Watching the ball instead of finding your player first.",
+    drill: "With a family member: they try to walk around you to a spot while you box them out with your seat. 5 rounds of 5 seconds." }
+];
+
+(async function () {
+  const user = await TEMPO.boot("fundamentals");
+  if (!user) return;
+  const esc = TEMPO.esc, wk = TEMPO.weekNumber();
+  const KEY = `tempo_practiced_${user.uid}_w${wk}`;
+  let done = {};
+  try { done = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+  const cats = ["All", ...new Set(SKILLS.map((s) => s.cat))];
+  let cur = "All";
+
+  function progress() {
+    const n = SKILLS.filter((s) => done[s.id]).length;
+    document.getElementById("pCount").textContent = n;
+    document.getElementById("pTotal").textContent = SKILLS.length;
+    document.getElementById("pBar").style.width = (100 * n / SKILLS.length) + "%";
+  }
+  function render() {
+    document.getElementById("filters").innerHTML = cats.map((c) => `<button class="${c === cur ? "on" : ""}" data-c="${c}">${c}</button>`).join("");
+    document.getElementById("skills").innerHTML = SKILLS.filter((s) => cur === "All" || s.cat === cur).map((s) => `
+      <div class="card accent skill">
+        <span class="pill">${esc(s.cat)}</span>
+        <h3>${esc(s.name)}</h3>
+        <p class="why">${esc(s.why)}</p>
+        <ol class="steps">${s.steps.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
+        <div class="cue">${esc(s.cue)}</div>
+        <div class="mistake"><b>Common mistake:</b> ${esc(s.mistake)}</div>
+        <div class="home-drill"><b>At-home drill:</b> ${esc(s.drill)}</div>
+        <label class="practiced no-print"><input type="checkbox" data-id="${s.id}" ${done[s.id] ? "checked" : ""}> I practiced this week</label>
+      </div>`).join("");
+  }
+  document.getElementById("filters").onclick = (e) => { if (e.target.dataset.c) { cur = e.target.dataset.c; render(); } };
+  document.getElementById("skills").onchange = (e) => {
+    const id = e.target.dataset.id; if (!id) return;
+    done[id] = e.target.checked;
+    try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (err) {}
+    progress();
+  };
+  render(); progress();
+})();
+</script>
+</body>
+</html>

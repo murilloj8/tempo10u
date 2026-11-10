@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Weekly Quizzes</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .topic h3 { margin: 6px 0 4px; }
+  .topic .status { margin: 10px 0 14px; }
+  .quiz-box { max-width: 720px; margin: 0 auto; }
+  .qhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 800; color: var(--muted); font-size: 14px; }
+  .bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+  .bar > div { height: 100%; background: var(--bordeaux); transition: width .3s; }
+  .question { font-size: 22px; font-weight: 800; margin-bottom: 16px; line-height: 1.3; }
+  .opts { display: grid; gap: 10px; }
+  .opt { text-align: left; background: #fff; color: var(--ink); border: 2px solid var(--line); border-radius: 14px; padding: 14px 16px; font-weight: 600; justify-content: flex-start; }
+  .opt:hover { background: var(--blue-soft); border-color: var(--blue); }
+  .opt .letter { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--bordeaux-soft); color: var(--bordeaux); font-weight: 900; margin-right: 10px; flex: none; }
+  .opt.right { border-color: var(--good); background: #E6F4EA; }
+  .opt.wrong { border-color: var(--bad); background: #FCE8E6; }
+  .opt:disabled { opacity: 1; cursor: default; }
+  .feedback { margin-top: 14px; }
+  .score-big { font-family: var(--display); font-size: 72px; color: var(--bordeaux); line-height: 1; text-align: center; }
+  .stars { text-align: center; font-size: 36px; letter-spacing: 6px; color: var(--gold); }
+</style>
+</head>
+<body>
+<main>
+  <section id="listView">
+    <div class="page-head">
+      <span class="kicker">Week <span id="wk"></span> · <span id="wkDates"></span></span>
+      <h1>Weekly Quizzes</h1>
+      <p>A new quiz on every topic each Monday. You can retake a quiz as many times as you want — Coach sees your best score for the week.</p>
+    </div>
+    <div class="grid grid-2" id="topics"></div>
+    <div class="section">
+      <h2>My quiz history</h2>
+      <div id="history" class="muted">Loading…</div>
+    </div>
+  </section>
+
+  <section id="quizView" class="hidden">
+    <div class="quiz-box card">
+      <div class="qhead"><span id="qTopic"></span><span id="qCount"></span></div>
+      <div class="bar"><div id="qBar"></div></div>
+      <div id="qBody"></div>
+    </div>
+  </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/quiz-data.js"></script>
+<script>
+(async function () {
+  const user = await TEMPO.boot("quizzes");
+  if (!user) return;
+  const { topics, banks } = window.TEMPO_QUIZ, esc = TEMPO.esc, CFG = TEMPO.cfg;
+  const wk = TEMPO.weekNumber();
+  document.getElementById("wk").textContent = wk;
+  document.getElementById("wkDates").textContent = TEMPO.weekDates(wk);
+  let results = [];
+
+  function buildQuiz(topicKey, week) {
+    const rand = TEMPO.seededRandom(`${topicKey}-week-${week}`);
+    const bank = banks[topicKey];
+    // Rotate through the bank so weeks don't repeat the same set too soon
+    const order = TEMPO.shuffle(bank.map((_, i) => i), TEMPO.seededRandom(topicKey + "-season"));
+    const n = Math.min(CFG.questionsPerQuiz, bank.length);
+    const startAt = ((week - 1) * n) % bank.length;
+    const picked = Array.from({ length: n }, (_, i) => bank[order[(startAt + i) % bank.length]]);
+    return TEMPO.shuffle(picked, rand).map((q) => {
+      const idx = TEMPO.shuffle(q.o.map((_, i) => i), rand);
+      return { q: q.q, why: q.why, o: idx.map((i) => q.o[i]), a: idx.indexOf(q.a) };
+    });
+  }
+
+  async function loadResults() {
+    try { results = await TEMPO.myResults(); } catch (e) { results = []; console.error(e); }
+  }
+
+  function renderList() {
+    document.getElementById("quizView").classList.add("hidden");
+    document.getElementById("listView").classList.remove("hidden");
+    document.getElementById("topics").innerHTML = topics.map((t) => {
+      const r = results.find((x) => x.topic === t.key && x.week === wk);
+      const status = r
+        ? `<span class="pill g">Best: ${r.best}/${r.total}</span> <span class="small muted">· ${r.attempts} ${r.attempts === 1 ? "try" : "tries"}</span>`
+        : `<span class="pill b">Not taken yet</span>`;
+      return `<div class="card accent topic">
+        <span class="pill">${CFG.questionsPerQuiz} questions</span>
+        <h3>${esc(t.name)}</h3><p class="muted" style="margin:0">${esc(t.blurb)}</p>
+        <div class="status">${status}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button data-start="${t.key}">${r ? "Try again" : "Start quiz"}</button>
+          <a class="btn ghost" href="${t.study}">Study first</a>
+        </div></div>`;
+    }).join("");
+
+    const past = results.slice().sort((a, b) => b.week - a.week || a.topic.localeCompare(b.topic));
+    const name = (k) => (topics.find((t) => t.key === k) || {}).name || k;
+    document.getElementById("history").innerHTML = past.length ? `<div class="table-wrap"><table>
+      <tr><th>Week</th><th>Quiz</th><th>Best score</th><th>Tries</th></tr>
+      ${past.map((r) => `<tr><td>${r.week}</td><td>${esc(name(r.topic))}</td><td><b>${r.best}/${r.total}</b></td><td>${r.attempts}</td></tr>`).join("")}
+    </table></div>` : "No quizzes yet — start one above!";
+  }
+
+  function runQuiz(topicKey) {
+    const t = topics.find((x) => x.key === topicKey);
+    if (!t) return renderList();
+    const qs = buildQuiz(topicKey, wk);
+    let i = 0, score = 0;
+    document.getElementById("listView").classList.add("hidden");
+    document.getElementById("quizView").classList.remove("hidden");
+    document.getElementById("qTopic").textContent = `${t.name} · Week ${wk}`;
+    window.scrollTo(0, 0);
+
+    function show() {
+      const q = qs[i];
+      document.getElementById("qCount").textContent = `Question ${i + 1} of ${qs.length}`;
+      document.getElementById("qBar").style.width = (100 * i / qs.length) + "%";
+      document.getElementById("qBody").innerHTML = `
+        <div class="question">${esc(q.q)}</div>
+        <div class="opts">${q.o.map((o, k) => `<button class="opt" data-k="${k}"><span class="letter">${"ABCD"[k]}</span>${esc(o)}</button>`).join("")}</div>
+        <div class="feedback" id="fb"></div>`;
+      document.querySelectorAll(".opt").forEach((b) => b.onclick = () => answer(+b.dataset.k));
+    }
+    function answer(k) {
+      const q = qs[i], ok = k === q.a;
+      if (ok) score++;
+      document.querySelectorAll(".opt").forEach((b) => {
+        b.disabled = true;
+        const bk = +b.dataset.k;
+        if (bk === q.a) b.classList.add("right");
+        else if (bk === k) b.classList.add("wrong");
+      });
+      document.getElementById("fb").innerHTML = `
+        <div class="msg ${ok ? "ok" : "error"}">${ok ? "Yes! Nice job." : "Not quite — next play!"} <span style="font-weight:500">${esc(q.why)}</span></div>
+        <button id="nextQ">${i === qs.length - 1 ? "See my score" : "Next question →"}</button>`;
+      document.getElementById("nextQ").onclick = () => { i++; i < qs.length ? show() : finish(); };
+      document.getElementById("nextQ").focus();
+    }
+    async function finish() {
+      document.getElementById("qBar").style.width = "100%";
+      document.getElementById("qCount").textContent = "Done!";
+      const pct = score / qs.length;
+      const stars = pct === 1 ? 3 : pct >= .75 ? 2 : pct >= .5 ? 1 : 0;
+      const msg = pct === 1 ? "PERFECT! You set the tempo!" : pct >= .75 ? "Great work! Almost perfect." : pct >= .5 ? "Good effort! Study a little and try again." : "Mistakes make me better. Study the page and try again!";
+      document.getElementById("qBody").innerHTML = `
+        <div class="stars">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
+        <div class="score-big">${score}/${qs.length}</div>
+        <p style="text-align:center;font-size:20px;font-weight:800;margin-top:8px">${msg}</p>
+        <div id="saveMsg" class="msg info" style="text-align:center">Saving your score…</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+          <button id="again">Try again</button>
+          <a class="btn ghost" href="${t.study}">Study ${esc(t.name)}</a>
+          <button class="secondary" id="back">All quizzes</button>
+        </div>`;
+      document.getElementById("again").onclick = () => runQuiz(topicKey);
+      document.getElementById("back").onclick = async () => { history.replaceState(null, "", "quizzes.html"); await loadResults(); renderList(); };
+      try {
+        const saved = await TEMPO.saveResult(topicKey, wk, score, qs.length);
+        document.getElementById("saveMsg").className = "msg ok";
+        document.getElementById("saveMsg").textContent = `Saved! Your best this week: ${saved.best}/${saved.total}`;
+      } catch (e) {
+        console.error(e);
+        document.getElementById("saveMsg").className = "msg error";
+        document.getElementById("saveMsg").textContent = "Couldn't save your score. Check your internet and try again.";
+      }
+    }
+    show();
+  }
+
+  document.getElementById("topics").onclick = (e) => { const k = e.target.dataset.start; if (k) runQuiz(k); };
+  await loadResults();
+  const hash = location.hash.replace("#", "");
+  if (topics.some((t) => t.key === hash)) runQuiz(hash); else renderList();
+})();
+</script>
+</body>
+</html>

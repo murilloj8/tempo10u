@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Know Your Court</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
+  .court-box { background: #2B1520; padding: 10px; }
+  #court { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; max-height: 68vh; }
+  .slide-info { padding: 20px 24px 8px; min-height: 190px; }
+  .slide-info h2 { color: var(--bordeaux); margin-bottom: 6px; }
+  .slide-info .aka { font-size: 14px; color: var(--muted); margin: -2px 0 10px; }
+  .controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px 20px; flex-wrap: wrap; }
+  .dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; flex: 1; }
+  .dots button { width: 13px; height: 13px; padding: 0; border-radius: 50%; background: var(--line); }
+  .dots button.done { background: var(--blue); }
+  .dots button.on { background: var(--bordeaux); transform: scale(1.3); }
+  .counter { font-weight: 800; color: var(--muted); font-size: 14px; min-width: 64px; text-align: center; }
+  @media (max-width: 560px) { .dots { display: none; } }
+  .tip { background: var(--blue-soft); border-left: 4px solid var(--blue-dark); padding: 8px 12px; border-radius: 8px; font-size: 15px; margin-top: 8px; }
+  .rule { background: var(--bordeaux-soft); border-left: 4px solid var(--bordeaux); padding: 8px 12px; border-radius: 8px; font-size: 15px; margin-top: 8px; }
+  @keyframes pulse { 0%,100% { opacity: .95; } 50% { opacity: .45; } }
+  .hl { animation: pulse 1.6s ease-in-out infinite; }
+  .lbl-cur rect { filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+</style>
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <span class="kicker">Know your court</span>
+    <h1>The Court, Spot by Spot</h1>
+    <p>Click <b>Next</b> (or press the → arrow key) to light up each part of the court. Coach will use these names in practice, so learn them all!</p>
+  </div>
+
+  <div class="stage">
+    <div class="court-box"><svg id="court" viewBox="0 0 840 500" role="img" aria-label="Basketball court diagram"></svg></div>
+    <div class="slide-info" aria-live="polite">
+      <div class="kicker" id="sKicker"></div>
+      <h2 id="sTitle"></h2>
+      <div class="aka" id="sAka"></div>
+      <p id="sText"></p>
+      <div id="sExtra"></div>
+    </div>
+    <div class="controls no-print">
+      <button class="ghost" id="prevBtn">← Back</button>
+      <div class="dots" id="dots"></div>
+      <span class="counter" id="counter"></span>
+      <button id="nextBtn">Next →</button>
+    </div>
+  </div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+(async function () {
+  if (!(await TEMPO.boot("court"))) return;
+
+  /* Units: 1 foot = 10 SVG units. High-school court 84 ft x 50 ft.
+     Left basket: baseline at x=0, rim center at (52.5, 250). */
+  const W = 840, H = 500;
+  const VIEW = { full: [-50, -40, 940, 580], half: [-55, -40, 520, 580], zoom: [-50, 95, 470, 300], lane: [-40, 148, 320, 204] };
+  const LINE = "#FFFFFF", FLOOR = "#D9A86C", PAINT = "#6B1E3A";
+
+  function courtHalf() {
+    return `
+      <rect x="0" y="190" width="190" height="120" fill="${PAINT}" opacity=".9"/>
+      <path d="M0 52.5 L52.5 52.5 A197.5 197.5 0 0 1 52.5 447.5 L0 447.5" fill="none" stroke="${LINE}" stroke-width="3"/>
+      <rect x="0" y="190" width="190" height="120" fill="none" stroke="${LINE}" stroke-width="3"/>
+      <path d="M190 190 A60 60 0 0 1 190 310" fill="none" stroke="${LINE}" stroke-width="3"/>
+      <path d="M190 190 A60 60 0 0 0 190 310" fill="none" stroke="${LINE}" stroke-width="3" stroke-dasharray="10 9"/>
+      <rect x="70" y="180" width="10" height="10" fill="${LINE}"/><rect x="70" y="310" width="10" height="10" fill="${LINE}"/>
+      ${[110, 140, 170].map(x => `<line x1="${x}" y1="182" x2="${x}" y2="190" stroke="${LINE}" stroke-width="3"/><line x1="${x}" y1="310" x2="${x}" y2="318" stroke="${LINE}" stroke-width="3"/>`).join("")}
+      <line x1="40" y1="220" x2="40" y2="280" stroke="${LINE}" stroke-width="5"/>
+      <line x1="40" y1="250" x2="45" y2="250" stroke="#E8833A" stroke-width="3"/>
+      <circle cx="52.5" cy="250" r="7.5" fill="none" stroke="#E8833A" stroke-width="3"/>`;
+  }
+  function courtSVG() {
+    return `
+      <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <rect x="-60" y="-60" width="960" height="620" fill="#2B1520"/>
+      <rect x="0" y="0" width="${W}" height="${H}" fill="${FLOOR}"/>
+      ${Array.from({ length: 24 }, (_, i) => `<line x1="0" y1="${i * 21}" x2="${W}" y2="${i * 21}" stroke="#C99558" stroke-width="1" opacity=".5"/>`).join("")}
+      <g>${courtHalf()}</g>
+      <g transform="translate(${W},0) scale(-1,1)">${courtHalf()}</g>
+      <rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="${LINE}" stroke-width="4"/>
+      <line x1="420" y1="0" x2="420" y2="500" stroke="${LINE}" stroke-width="3"/>
+      <circle cx="420" cy="250" r="60" fill="none" stroke="${LINE}" stroke-width="3"/>
+      <circle cx="420" cy="250" r="20" fill="none" stroke="${LINE}" stroke-width="2"/>
+      <text x="420" y="256" text-anchor="middle" font-family="Arial Black, sans-serif" font-style="italic" font-size="18" fill="${PAINT}" opacity=".7">TEMPO</text>
+      <g id="hlLayer"></g>
+      <g id="lblLayer"></g>`;
+  }
+
+  /* Highlight shape helpers (blue = the part we're learning) */
+  const B = "#9CC3E6", BD = "#3E7DB5";
+  const hl = {
+    line: (x1, y1, x2, y2) => `<line class="hl" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${B}" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>`,
+    rect: (x, y, w, h, op = .6) => `<rect class="hl" x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${B}" fill-opacity="${op}" stroke="${BD}" stroke-width="3"/>`,
+    circle: (cx, cy, r, op = .6) => `<circle class="hl" cx="${cx}" cy="${cy}" r="${r}" fill="${B}" fill-opacity="${op}" stroke="${BD}" stroke-width="3"/>`,
+    ring: (cx, cy, r) => `<circle class="hl" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${B}" stroke-width="10" filter="url(#glow)"/>`,
+    path: (d, fill) => fill ? `<path class="hl" d="${d}" fill="${B}" fill-opacity=".55" stroke="${BD}" stroke-width="3"/>` : `<path class="hl" d="${d}" fill="none" stroke="${B}" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>`,
+    spot: (cx, cy) => `<circle class="hl" cx="${cx}" cy="${cy}" r="16" fill="${B}" stroke="#fff" stroke-width="4"/><circle cx="${cx}" cy="${cy}" r="5" fill="${PAINT}"/>`
+  };
+
+  /* Each slide: view, highlight shapes, labels [x, y, text, rotate?], and the lesson. */
+  const SLIDES = [
+    { view: "full", kicker: "Start here", title: "Welcome to the court!", aka: "",
+      text: "A basketball court is a rectangle with a basket at each end. Our team attacks one basket and defends the other, then we switch at halftime. Let's learn the name of every line and spot.",
+      tip: "Press Next →. Each new spot lights up in blue. Spots you've already learned stay labeled in white.", hl: "", labels: [] },
+    { view: "full", kicker: "Lines", title: "Sidelines", aka: "The two long lines on the sides",
+      text: "The sidelines run the long way down the court. The line itself is OUT of bounds — if you step on it while holding or dribbling the ball, it's the other team's ball.",
+      tip: "When you catch near the sideline, keep your feet inside and pivot toward the middle of the court.",
+      hl: hl.line(0, 0, 840, 0) + hl.line(0, 500, 840, 500), labels: [[250, -16, "Sideline", 0, true], [590, 522, "Sideline"]] },
+    { view: "full", kicker: "Lines", title: "Baselines", aka: "Also called end lines",
+      text: "The baselines are the short lines at each end, behind the baskets. Like the sidelines, the baseline is out of bounds. After the other team scores, we inbound the ball from the baseline.",
+      tip: "After a made basket, the inbounder may run along the baseline before passing in.",
+      hl: hl.line(0, 0, 0, 500) + hl.line(840, 0, 840, 500), labels: [[-28, 250, "Baseline", -90, true], [868, 250, "Baseline", 90]] },
+    { view: "full", kicker: "Lines", title: "Half-court line & center circle", aka: "Also called the midcourt line, or the 'time line'",
+      text: "The half-court line splits the court in two. The game starts with a jump ball in the center circle. Once your team brings the ball over half court, you can't take it back over the line — that's a backcourt violation (\"over and back\").",
+      tip: "When you bring the ball up, use the half-court line like a wall behind you: once you cross it, play in front of it.",
+      hl: hl.line(420, 0, 420, 500) + hl.ring(420, 250, 60), labels: [[400, -16, "Half-court line", 0, true], [420, 328, "Center circle", 0, true]] },
+    { view: "full", kicker: "Halves", title: "Frontcourt & backcourt", aka: "Frontcourt = the half with the basket we're attacking",
+      text: "The frontcourt is the half where our basket is (where we're trying to score). The backcourt is the other half — the half we defend. Which half is which switches at halftime when teams change baskets.",
+      rule: "Our National League rule: no defending the ball handler in the backcourt (no full-court press). The only exception: in the last 60 seconds of the game, a team that is NOT ahead by 10 or more may defend in the backcourt. So on defense, sprint back and pick up your player at half court!",
+      hl: hl.rect(0, 0, 420, 500, .45) + `<rect x="420" y="0" width="420" height="500" fill="${PAINT}" fill-opacity=".25"/>`,
+      labels: [[340, 360, "Frontcourt", 0, true], [630, 470, "Backcourt"]] },
+    { view: "zoom", kicker: "The goal", title: "The basket: rim & backboard", aka: "Rim = hoop. Backboard = glass.",
+      text: "The rim is the orange hoop. For our league it is 10 feet high, the same as high school, college and the pros. The backboard is the rectangle behind the rim. On layups, aim for the top corner of the small square on the backboard and let the ball kiss off the glass.",
+      tip: "Our league plays with a 28.5\" ball (a size 6 'girls/women's' ball).",
+      hl: hl.line(40, 220, 40, 280) + hl.ring(52.5, 250, 9), labels: [[45, 222, "Basket", 0, true]] },
+    { view: "lane", kicker: "Inside", title: "The paint (the lane)", aka: "Also called the key or the lane",
+      text: "The paint is the painted rectangle in front of the basket. Lots of scoring and rebounding happens here — it's the most crowded part of the floor.",
+      rule: "3-second rule: an offensive player can't stay in the paint for more than 3 seconds in a row while her team has the ball. Get in, get out, keep moving! (MOTION — never stand still.)",
+      hl: hl.rect(0, 190, 190, 120), labels: [[120, 250, "Paint", 0, true]] },
+    { view: "lane", kicker: "Lines", title: "Free-throw line", aka: "Also called the foul line or charity stripe",
+      text: "The free-throw line is the short line at the top of the paint. After certain fouls, you shoot free throws from behind this line — 1 point each, and nobody can guard you.",
+      rule: "SBMSA rule: Junior League girls shoot free throws from 13 feet — closer than the painted 15-foot line on most courts, so the ref will show you where to stand. Our team shoots 2 free throws when the other team commits its 5th team foul of a quarter.",
+      hl: hl.line(190, 190, 190, 310), labels: [[204, 250, "Free-throw line", -90, true]] },
+    { view: "half", kicker: "Spots", title: "Free-throw circle & top of the key", aka: "Top of the key = the spot at the top of the circle, near the 3-point line",
+      text: "The circle around the free-throw line is the free-throw circle. The area at the very top of it, in the middle of the floor, is the top of the key. Our point guard often starts the offense from here.",
+      tip: "From the top of the key you can see the whole floor — a great place to pass to either side. PASS FIRST!",
+      hl: hl.circle(190, 250, 60, .35) + hl.spot(262, 250), labels: [[290, 250, "Top of the key", 0, true]] },
+    { view: "lane", kicker: "Spots", title: "The elbows", aka: "Left elbow and right elbow",
+      text: "The elbows are the two corners where the free-throw line meets the sides of the paint — they look like bent elbows. Coaches use them a lot: \"Cut to the elbow!\" or \"Flash to the elbow!\"",
+      tip: "Catch at the elbow and face the basket in triple threat — you can shoot, pass, or drive.",
+      hl: hl.spot(190, 190) + hl.spot(190, 310), labels: [[226, 172, "Elbow", 0, true], [226, 328, "Elbow"]] },
+    { view: "lane", kicker: "Spots", title: "The blocks", aka: "The small painted squares on each side of the lane",
+      text: "The blocks are the little squares on the sides of the paint, close to the basket. Post players love to catch the ball \"on the block\" because it's so close to the rim.",
+      tip: "On defense, if your player is on the block, stay between her and the ball — get a hand in front!",
+      hl: hl.rect(66, 174, 18, 20, .9) + hl.rect(66, 306, 18, 20, .9), labels: [[82, 164, "Block", 0, true], [82, 336, "Block"]] },
+    { view: "lane", kicker: "Lines", title: "Lane spaces", aka: "Where players line up for free throws",
+      text: "The little marks along the sides of the paint are the lane spaces. During free throws, players line up in these spaces. Nobody may go into the paint until the ball leaves the shooter's hands.",
+      tip: "On a free throw, the defense gets the spots closest to the basket. Be ready to box out — OWN THE BOARDS!",
+      hl: hl.rect(80, 176, 110, 14, .8) + hl.rect(80, 310, 110, 14, .8), labels: [[135, 338, "Lane spaces", 0, true]] },
+    { view: "zoom", kicker: "Areas", title: "Low post", aka: "The area near the blocks, close to the basket",
+      text: "The low post is the area just outside the paint, near the blocks. When a teammate \"posts up\" here, she uses her body to hold off the defender and calls for the ball with a big target hand.",
+      tip: "Posting up: wide stance, arms up, sit low, and show your hands as a target.",
+      hl: hl.rect(30, 130, 90, 55) + hl.rect(30, 315, 90, 55), labels: [[78, 116, "Low post"], [78, 386, "Low post", 0, true]] },
+    { view: "zoom", kicker: "Areas", title: "High post", aka: "The area around the free-throw line and elbows",
+      text: "The high post is the area near the free-throw line. A player who flashes (cuts quickly) to the high post can catch the ball and pass to cutters, shoot, or drive.",
+      tip: "Low post = near the basket. High post = near the free-throw line.",
+      hl: hl.rect(160, 185, 70, 130), labels: [[150, 292, "High post", 0, true]] },
+    { view: "half", kicker: "Spots", title: "The short corner", aka: "Along the baseline, between the paint and the corner",
+      text: "The short corner is the spot along the baseline, between the paint and the corner, inside the 3-point line. It's a sneaky place to get open when the defense collapses into the paint.",
+      tip: "If your defender turns her head to watch the ball, slide to the short corner and show your hands.",
+      hl: hl.spot(30, 125) + hl.spot(30, 375), labels: [[44, 104, "Short corner", 0, true], [44, 396, "Short corner"]] },
+    { view: "half", kicker: "Lines", title: "Three-point line", aka: "Also called the arc",
+      text: "The three-point line is the big curved line. A basket made from behind it counts 3 points. Inside it, a basket counts 2. Your feet decide — if you're touching the line, it's a 2.",
+      tip: "Spacing! On offense, spread out around the arc so the defense has to cover the whole floor.",
+      hl: hl.path("M0 52.5 L52.5 52.5 A197.5 197.5 0 0 1 52.5 447.5 L0 447.5"), labels: [[205, 418, "3-point line", 0, true]] },
+    { view: "half", kicker: "Spots", title: "The corners", aka: "Left corner and right corner",
+      text: "The corners are the spots near the baseline and sideline, outside the 3-point line. A player in the corner stretches the defense wide, which opens up the middle.",
+      tip: "Don't let the corner trap you! If you're double-teamed there, pivot away and pass out quickly.",
+      hl: hl.rect(0, 0, 60, 50, .7) + hl.rect(0, 450, 60, 50, .7), labels: [[36, 26, "Corner", 0, true], [36, 474, "Corner"]] },
+    { view: "half", kicker: "Spots", title: "The wings", aka: "Left wing and right wing",
+      text: "The wings are the spots on each side of the court, halfway between the corner and the top of the key, near the 3-point line. Many plays start with a pass from the point guard to a wing.",
+      tip: "Get open on the wing with a V-cut: walk your defender toward the basket, then explode out to the wing and catch with two hands.",
+      hl: hl.spot(225, 92) + hl.spot(225, 408), labels: [[255, 66, "Wing", 0, true], [255, 434, "Wing"]] },
+    { view: "half", kicker: "Review", title: "You know the court!", aka: "",
+      text: "Here are all the spots together. Point to each one and say its name out loud. Then go take this week's Court quiz!",
+      tip: "Challenge: ask someone at home to call out a spot (\"Left elbow!\") while you point to it on this picture.",
+      hl: "", labels: "recap" }
+  ];
+
+  const svg = document.getElementById("court");
+  svg.innerHTML = courtSVG();
+  const hlLayer = document.getElementById("hlLayer"), lblLayer = document.getElementById("lblLayer");
+  let idx = 0, maxSeen = 0, curVB = VIEW.full.slice(), anim = null;
+
+  // Keep labels the same size on screen no matter how far we zoom in.
+  let unitsPerPx = 1;
+  function measure(vb) {
+    const w = svg.clientWidth || 800, h = svg.clientHeight || 500;
+    unitsPerPx = 1 / Math.min(w / vb[2], h / vb[3]);
+  }
+  function labelSVG(x, y, text, rot, kind) {
+    const px = kind === "cur" ? (svg.clientWidth < 520 ? 13 : 16) : (svg.clientWidth < 520 ? 10 : 12.5);
+    const size = px * unitsPerPx;
+    const w = text.length * size * 0.62 + 16 * unitsPerPx, h = size + 10 * unitsPerPx;
+    const fill = kind === "cur" ? "#6B1E3A" : "#FFFFFF", color = kind === "cur" ? "#FFFFFF" : "#6B1E3A";
+    return `<g class="${kind === "cur" ? "lbl-cur" : ""}" transform="translate(${x},${y}) rotate(${rot || 0})" opacity="${kind === "cur" ? 1 : .9}">
+      <rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="${fill}" stroke="${kind === "cur" ? "#9CC3E6" : "#6B1E3A"}" stroke-width="${2 * unitsPerPx}"/>
+      <text x="0" y="${size * 0.36}" text-anchor="middle" font-family="system-ui, Arial, sans-serif" font-weight="800" font-size="${size}" fill="${color}">${text}</text></g>`;
+  }
+  function animateTo(vb) {
+    cancelAnimationFrame(anim);
+    const from = curVB.slice(), t0 = performance.now(), dur = 650;
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      curVB = from.map((v, i) => v + (vb[i] - v) * e);
+      svg.setAttribute("viewBox", curVB.join(" "));
+      if (k < 1) anim = requestAnimationFrame(step);
+    };
+    anim = requestAnimationFrame(step);
+  }
+  function render() {
+    const s = SLIDES[idx];
+    maxSeen = Math.max(maxSeen, idx);
+    measure(VIEW[s.view]);
+    animateTo(VIEW[s.view]);
+    hlLayer.innerHTML = s.hl;
+    let labels = "";
+    if (s.labels === "recap") {
+      SLIDES.forEach((sl) => Array.isArray(sl.labels) && sl.labels.forEach((l) => { if (l[4]) labels += labelSVG(l[0], l[1], l[2], l[3], "cur"); }));
+    } else {
+      // Labels learned on earlier slides (one of each), then the current ones on top
+      SLIDES.slice(1, idx).forEach((sl) => Array.isArray(sl.labels) && sl.labels.forEach((l) => { if (l[4]) labels += labelSVG(l[0], l[1], l[2], l[3], "old"); }));
+      s.labels.forEach((l) => labels += labelSVG(l[0], l[1], l[2], l[3], "cur"));
+    }
+    lblLayer.innerHTML = labels;
+    document.getElementById("sKicker").textContent = s.kicker;
+    document.getElementById("sTitle").textContent = s.title;
+    document.getElementById("sAka").textContent = s.aka;
+    document.getElementById("sText").textContent = s.text;
+    document.getElementById("sExtra").innerHTML =
+      (s.rule ? `<div class="rule"><b>Rule:</b> ${TEMPO.esc(s.rule)}</div>` : "") +
+      (s.tip ? `<div class="tip"><b>Coach tip:</b> ${TEMPO.esc(s.tip)}</div>` : "");
+    document.getElementById("counter").textContent = `${idx + 1} / ${SLIDES.length}`;
+    document.getElementById("prevBtn").disabled = idx === 0;
+    const nb = document.getElementById("nextBtn");
+    nb.textContent = idx === SLIDES.length - 1 ? "Take the quiz →" : "Next →";
+    document.getElementById("dots").innerHTML = SLIDES.map((_, i) =>
+      `<button aria-label="Slide ${i + 1}" class="${i === idx ? "on" : i <= maxSeen ? "done" : ""}" data-i="${i}"></button>`).join("");
+  }
+  function go(d) {
+    if (idx === SLIDES.length - 1 && d > 0) { location.href = "quizzes.html#court"; return; }
+    idx = Math.max(0, Math.min(SLIDES.length - 1, idx + d)); render();
+  }
+  document.getElementById("prevBtn").onclick = () => go(-1);
+  document.getElementById("nextBtn").onclick = () => go(1);
+  document.getElementById("dots").onclick = (e) => { const i = e.target.dataset.i; if (i !== undefined) { idx = +i; render(); } };
+  document.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); });
+  // swipe on phones
+  let sx = null;
+  svg.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+  svg.addEventListener("touchend", (e) => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1); sx = null; });
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+  render();
+})();
+</script>
+</body>
+</html>
