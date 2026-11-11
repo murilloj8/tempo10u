@@ -6,7 +6,7 @@ window.TEMPO_PLAYS = {
   "screen-cut": {
     title: "Motion",
     sub: "Two-guard front vs. man-to-man. #3 cuts off #5's screen — read it: is she open?",
-    tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball and run the option.",
+    tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball, reverse it to the top, and run the weak-side screen. Still covered? Run Motion again — patience creates the open look.",
     start: {
       off: { 1: [416, 403], 2: [78, 212], 3: [572, 212], 4: [234, 403], 5: [436, 104] },
       def: { X1: [397, 351], X2: [167, 202], X3: [522, 227], X4: [247, 352], X5: [410, 150] },
@@ -76,16 +76,48 @@ window.TEMPO_PLAYS = {
         next: "swing"
       },
       swing: {
-        dur: 0.8, caption: "#4 swings the ball to #5 up top. The defense has to shift again.",
+        dur: 0.8, caption: "<b>Reverse it!</b> #4 swings the ball to #5, who just came up to the top. The ball is on the right now — the left is the <b>weak side</b>.",
         ball: [{ t0: 0, t1: 0.6, from: "4", to: "5" }],
         trails: [{ t0: 0, t1: 0.6, kind: "pass", pts: [[249, 388], [432, 390]] }],
-        next: "reset"
+        next: "weakScreen"
+      },
+      weakScreen: {
+        dur: 1.0, caption: "<b>Weak-side screen:</b> #3 steps up from the left block and sets a screen on #2's defender.",
+        moves: { 3: [[1.0, 150, 196]], X3: [[1.0, 196, 168]], X2: [[0.6, 128, 252], [1.0, 124, 236]] },
+        trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[232, 104], [158, 184]] }],
+        next: "crossCut"
+      },
+      crossCut: {
+        dur: 1.9, caption: "#2 cuts off #3's screen, across the lane toward the rim. #3 fades out to the left wing — #2's old spot.",
+        moves: {
+          2: [[0.45, 120, 160], [1.2, 222, 112], [1.7, 300, 100]],
+          X2: [[0.6, 138, 222], [1.0, 150, 214], [1.8, 240, 150]],
+          3: [[0.9, 150, 196], [1.9, 82, 216]],
+          X3: [[1.0, 196, 170], [1.9, 118, 196]]
+        },
+        trails: [{ t0: 0, t1: 1.7, kind: "cut", pts: [[78, 212], [120, 160], [222, 112], [288, 102]] }, { t0: 0.9, t1: 1.9, kind: "cut", pts: [[150, 196], [96, 212]] }],
+        next: "read2"
+      },
+      read2: {
+        dur: 0, caption: "<b>Decision:</b> #5, look at #2 on the cut. Is she open?",
+        decision: { question: "Is #2 open on the cut?", hint: "Open = X2 got stuck on #3's screen and is behind her.", yes: "hit2", no: "reset" }
+      },
+      hit2: {
+        dur: 1.0, caption: "<b>Yes!</b> #5 hits #2 on the cut.",
+        ball: [{ t0: 0, t1: 0.75, from: "5", to: "2" }],
+        trails: [{ t0: 0, t1: 0.75, kind: "pass", pts: [[455, 385], [312, 88]] }],
+        next: "score2"
+      },
+      score2: {
+        dur: 1.2, caption: "<b>Score!</b> #2 finishes the layup. Sprint back on defense!", score: 0.85,
+        moves: { 2: [[0.4, 314, 84]] },
+        ball: [{ t0: 0, t1: 0.4, hold: "2" }, { t0: 0.4, t1: 0.85, from: "2", toXY: [325, 68] }]
       },
       reset: {
-        dur: 1.8, caption: "<b>Reset:</b> #5 gives the ball back to #1 and everyone returns to their starting spot — run it again!",
+        dur: 2.0, caption: "<b>Still covered? Run Motion again!</b> #5 gives the ball to #1 and everyone goes back to their starting spot.",
         moves: {
-          1: [[0.9, 416, 403]], 5: [[0.8, 452, 330], [1.8, 436, 104]], 3: [[1.8, 572, 212]],
-          X1: [[1.0, 397, 351]], X3: [[1.8, 522, 227]], X5: [[1.8, 410, 150]], X2: [[1.2, 167, 202]], X4: [[1.2, 247, 352]]
+          1: [[0.9, 416, 403]], 5: [[0.8, 452, 330], [2.0, 436, 104]], 2: [[1.6, 78, 212]], 3: [[2.0, 572, 212]],
+          X1: [[1.0, 397, 351]], X2: [[1.6, 167, 202]], X3: [[2.0, 522, 227]], X4: [[1.2, 247, 352]], X5: [[2.0, 410, 150]]
         },
         ball: [{ t0: 0, t1: 0.9, hold: "5" }, { t0: 0.9, t1: 1.3, from: "5", to: "1" }],
         next: "pass"
@@ -104,8 +136,12 @@ window.TEMPO_PLAYS = {
       { id: "screener", html: "<b>4.</b> #1 screens for #5." },
       { id: "toTop", html: "<b>5.</b> #5 cuts to the top." },
       { id: "fade", html: "<b>6.</b> #1 fades to the wing." },
-      { id: "swing", html: "<b>7.</b> #4 swings it to #5." },
-      { id: "reset", html: "<b>8.</b> Reset and run it again." }
+      { id: "swing", html: "<b>7.</b> #4 reverses the ball to #5 at the top." },
+      { id: "weakScreen", html: "<b>8.</b> #3 (weak-side block) screens for #2." },
+      { id: "crossCut", html: "<b>9.</b> #2 cuts across to the rim. #3 fades to the wing." },
+      { id: "read2", html: "<b>Decision:</b> Is #2 open?" },
+      { id: "hit2", html: "Yes → #5 passes to #2, #2 scores." },
+      { id: "reset", html: "No → reset and run Motion again." }
     ]
   },
 
