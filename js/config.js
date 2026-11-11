@@ -17,7 +17,7 @@ window.TEMPO_CONFIG = {
 
   // Week 1 of the quiz calendar (a Monday). Quizzes change every Monday.
   quizStartDate: "2026-11-16",
-  questionsPerQuiz: 8,
+  questionsPerQuiz: 6,
 
   // Used behind the scenes to turn a username into a Firebase login.
   // It is not a real email address and nothing is ever sent to it.

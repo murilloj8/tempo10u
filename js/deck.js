@@ -12,7 +12,7 @@
   .deck-stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
   .deck-card { display: grid; grid-template-columns: minmax(200px, 300px) 1fr; min-height: 340px; }
   .deck-visual { background: linear-gradient(180deg, var(--blue-soft), #fff); display: grid; place-items: center; padding: 18px; border-right: 1px solid var(--line); }
-  .deck-visual svg { width: 100%; max-width: 260px; height: auto; }
+  .deck-visual svg { width: 100%; max-width: 280px; height: auto; }
   .deck-big { font-family: var(--display); font-style: italic; color: var(--bordeaux); font-size: clamp(40px, 7vw, 64px); text-align: center; line-height: 1.05; }
   .deck-body { padding: 22px 24px; }
   .deck-body h2 { color: var(--bordeaux); margin: 6px 0 8px; }
@@ -32,15 +32,15 @@
   }`;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
-  function mount({ root, items, groups, storageKey, visual, body, allLabel = "All" }) {
+  function mount({ root, items, groups, storageKey, visual, body, onRender }) {
     const T = window.TEMPO;
     const KEY = `tempo_seen_${storageKey}_${T.user ? T.user.uid : "x"}_${T.dayKey()}`;
     let seen = {};
     try { seen = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
     const save = () => { try { localStorage.setItem(KEY, JSON.stringify(seen)); } catch (e) {} };
-    let group = allLabel, idx = 0;
-    const list = () => items.filter((it) => group === allLabel || it.group === group);
-    const groupDone = (g) => items.filter((it) => g === allLabel || it.group === g).every((it) => seen[it.id]);
+    let group = groups[0], idx = 0;
+    const list = () => items.filter((it) => it.group === group);
+    const groupDone = (g) => items.filter((it) => it.group === g).every((it) => seen[it.id]);
 
     root.innerHTML = `
       <div class="deck-filters no-print"></div>
@@ -61,8 +61,8 @@
       const wasDone = groupDone(group);
       seen[it.id] = true; save();
       const nowDone = groupDone(group);
-      $(".deck-filters").innerHTML = [allLabel, ...groups].map((g) => {
-        const n = items.filter((x) => g === allLabel || x.group === g);
+      $(".deck-filters").innerHTML = groups.map((g) => {
+        const n = items.filter((x) => x.group === g);
         const c = n.filter((x) => seen[x.id]).length;
         return `<button data-g="${g}" class="${g === group ? "on" : ""} ${groupDone(g) ? "done" : ""}">${g}<span class="cnt">${c}/${n.length}</span></button>`;
       }).join("");
@@ -74,9 +74,10 @@
       $(".deck-dots").innerHTML = L.map((x, i) => `<button aria-label="Card ${i + 1}" data-i="${i}" class="${i === idx ? "on" : seen[x.id] ? "seen" : ""}"></button>`).join("");
       $(".deck-toast").innerHTML = (!wasDone && nowDone)
         ? `<div class="msg ok">You've seen every card in <b>${group}</b> today — nice work! ✓</div>` : "";
+      if (onRender) onRender(it, root);
     }
     root.addEventListener("click", (e) => {
-      const b = e.target.closest("button"); if (!b || !root.contains(b)) return;
+      const b = e.target.closest("button"); if (!b || !root.contains(b) || b.closest(".deck-body")) return;
       if (b.dataset.g) { group = b.dataset.g; idx = 0; render(); }
       else if (b.dataset.i !== undefined) { idx = +b.dataset.i; render(); }
       else if (b.classList.contains("deck-prev")) { idx = Math.max(0, idx - 1); render(); }

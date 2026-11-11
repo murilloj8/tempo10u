@@ -22,6 +22,8 @@
 
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
+<script src="js/signals.js"></script>
+<script src="js/pictures.js"></script>
 <script src="js/deck.js"></script>
 <script>
 const B = "Basic rules", L = "Our league (SBMSA)";
@@ -65,7 +67,7 @@ const RULES = [
     storageKey: "rules",
     items: RULES,
     groups: [B, L],
-    visual: (r) => `<div class="deck-big">${esc(r.big)}</div>`,
+    visual: (r) => TEMPO_PICS.rule(r.id) || `<div class="deck-big">${esc(r.big)}</div>`,
     body: (r) => `
       <span class="pill ${r.group === L ? "b" : ""}">${esc(r.group)}</span>
       <h2>${esc(r.title)}</h2>

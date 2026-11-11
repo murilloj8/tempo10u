@@ -324,11 +324,13 @@
       </div>`;
     const mb = $(".menu-btn", bar); if (mb) mb.onclick = () => $(".nav", bar).classList.toggle("open");
     const lo = $("#logoutBtn", bar); if (lo) lo.onclick = () => TEMPO.signOut();
-    if (!$("footer")) {
-      const f = document.createElement("footer");
-      f.innerHTML = `<b>Who sets the tempo? WE DO!</b><br>${esc(CFG.teamName)} 10U · ${esc(CFG.league)} · ${esc(CFG.season)}` +
-        (backend.mode === "demo" ? '<br><span class="small">Demo mode: accounts and scores are saved on this device only.</span>' : "");
-      document.body.appendChild(f);
+    // "Return Home" button at the bottom of every page except Home
+    const main = $("main");
+    if (u && pageKey !== "home" && main && !$(".return-home")) {
+      const r = document.createElement("div");
+      r.className = "return-home no-print";
+      r.innerHTML = '<a class="btn secondary" href="index.html">← Return Home</a>';
+      main.appendChild(r);
     }
   }
   function showFatal(msg) {

@@ -178,3 +178,7 @@ footer b { color: var(--bordeaux); }
   body { background: #fff; }
   .card { box-shadow: none; break-inside: avoid; }
 }
+
+/* ----- Return Home ----- */
+.return-home { display: flex; justify-content: center; margin: 34px 0 10px; }
+.return-home .btn { padding: 13px 26px; font-size: 17px; }

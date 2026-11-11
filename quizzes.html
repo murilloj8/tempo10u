@@ -31,7 +31,7 @@
     <div class="page-head">
       <span class="kicker">Week <span id="wk"></span> · <span id="wkDates"></span></span>
       <h1>Weekly Quizzes</h1>
-      <p>A new quiz on every topic each Monday. You can retake a quiz as many times as you want — Coach sees your best score for the week.</p>
+      <p>A new quiz on every topic each Monday — and each week's set is a little harder than the last (Set 1 Rookie → Set 10 MVP). Retake it as many times as you want; Coach sees your best score for the week.</p>
     </div>
     <div class="grid grid-2" id="topics"></div>
     <div class="section">
@@ -56,20 +56,24 @@
 (async function () {
   const user = await TEMPO.boot("quizzes");
   if (!user) return;
-  const { topics, banks } = window.TEMPO_QUIZ, esc = TEMPO.esc, CFG = TEMPO.cfg;
+  const { topics } = window.TEMPO_QUIZ, esc = TEMPO.esc, CFG = TEMPO.cfg;
   const wk = TEMPO.weekNumber();
   document.getElementById("wk").textContent = wk;
   document.getElementById("wkDates").textContent = TEMPO.weekDates(wk);
   let results = [];
 
+  const { sets, levels } = window.TEMPO_QUIZ;
+  // Week 1 → Set 1 (easiest) ... Week 10 → Set 10 (hardest). After that: Challenge mix of Sets 6–10.
+  function setInfo(week) {
+    if (week <= 10) return { label: `Set ${week} · ${levels[week - 1]}`, set: week };
+    return { label: "Challenge mix · MVP", set: 0 };
+  }
   function buildQuiz(topicKey, week) {
     const rand = TEMPO.seededRandom(`${topicKey}-week-${week}`);
-    const bank = banks[topicKey];
-    // Rotate through the bank so weeks don't repeat the same set too soon
-    const order = TEMPO.shuffle(bank.map((_, i) => i), TEMPO.seededRandom(topicKey + "-season"));
-    const n = Math.min(CFG.questionsPerQuiz, bank.length);
-    const startAt = ((week - 1) * n) % bank.length;
-    const picked = Array.from({ length: n }, (_, i) => bank[order[(startAt + i) % bank.length]]);
+    const info = setInfo(week);
+    let picked;
+    if (info.set) picked = sets[topicKey][info.set - 1];
+    else picked = TEMPO.shuffle(sets[topicKey].slice(5).flat(), rand).slice(0, 6);
     return TEMPO.shuffle(picked, rand).map((q) => {
       const idx = TEMPO.shuffle(q.o.map((_, i) => i), rand);
       return { q: q.q, why: q.why, o: idx.map((i) => q.o[i]), a: idx.indexOf(q.a) };
@@ -89,7 +93,7 @@
         ? `<span class="pill g">Best: ${r.best}/${r.total}</span> <span class="small muted">· ${r.attempts} ${r.attempts === 1 ? "try" : "tries"}</span>`
         : `<span class="pill b">Not taken yet</span>`;
       return `<div class="card accent topic">
-        <span class="pill">${CFG.questionsPerQuiz} questions</span>
+        <span class="pill">${setInfo(wk).label}</span> <span class="small muted">6 questions</span>
         <h3>${esc(t.name)}</h3><p class="muted" style="margin:0">${esc(t.blurb)}</p>
         <div class="status">${status}</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -113,7 +117,7 @@
     let i = 0, score = 0;
     document.getElementById("listView").classList.add("hidden");
     document.getElementById("quizView").classList.remove("hidden");
-    document.getElementById("qTopic").textContent = `${t.name} · Week ${wk}`;
+    document.getElementById("qTopic").textContent = `${t.name} · Week ${wk} · ${setInfo(wk).label}`;
     window.scrollTo(0, 0);
 
     function show() {

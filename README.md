@@ -89,7 +89,7 @@ Players can install it like an app: on iPhone open the link in Safari → Share 
 
 **Change the team code:** Coach tab → Team code → Change code. Existing players aren't affected.
 
-**Quiz weeks:** Week 1 starts on `quizStartDate` in `js/config.js` (set to Mon Nov 16, 2026, the first practice week). Quizzes change every Monday. Each quiz has 8 questions (`questionsPerQuiz`).
+**Quiz weeks:** Week 1 starts on `quizStartDate` in `js/config.js` (set to Mon Nov 16, 2026, the first practice week). Quizzes change every Monday. Each subject has 10 sets of 6 questions in `js/quiz-data.js`: Week 1 = Set 1 (easiest) … Week 10 = Set 10 (hardest), then a Challenge mix.
 
 **Add or edit quiz questions:** `js/quiz-data.js`. Each question looks like:
 ```js

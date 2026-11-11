@@ -6,10 +6,6 @@
 <title>Tempo 10U — Fundamentals</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 18px; }
-  .filters button { background: #fff; color: var(--bordeaux); border: 2px solid var(--bordeaux); padding: 7px 14px; }
-  .filters button.on { background: var(--bordeaux); color: #fff; }
-  .skill h3 { margin: 6px 0 4px; font-size: 22px; }
   .why { color: var(--muted); font-size: 15px; }
   .cue { font-family: var(--display); font-style: italic; color: var(--bordeaux); background: var(--bordeaux-soft); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 16px; text-align: center; letter-spacing: .02em; }
   .practiced { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; margin-top: 10px; cursor: pointer; }
@@ -23,18 +19,19 @@
   <div class="page-head">
     <span class="kicker">Fundamentals</span>
     <h1>Stances, Footwork &amp; Skills</h1>
-    <p>Great players do the simple things right every single time. Read each skill, say the cue words out loud, and try the at-home drill. Check the box when you've practiced it this week!</p>
+    <p>Great players do the simple things right every single time. Go one skill at a time: look at the picture, read the steps, say the cue words out loud, and try the at-home drill. Check the box when you've practiced it this week!</p>
   </div>
   <div class="card" style="margin-bottom:18px">
     <b>This week I practiced <span id="pCount">0</span> of <span id="pTotal">0</span> skills</b>
     <div class="progress"><div id="pBar" style="width:0%"></div></div>
   </div>
-  <div class="filters no-print" id="filters"></div>
-  <div class="grid grid-2" id="skills"></div>
+  <div id="deck"></div>
 </main>
 
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
+<script src="js/pictures.js"></script>
+<script src="js/deck.js"></script>
 <script>
 const SKILLS = [
   { id: "ready", cat: "Stances", name: "Athletic (ready) stance",
@@ -118,37 +115,36 @@ const SKILLS = [
   const KEY = `tempo_practiced_${user.uid}_w${wk}`;
   let done = {};
   try { done = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
-  const cats = ["All", ...new Set(SKILLS.map((s) => s.cat))];
-  let cur = "All";
-
+  const PIC = { chest: "chestpass", bounce: "bouncepass", shoot: "shooting" };
   function progress() {
     const n = SKILLS.filter((s) => done[s.id]).length;
     document.getElementById("pCount").textContent = n;
     document.getElementById("pTotal").textContent = SKILLS.length;
     document.getElementById("pBar").style.width = (100 * n / SKILLS.length) + "%";
   }
-  function render() {
-    document.getElementById("filters").innerHTML = cats.map((c) => `<button class="${c === cur ? "on" : ""}" data-c="${c}">${c}</button>`).join("");
-    document.getElementById("skills").innerHTML = SKILLS.filter((s) => cur === "All" || s.cat === cur).map((s) => `
-      <div class="card accent skill">
-        <span class="pill">${esc(s.cat)}</span>
-        <h3>${esc(s.name)}</h3>
-        <p class="why">${esc(s.why)}</p>
-        <ol class="steps">${s.steps.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
-        <div class="cue">${esc(s.cue)}</div>
-        <div class="mistake"><b>Common mistake:</b> ${esc(s.mistake)}</div>
-        <div class="home-drill"><b>At-home drill:</b> ${esc(s.drill)}</div>
-        <label class="practiced no-print"><input type="checkbox" data-id="${s.id}" ${done[s.id] ? "checked" : ""}> I practiced this week</label>
-      </div>`).join("");
-  }
-  document.getElementById("filters").onclick = (e) => { if (e.target.dataset.c) { cur = e.target.dataset.c; render(); } };
-  document.getElementById("skills").onchange = (e) => {
+  TEMPO_DECK.mount({
+    root: document.getElementById("deck"),
+    storageKey: "fundamentals",
+    items: SKILLS.map((s) => ({ ...s, group: s.cat })),
+    groups: [...new Set(SKILLS.map((s) => s.cat))],
+    visual: (s) => TEMPO_PICS.fund(PIC[s.id] || s.id),
+    body: (s) => `
+      <span class="pill">${esc(s.cat)}</span>
+      <h2>${esc(s.name)}</h2>
+      <p class="why">${esc(s.why)}</p>
+      <ol class="steps">${s.steps.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
+      <div class="cue">${esc(s.cue)}</div>
+      <div class="mistake"><b>Common mistake:</b> ${esc(s.mistake)}</div>
+      <div class="home-drill"><b>At-home drill:</b> ${esc(s.drill)}</div>
+      <label class="practiced no-print"><input type="checkbox" data-id="${s.id}" ${done[s.id] ? "checked" : ""}> I practiced this week</label>`
+  });
+  document.getElementById("deck").addEventListener("change", (e) => {
     const id = e.target.dataset.id; if (!id) return;
     done[id] = e.target.checked;
     try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (err) {}
     progress();
-  };
-  render(); progress();
+  });
+  progress();
 })();
 </script>
 </body>

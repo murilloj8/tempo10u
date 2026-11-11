@@ -26,6 +26,11 @@
   .zone:hover { transform: translateY(-2px); border-color: var(--blue); }
   .zone span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--blue-soft); font-size: 16px; flex: none; }
   .zone.done { border-color: var(--good); }
+  .aff ol { counter-reset: n; list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+  .aff li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; font-size: 16px; }
+  .aff li::before { counter-increment: n; content: counter(n); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--blue-soft); color: var(--bordeaux); font-weight: 900; }
+  .aff li b { color: var(--bordeaux); }
+  .aff-close { font-style: italic; font-weight: 700; color: var(--bordeaux); text-align: center; font-size: 17px; margin: 14px 0; }
   @media (max-width: 700px) { .zones { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 12px; } }
   @media (max-width: 480px) { .week { gap: 5px; } .ic { width: 20px; height: 20px; font-size: 10px; } .day .icons { gap: 3px; } }
 </style>
@@ -94,28 +99,29 @@
       <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>★ = day complete</span></div>
     </div>
 
-    <div class="grid grid-2" style="margin-bottom:26px">
-      <div class="card blue">
-        <h3>Today's affirmation</h3>
-        <p id="affirm" style="font-size:18px;font-weight:600"></p>
-        <button id="saidIt">I said it! ✓</button>
-        <span id="saidMsg" class="small muted" style="margin-left:8px"></span>
-      </div>
-      <div class="card blue">
-        <h3>This week's quizzes</h3>
-        <div id="quizStatus" class="muted">Loading…</div>
-        <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
-      </div>
-    </div>
-
     <h2 style="color:var(--bordeaux)">Study zones</h2>
-    <div class="zones">
+    <div class="zones" style="margin-bottom:26px">
       <a class="zone" href="court.html"><span>1</span>The Court</a>
       <a class="zone" href="refs.html"><span>2</span>Referee Signals</a>
       <a class="zone" href="rules.html"><span>3</span>Rules</a>
       <a class="zone" href="fundamentals.html"><span>4</span>Fundamentals</a>
       <a class="zone" href="culture.html"><span>5</span>Team Culture</a>
       <a class="zone" href="stories.html"><span>6</span>Stories</a>
+    </div>
+
+    <div class="card blue aff" style="margin-bottom:22px">
+      <div class="kicker">Daily affirmation</div>
+      <h3>I Am TEMPO</h3>
+      <ol id="affirmList"></ol>
+      <p class="aff-close">Today I will be a little better than I was yesterday.<br>I am TEMPO. We set the pace.</p>
+      <button id="saidIt">I said it! ✓</button>
+      <span id="saidMsg" class="small muted" style="margin-left:8px"></span>
+    </div>
+
+    <div class="card accent">
+      <h3>This week's quizzes</h3>
+      <div id="quizStatus" class="muted">Loading…</div>
+      <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
     </div>
   </section>
 </main>
@@ -161,18 +167,17 @@
     const wk = T.weekNumber();
     $("#wk").textContent = wk; $("#wkDates").textContent = T.weekDates(wk);
 
-    const affirmations = [
-      "I belong. I have unique characteristics, and my team needs what I bring.",
-      "Mistakes make me better. I try, I learn, I grow. Next play!",
-      "Together we are more. My best plus your best adds up to something bigger.",
-      "My defense wears down anyone. I stay low, I talk, I contest every shot.",
-      "I share the ball. The extra pass shows I trust my teammates.",
-      "Every rebound is ours. I find a body, box out, and go get it with two hands.",
-      "I control what I can. My effort and my attitude are always up to me.",
-      "I lift my teammates. I cheer the loudest when they shine and pick them up when they fall."
+    const AFF = [
+      ["I belong.", "I have unique characteristics, and my team needs what I bring."],
+      ["Mistakes make me better.", "I try, I learn, I grow. A mistake is just practice for getting it right — next play!"],
+      ["Together we are more.", "My best plus your best adds up to something bigger than any of us alone."],
+      ["My defense wears down anyone.", "I stay low, I talk, I contest every shot. Even the best scorer gets tired of seeing me."],
+      ["I share the ball.", "The extra pass shows I trust my teammates — and they trust me."],
+      ["Every rebound is ours.", "I find a body, box out, and go get it with two hands."],
+      ["I control what I can.", "My effort and my attitude are always up to me."],
+      ["I lift my teammates.", "I cheer the loudest when they shine and pick them up when they fall."]
     ];
-    const day = Math.floor(Date.now() / 86400000);
-    $("#affirm").textContent = affirmations[day % affirmations.length];
+    $("#affirmList").innerHTML = AFF.map(([h, t]) => `<li><span><b>${T.esc(h)}</b> ${T.esc(t)}</span></li>`).join("");
 
     let activity = [];
     async function renderWeek() {
