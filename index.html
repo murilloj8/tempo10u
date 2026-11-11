@@ -4,12 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Team Home</title>
-<link rel="stylesheet" href="css/style.css?v=20261110c">
+<link rel="stylesheet" href="css/style.css?v=20261111a">
 <style>
   .week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 14px 0 10px; }
   .day { border: 2px solid var(--line); border-radius: 14px; padding: 10px 6px; text-align: center; background: #fff; }
   .day.today { border-color: var(--bordeaux); box-shadow: 0 0 0 3px var(--bordeaux-soft); }
-  .day.full { background: #E6F4EA; border-color: var(--good); }
+  .day.full { background: #CDEBD6; border-color: var(--good); box-shadow: 0 0 0 3px #E6F4EA; }
+  .day.full-past { background: #F3F8F4; border-color: #D5E6DA; }
+  .day.full-past .star { color: #8FB79C; }
+  .day.full .star { color: var(--good); font-weight: 900; }
+  .hero-list { margin: 0; padding-left: 22px; font-size: 18px; }
+  .hero-list li { margin: 2px 0; }
   .day .dn { font-weight: 800; font-size: 14px; }
   .day .dd { font-size: 12px; color: var(--muted); }
   .day .icons { display: flex; justify-content: center; gap: 6px; margin: 8px 0 4px; }
@@ -99,7 +104,12 @@
       <div class="stripe"></div>
       <div class="kicker" style="color:var(--blue)">Week <span id="wk"></span> · <span id="wkDates"></span></div>
       <h1>Welcome back, <span id="hiName"></span>!</h1>
-      <p>Every school day: <b>study</b> one zone, take a <b>quiz</b>, and say your <b>affirmation</b>.</p>
+      <p style="margin-bottom:6px">Every school day:</p>
+      <ul class="hero-list">
+        <li>Study one zone</li>
+        <li>Take a quiz</li>
+        <li>Say your affirmation</li>
+      </ul>
     </div>
 
     <div class="card accent" style="margin-bottom:22px">
@@ -108,7 +118,7 @@
         <span class="small muted" id="weekCount"></span>
       </div>
       <div class="week" id="week"></div>
-      <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>★ = day complete</span></div>
+      <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>✓ = day complete</span></div>
     </div>
 
     <a class="card blue aff-mini" href="affirmation.html" style="margin-bottom:22px">
@@ -138,15 +148,15 @@
       <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
     </div>
 
-    <h2 style="color:var(--bordeaux);margin-top:30px">Motivational stories</h2>
-    <div class="grid grid-3" id="storyPreviews"></div>
+    <h2 style="color:var(--bordeaux);margin-top:30px">Story of the week</h2>
+    <div id="storyPreviews" style="max-width:560px"></div>
     <a class="btn ghost" href="stories.html" style="margin-top:14px">All stories →</a>
   </section>
 </main>
 
-<script src="js/config.js?v=20261110c"></script>
-<script src="js/app.js?v=20261110c"></script>
-<script src="js/stories-data.js?v=20261110c"></script>
+<script src="js/config.js?v=20261111a"></script>
+<script src="js/app.js?v=20261111a"></script>
+<script src="js/stories-data.js?v=20261111a"></script>
 <script>
 (async function () {
   const T = window.TEMPO, $ = T.$;
@@ -196,11 +206,11 @@
       $("#week").innerHTML = T.schoolWeek().map((d) => {
         const k = T.dayKey(d), a = activity.find((x) => x.date === k) || {};
         const all = a.study && a.quiz && a.affirm; if (all) full++;
-        return `<div class="day ${k === today ? "today" : ""} ${all ? "full" : ""}">
+        return `<div class="day ${k === today ? "today" : ""} ${all ? (k === today ? "full" : "full-past") : ""}">
           <div class="dn">${d.toLocaleDateString(undefined, { weekday: "short" })}</div>
           <div class="dd">${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>
           <div class="icons"><i class="ic s ${a.study ? "on" : ""}" title="Study zone"></i><i class="ic q ${a.quiz ? "on" : ""}" title="Quiz"></i><i class="ic a ${a.affirm ? "on" : ""}" title="Affirmation"></i></div>
-          <div class="star">${all ? "★" : ""}</div></div>`;
+          <div class="star">${all ? "✓" : ""}</div></div>`;
       }).join("");
       $("#weekCount").textContent = `${full} of 5 days complete`;
       const t = activity.find((x) => x.date === today) || {};
@@ -212,9 +222,9 @@
     const S = window.TEMPO_STORIES || [];
     const slug = (n) => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     const teaser = (t) => { const m = t.match(/^.*?[.!?](\s|$)/); return m ? m[0].trim() : t.slice(0, 120); };
-    $("#storyPreviews").innerHTML = [0, 1, 2].map((k) => S[(wk - 1 + k) % S.length]).map((st, k) => `
+    $("#storyPreviews").innerHTML = [0].map((k) => S[(wk - 1 + k) % S.length]).map((st, k) => `
       <a class="sp" href="story.html#${slug(st.name)}">
-        <div><span class="pill ${k === 0 ? "" : "b"}">${k === 0 ? "Story of the week" : T.esc(st.value)}</span></div>
+        <div><span class="pill b">${T.esc(st.value)}</span></div>
         <h3>${T.esc(st.name)}</h3><div class="who">${T.esc(st.who)}</div>
         <p>${T.esc(teaser(st.story))}</p><span class="more">Read more →</span></a>`).join("");
 

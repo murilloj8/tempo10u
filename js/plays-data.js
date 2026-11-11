@@ -6,7 +6,7 @@ window.TEMPO_PLAYS = {
   "screen-cut": {
     title: "Motion",
     sub: "Two-guard front vs. man-to-man. Screen, cut, read: is the cutter open? If not, swap, reverse the ball and screen the weak side — the motion never stops.",
-    tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball while the guard and wing swap with a screen, reverse it, and run the weak-side screen for the other wing. Still covered? Keep the motion going on the other side — patience creates the open look.",
+    tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. Ball handler: never force a pass into a covered cutter — patience creates the open look. Everyone: after every screen, fill the open spot so the floor stays spread.",
     start: {
       off: { 1: [416, 403], 2: [78, 212], 3: [572, 212], 4: [234, 403], 5: [436, 104] },
       def: { X1: [397, 351], X2: [167, 202], X3: [522, 227], X4: [247, 352], X5: [410, 150] },
@@ -35,7 +35,7 @@ window.TEMPO_PLAYS = {
       },
       read: {
         dur: 0, caption: "<b>Decision:</b> #4, look at #3 on the cut. Is she open?",
-        decision: { question: "Is #3 open on the cut?", hint: "Open = her defender (X3) is behind her. Covered = X3 is between her and the ball.", yes: "hit", no: "c0_a1" }
+        decision: { question: "Is #3 open on the cut?", hint: "Open = her defender (X3) is behind her. Covered = X3 is between her and the ball.", yes: "hit", no: "c0_pre" }
       },
       /* ---- YES: hit the cutter ---- */
       hit: {
@@ -185,9 +185,12 @@ window.TEMPO_PLAYS = {
   for (let c = 0; c < CYCLES; c++) {
     const r = roles, n = (k) => "#" + r[k], id = (k) => `c${c}_${k}`;
     const L = left ? "left" : "right", R = left ? "right" : "left";
-    const nextStart = c === CYCLES - 1 ? "c0_a1" : `c${c + 1}_a1`;
+    const nextStart = c === CYCLES - 1 ? "c0_pre" : `c${c + 1}_pre`;
     const ph = {};
     let m;
+    ph.pre = { dur: 0.01, hold: true, listId: "c0_a1", clearTrails: true, focus: [r.og, r.cw],
+      caption: `<b>Covered — keep the motion going.</b> Watch the ${R} side: ${n("og")} (${R} guard) is about to screen for ${n("cw")} (${R} wing). Tap <b>Next step</b>.`,
+      next: id("a1") };
     m = { [r.cut]: keys([[0.8, 232, 104]]), [r.og]: keys([[1.0, 522, 250]]) };
     ph.a1 = { dur: 1.1, listId: "c0_a1", clearTrails: true,
       caption: `<b>No pass.</b> ${n("bh")} (${L} guard) holds the ball. ${n("og")} (${R} guard) screens for ${n("cw")} (${R} wing). ${n("cut")} goes to the ${L} block — the ball side.`,

@@ -322,7 +322,15 @@
           ${u ? `<span class="userchip">Hi, ${esc(u.displayName)}${u.jersey ? " #" + esc(u.jersey) : ""} <button class="secondary" id="logoutBtn">Log out</button></span>` : ""}
         </nav>
       </div>`;
-    const mb = $(".menu-btn", bar); if (mb) mb.onclick = () => $(".nav", bar).classList.toggle("open");
+    const mb = $(".menu-btn", bar);
+    if (mb) mb.onclick = (e) => { e.stopPropagation(); $(".nav", bar).classList.toggle("open"); };
+    if (!window.__tempoMenuClose) {   // tap anywhere outside the open menu to close it
+      window.__tempoMenuClose = true;
+      document.addEventListener("click", (e) => {
+        const nav = document.querySelector(".topbar .nav.open");
+        if (nav && !nav.contains(e.target)) nav.classList.remove("open");
+      });
+    }
     const lo = $("#logoutBtn", bar); if (lo) lo.onclick = () => TEMPO.signOut();
     // "Home" button at the bottom of every page except Home
     const main = $("main");

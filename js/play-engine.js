@@ -28,7 +28,7 @@
     <line x1="286" y1="52" x2="364" y2="52" stroke="${INK}" stroke-width="5"/>
     <rect x="237" y="85" width="10" height="12" fill="${B}"/><rect x="403" y="85" width="10" height="12" fill="${B}"/>
     <g class="pv-oob"></g>
-    <g class="pv-trails"></g><g class="pv-def"></g><g class="pv-off"></g><g class="pv-ball"></g>
+    <g class="pv-trails"></g><g class="pv-focus"></g><g class="pv-def"></g><g class="pv-off"></g><g class="pv-ball"></g>
     <text class="pv-score" x="325" y="40" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="34" fill="${B}" opacity="0">+2!</text>`;
 
   const css = `
@@ -113,7 +113,7 @@
         </aside>
       </div>`;
     const $ = (s) => root.querySelector(s);
-    const svg = $("svg"), gOff = $(".pv-off"), gDef = $(".pv-def"), gTr = $(".pv-trails"), gBall = $(".pv-ball");
+    const svg = $("svg"), gFocus = $(".pv-focus"), gOff = $(".pv-off"), gDef = $(".pv-def"), gTr = $(".pv-trails"), gBall = $(".pv-ball");
     if (play.oob) {
       svg.setAttribute("viewBox", "0 -56 650 667");
       $(".pv-oob").innerHTML = `<rect x="0" y="-56" width="650" height="56" fill="#c9cdd2"/><line x1="0" y1="0" x2="650" y2="0" stroke="${B}" stroke-width="4"/>` +
@@ -144,7 +144,7 @@
       `<li data-id="${it.id}" class="${play.phases[it.id] && play.phases[it.id].decision ? "dec" : ""}">${it.html}</li>`).join("");
 
     // state
-    let pos, holder, phaseId, t, playing = false, speed = 0.5, last = null, stepMode = false, trails = [], ballAt = null;
+    let pos, holder, phaseId, t, playing = false, speed = 0.5, last = null, stepMode = false, trails = [], ballAt = null, focusRings = [];
     const start = () => {
       pos = {}; Object.entries({ ...play.start.off, ...(play.start.def || {}) }).forEach(([k, v]) => pos[k] = v.slice());
       holder = play.start.ball; ballAt = null; trails.forEach((x) => x.el.remove()); trails = [];
@@ -168,6 +168,7 @@
       ph._holder = holder;
       stepsEl.querySelectorAll("li[data-id]").forEach((li) => li.classList.toggle("on", li.dataset.id === (ph.listId || id)));
       $(".pv-caption").innerHTML = ph.caption;
+      gFocus.innerHTML = ""; focusRings = (ph.focus || []).map((k) => ({ k, el: el("circle", { r: 32, fill: "#F2C94C", "fill-opacity": .35, stroke: "#E0A800", "stroke-width": 4 }, gFocus) }));
       $(".pv-decision").classList.add("hidden");
       if (ph.decision) {
         $(".pv-q").textContent = ph.decision.question; $(".pv-hint").textContent = ph.decision.hint || "";
@@ -181,6 +182,7 @@
     function render() {
       const ph = play.phases[phaseId];
       Object.keys(nodes).forEach((k) => { const p = cur(ph, k, t); nodes[k].setAttribute("transform", `translate(${p[0]},${p[1]})`); });
+      focusRings.forEach((f) => { const p = cur(ph, f.k, t); f.el.setAttribute("cx", p[0]); f.el.setAttribute("cy", p[1]); });
       // ball
       let bxy = ballAt || hxy(ph, ph._holder, t);
       (ph.ball || []).forEach((s) => {
@@ -235,7 +237,8 @@
       const d = play.phases[phaseId].decision;
       $(".pv-decision").classList.add("hidden");
       enter(yes ? d.yes : d.no);
-      if (!stepMode) playIt(); else { playIt(); }
+      if (play.phases[phaseId].hold) { stepMode = true; pause(); return; }   // wait for Next before the action
+      playIt();
     }
     $(".pv-play").onclick = () => { stepMode = false; if (playing) pause(); else if (!play.phases[phaseId].decision) playIt(); };
     $(".pv-next").onclick = () => {

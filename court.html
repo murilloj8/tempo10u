@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Know Your Court</title>
-<link rel="stylesheet" href="css/style.css?v=20261110c">
+<link rel="stylesheet" href="css/style.css?v=20261111a">
 <style>
   .stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
   .court-box { background: #2B1520; padding: 10px; }
@@ -52,8 +52,8 @@
   </div>
 </main>
 
-<script src="js/config.js?v=20261110c"></script>
-<script src="js/app.js?v=20261110c"></script>
+<script src="js/config.js?v=20261111a"></script>
+<script src="js/app.js?v=20261111a"></script>
 <script>
 (async function () {
   if (!(await TEMPO.boot("court", { study: true }))) return;
@@ -109,7 +109,7 @@
   const SLIDES = [
     { view: "full", kicker: "Start here", title: "Welcome to the court!", aka: "",
       text: "A basketball court is a rectangle with a basket at each end. Our team attacks one basket and defends the other, then we switch at halftime. Let's learn the name of every line and spot.",
-      tip: "Press Next →. Each new spot lights up in blue, with its name and an arrow pointing to it.", hl: "", labels: [] },
+      hl: "", labels: [] },
     { view: "full", kicker: "Lines", title: "Sidelines", aka: "The two long lines on the sides",
       text: "The sidelines run the long way down the court. The line itself is OUT of bounds — if you step on it while holding or dribbling the ball, it's the other team's ball.",
       tip: "When you catch near the sideline, keep your feet inside and pivot toward the middle of the court.",
@@ -161,7 +161,7 @@
       hl: hl.rect(30, 130, 90, 55) + hl.rect(30, 315, 90, 55), labels: [[78, 116, "Low post"], [78, 386, "Low post", 0, true]] },
     { view: "zoom", kicker: "Areas", title: "High post", aka: "The area around the free-throw line and elbows",
       text: "The high post is the area near the free-throw line. A player who flashes (cuts quickly) to the high post can catch the ball and pass to cutters, shoot, or drive.",
-      tip: "Low post = near the basket. High post = near the free-throw line.",
+      tip: "Flash to the high post when your defender turns her head — show your hands and call for the ball.",
       hl: hl.rect(160, 185, 70, 130), labels: [[150, 292, "High post", 0, true]] },
     { view: "half", kicker: "Spots", title: "The short corner", aka: "Along the baseline, between the paint and the corner",
       text: "The short corner is the spot along the baseline, between the paint and the corner, inside the 3-point line. It's a sneaky place to get open when the defense collapses into the paint.",
@@ -179,8 +179,15 @@
       text: "The wings are the spots on each side of the court, halfway between the corner and the top of the key, near the 3-point line. Many plays start with a pass from the point guard to a wing.",
       tip: "Get open on the wing with a V-cut: walk your defender toward the basket, then explode out to the wing and catch with two hands.",
       hl: hl.spot(225, 92) + hl.spot(225, 408), labels: [[255, 66, "Wing", 0, true], [255, 434, "Wing"]] },
+    { view: "half", kicker: "Sides", title: "Strong side & weak side", aka: "Weak side = the side of the court WITHOUT the ball",
+      text: "Draw an imaginary line from the basket straight up the middle of the floor. The side where the ball is, is the strong side (ball side). The other side is the weak side. Every time the ball moves across the floor, the sides switch!",
+      tip: "On defense, weak-side players sag toward the paint to help. On offense, the weak side is a great place for a cut or a screen while the defense is watching the ball.",
+      hl: `<rect class="hl" x="0" y="250" width="420" height="250" fill="#9CC3E6" fill-opacity=".55"/><rect x="0" y="0" width="420" height="250" fill="#6B1E3A" fill-opacity=".18"/>` +
+          `<line x1="52" y1="250" x2="420" y2="250" stroke="#fff" stroke-width="4" stroke-dasharray="14 10"/>` +
+          `<circle cx="230" cy="92" r="17" fill="#6B1E3A" stroke="#fff" stroke-width="4"/><circle cx="244" cy="80" r="9" fill="#E8833A" stroke="#22161C" stroke-width="2"/>`,
+      labels: [] },
     { view: "half", kicker: "Review", title: "You know the court!", aka: "",
-      text: "Here are all the spots together. Point to each one and say its name out loud. Then go take this week's Court quiz!",
+      text: "Every blue dot is a spot you learned. Tap a dot to check its name — but first, say the name out loud. Then go take this week's Court quiz!",
       tip: "Challenge: ask someone at home to call out a spot (\"Left elbow!\") while you point to it on this picture.",
       hl: "", labels: "recap" }
   ];
@@ -206,9 +213,18 @@
     [[330, 445, "3-point line", 0, 214, 367]],
     [[150, -15, "Corner", 0, 42, 18], [150, 515, "Corner", 0, 42, 482]],
     [[345, 55, "Wing", 0, 240, 86], [345, 445, "Wing", 0, 240, 414]],
+    [[300, 165, "Strong side (ball)"], [300, 380, "Weak side"]],
     "recap"
   ];
 
+  // Review slide: where each spot is (one of each)
+  const SPOTS = [
+    [12, 250, "Baseline"], [250, 6, "Sideline"], [420, 120, "Half-court line"], [420, 250, "Center circle"],
+    [52.5, 250, "Basket"], [130, 250, "Paint"], [190, 280, "Free-throw line"], [262, 250, "Top of the key"],
+    [190, 190, "Elbow"], [75, 185, "Block"], [140, 318, "Lane spaces"], [75, 345, "Low post"], [205, 250, "High post"],
+    [30, 125, "Short corner"], [205, 390, "3-point line"], [26, 24, "Corner"], [225, 92, "Wing"]
+  ];
+  let revealed = null;
   const svg = document.getElementById("court");
   svg.innerHTML = courtSVG();
   const hlLayer = document.getElementById("hlLayer"), lblLayer = document.getElementById("lblLayer");
@@ -242,14 +258,20 @@
   }
   function render() {
     const s = SLIDES[idx];
+    if (SHOW[idx] !== "recap") revealed = null;
     maxSeen = Math.max(maxSeen, idx);
     measure(VIEW[s.view]);
     animateTo(VIEW[s.view]);
     hlLayer.innerHTML = s.hl;
     let labels = "", arrows = "";
     if (SHOW[idx] === "recap") {
-      // Review slide: every spot at once
-      SLIDES.forEach((sl) => Array.isArray(sl.labels) && sl.labels.forEach((l) => { if (l[4]) labels += labelSVG(l[0], l[1], l[2], l[3], "cur"); }));
+      // Review slide: a dot on every spot; tap a dot to reveal its name
+      const r = 9 * unitsPerPx;
+      SPOTS.forEach(([x, y, name], i) => {
+        labels += `<g class="spot" data-i="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="${r * 2.2}" fill="transparent"/>` +
+          `<circle cx="${x}" cy="${y}" r="${r}" fill="#9CC3E6" stroke="#fff" stroke-width="${2.5 * unitsPerPx}"/></g>`;
+      });
+      if (revealed !== null) { const [x, y, name] = SPOTS[revealed]; labels += labelSVG(x, y - 26 * unitsPerPx, name, 0, "cur"); }
     } else {
       // Only the part(s) explained on this slide, with arrows pointing to them
       (SHOW[idx] || []).forEach(([x, y, t, rot, tx, ty]) => {
@@ -280,6 +302,10 @@
     if (idx === SLIDES.length - 1 && d > 0) { location.href = "quizzes.html#court"; return; }
     idx = Math.max(0, Math.min(SLIDES.length - 1, idx + d)); render();
   }
+  lblLayer.addEventListener("click", (e) => {
+    const g = e.target.closest(".spot"); if (!g) return;
+    revealed = +g.dataset.i; render();
+  });
   document.getElementById("prevBtn").onclick = () => go(-1);
   document.getElementById("nextBtn").onclick = () => go(1);
   document.getElementById("dots").onclick = (e) => { const i = e.target.dataset.i; if (i !== undefined) { idx = +i; render(); } };

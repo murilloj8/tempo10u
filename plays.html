@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Plays</title>
-<link rel="stylesheet" href="css/style.css?v=20261110c">
+<link rel="stylesheet" href="css/style.css?v=20261111a">
 <style>
   .play { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .12s, box-shadow .12s; }
   .play:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(74,18,40,.14); }
@@ -24,21 +24,26 @@
   </div>
   <div class="grid" style="gap:16px">
     <a class="play" href="play.html#screen-cut">
-      <div class="num">1</div>
-      <div><span class="pill">Man-to-man offense</span> <span class="pill">Half court</span>
+      <div class="num"><svg viewBox="0 0 64 64" width="64%" aria-hidden="true" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M50 26 A20 20 0 0 0 14 22"/><path d="M14 38 A20 20 0 0 0 50 42"/>
+          <path d="M8 14 L14 22 L23 18"/><path d="M56 50 L50 42 L41 46"/></svg></div>
+      <div><span class="pill">Half-court offense</span> <span class="pill b">vs Man-to-man defense</span>
         <h3>Motion</h3>
         <span class="go">Watch →</span></div>
     </a>
     <a class="play" href="play.html#banana-split">
-      <div class="num" style="font-size:26px">BLOB</div>
-      <div><span class="pill b">Baseline out of bounds</span> <span class="pill b">vs man-to-man</span>
+      <div class="num"><svg viewBox="0 0 64 64" width="64%" aria-hidden="true" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="56" x2="58" y2="56" stroke-width="3"/><path d="M32 50 V36"/>
+          <path d="M32 36 C30 22 20 18 12 12"/><path d="M32 36 C34 22 44 18 52 12"/>
+          <path d="M12 21 L11 11 L21 10"/><path d="M43 10 L53 11 L52 21"/></svg></div>
+      <div><span class="pill">Baseline out-of-bounds</span> <span class="pill b">vs Man-to-man defense</span>
         <h3>Banana Split</h3>
         <span class="go">Watch →</span></div>
     </a>
   </div>
 </main>
-<script src="js/config.js?v=20261110c"></script>
-<script src="js/app.js?v=20261110c"></script>
+<script src="js/config.js?v=20261111a"></script>
+<script src="js/app.js?v=20261111a"></script>
 <script>TEMPO.boot("plays", { study: true });</script>
 </body>
 </html>
