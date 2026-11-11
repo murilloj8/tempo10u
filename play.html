@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Play</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <span class="kicker">Tempo playbook</span>
+    <h1 id="ptitle"></h1>
+    <p id="psub"></p>
+  </div>
+  <div id="viewer"></div>
+  <div class="no-print" style="display:flex;justify-content:center;margin-top:24px"><a class="btn ghost" href="plays.html">← All plays</a></div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/plays-data.js"></script>
+<script src="js/play-engine.js"></script>
+<script>
+(async function () {
+  if (!(await TEMPO.boot("plays", { study: true }))) return;
+  const id = location.hash.slice(1), play = TEMPO_PLAYS[id] || TEMPO_PLAYS["screen-cut"];
+  document.title = "Tempo 10U — " + play.title;
+  document.getElementById("ptitle").textContent = play.title;
+  document.getElementById("psub").textContent = play.sub;
+  TEMPO_PLAY.mount(document.getElementById("viewer"), play);
+  window.addEventListener("hashchange", () => location.reload());
+})();
+</script>
+</body>
+</html>

@@ -97,7 +97,7 @@ Players can install it like an app: on iPhone open the link in Safari → Share 
 ```
 `a` is the number of the correct choice, counting from 0 (so `a: 1` = Choice B).
 
-**Edit page content:** skills in `fundamentals.html`, court slides in `court.html` (the `SLIDES` list), stories in `js/stories-data.js`, plays in `plays/` (listed on `plays.html`), the full affirmation on `affirmation.html`, signals in `js/signals.js` (shown on `refs.html`), rules in the `RULES` list in `rules.html`.
+**Edit page content:** skills in `fundamentals.html`, court slides in `court.html` (the `SLIDES` list), stories in `js/stories-data.js`, plays in `js/plays-data.js` (shown by `play.html`, listed on `plays.html`), the full affirmation on `affirmation.html`, signals in `js/signals.js` (shown on `refs.html`), rules in the `RULES` list in `rules.html`.
 
 **League rules:** the Refs & Rules page summarizes the **SBMSA 2024–25 rule book** for the **Junior Girls National League** (section 5.03 plus the general rules: man-to-man only, no backcourt defense except the last 60 seconds, 12-minute running quarters, no isolation plays). Two things to confirm with the league: (1) the free-throw distance — the book says "13 feet for Junior League girls and 14 feet for National League"; the site teaches 13 feet; (2) any changes in the 2026–27 rule book.
 

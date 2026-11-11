@@ -26,6 +26,12 @@
   .zone:hover { transform: translateY(-2px); border-color: var(--blue); }
   .zone span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--blue-soft); font-size: 16px; flex: none; }
   .zone.done { border-color: var(--good); }
+  .sp { display: flex; flex-direction: column; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--line); border-top: 6px solid var(--bordeaux); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); transition: transform .12s; }
+  .sp:hover { transform: translateY(-3px); }
+  .sp h3 { color: var(--bordeaux); margin: 8px 0 2px; }
+  .sp .who { color: var(--muted); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .sp p { font-size: 15px; margin: 0 0 10px; flex: 1; }
+  .sp .more { font-weight: 800; color: var(--bordeaux); font-size: 14px; }
   .aff-mini { display: block; text-decoration: none; color: inherit; transition: transform .12s; }
   .aff-mini:hover { transform: translateY(-2px); }
   .aff-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
@@ -124,7 +130,6 @@
       <a class="zone" href="fundamentals.html"><span>4</span>Fundamentals</a>
       <a class="zone" href="plays.html"><span>5</span>Plays</a>
       <a class="zone" href="culture.html"><span>6</span>Team Culture</a>
-      <a class="zone" href="stories.html"><span>7</span>Motivational Stories</a>
     </div>
 
     <div class="card accent">
@@ -132,11 +137,16 @@
       <div id="quizStatus" class="muted">Loading…</div>
       <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
     </div>
+
+    <h2 style="color:var(--bordeaux);margin-top:30px">Motivational stories</h2>
+    <div class="grid grid-3" id="storyPreviews"></div>
+    <a class="btn ghost" href="stories.html" style="margin-top:14px">All stories →</a>
   </section>
 </main>
 
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
+<script src="js/stories-data.js"></script>
 <script>
 (async function () {
   const T = window.TEMPO, $ = T.$;
@@ -206,6 +216,16 @@
       if (t.affirm) { $("#affStatus").className = "pill g"; $("#affStatus").textContent = "Done today ✓"; }
     }
     renderWeek();
+
+    // Motivational stories: story of the week + next two
+    const S = window.TEMPO_STORIES || [];
+    const slug = (n) => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    const teaser = (t) => { const m = t.match(/^.*?[.!?](\s|$)/); return m ? m[0].trim() : t.slice(0, 120); };
+    $("#storyPreviews").innerHTML = [0, 1, 2].map((k) => S[(wk - 1 + k) % S.length]).map((st, k) => `
+      <a class="sp" href="story.html#${slug(st.name)}">
+        <div><span class="pill ${k === 0 ? "" : "b"}">${k === 0 ? "Story of the week" : T.esc(st.value)}</span></div>
+        <h3>${T.esc(st.name)}</h3><div class="who">${T.esc(st.who)}</div>
+        <p>${T.esc(teaser(st.story))}</p><span class="more">Read more →</span></a>`).join("");
 
     try {
       const res = await T.myResults();
