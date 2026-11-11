@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — Plays</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .play { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .12s, box-shadow .12s; }
+  .play:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(74,18,40,.14); }
+  .play .num { display: grid; place-items: center; height: 120px; border-radius: 14px; background: var(--bordeaux); color: #fff; font-family: var(--display); font-style: italic; font-size: 44px; }
+  .play h3 { color: var(--bordeaux); margin: 4px 0 6px; font-size: 22px; }
+  .play p { margin: 0 0 8px; color: var(--muted); }
+  .play .go { font-weight: 800; color: var(--bordeaux); }
+  @media (max-width: 520px) { .play { grid-template-columns: 80px 1fr; } .play .num { height: 80px; font-size: 30px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <span class="kicker">Playbook</span>
+    <h1>Plays</h1>
+    <p>Watch each play, then walk it through at half speed. Learn your number's job: where you start, when you move, and where the ball goes.</p>
+  </div>
+  <div class="grid" style="gap:16px">
+    <a class="play" href="plays/play-1.html">
+      <div class="num">1</div>
+      <div><span class="pill">Two-guard front · vs man-to-man</span>
+        <h3>Play 1 · Screen &amp; Cut</h3>
+        <p>#5 screens for #3, #3 cuts hard to the rim, and #4 hits her for the layup.</p>
+        <span class="go">Watch the play →</span></div>
+    </a>
+    <a class="play" href="plays/play-1b.html">
+      <div class="num">1B</div>
+      <div><span class="pill b">Option when #3 is covered</span>
+        <h3>Play 1B · Screen the Screener</h3>
+        <p>#1 screens for #5, they swap spots, and the ball swings to reset.</p>
+        <span class="go">Watch the play →</span></div>
+    </a>
+  </div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>TEMPO.boot("plays", { study: true });</script>
+</body>
+</html>

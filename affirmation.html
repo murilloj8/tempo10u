@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tempo 10U — I Am TEMPO</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .aff { max-width: 760px; margin: 0 auto; }
+  .aff ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .aff li { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; box-shadow: var(--shadow); font-size: 18px; }
+  .aff li .n { width: 46px; height: 46px; border-radius: 50%; background: var(--blue-soft); color: var(--bordeaux); font-family: var(--display); font-size: 22px; display: grid; place-items: center; }
+  .aff li b { color: var(--bordeaux); display: block; font-size: 20px; }
+  .aff li.on { outline: 4px solid var(--blue); background: var(--blue-soft); }
+  .aff .close { text-align: center; font-size: 22px; font-style: italic; font-weight: 800; color: var(--bordeaux); margin: 22px 0; }
+  .aff .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<main>
+  <div class="aff">
+    <div class="page-head" style="text-align:center">
+      <span class="kicker">Daily affirmation</span>
+      <h1>I Am TEMPO</h1>
+      <p style="margin:0 auto">Read it out loud — every day. Use <b>Say it with me</b> to go one line at a time.</p>
+    </div>
+    <ol id="list"></ol>
+    <p class="close">Today I will be a little better than I was yesterday.<br>I am TEMPO. We set the pace.</p>
+    <div class="actions no-print">
+      <button class="ghost" id="sayBtn">Say it with me ▶</button>
+      <button id="saidIt">I said it! ✓</button>
+    </div>
+    <div id="msg" style="text-align:center"></div>
+  </div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+const AFF = [
+  ["I belong.", "I have unique characteristics, and my team needs what I bring."],
+  ["Mistakes make me better.", "I try, I learn, I grow. A mistake is just practice for getting it right — next play!"],
+  ["Together we are more.", "My best plus your best adds up to something bigger than any of us alone."],
+  ["My defense wears down anyone.", "I stay low, I talk, I contest every shot. Even the best scorer gets tired of seeing me."],
+  ["I share the ball.", "The extra pass shows I trust my teammates — and they trust me."],
+  ["Every rebound is ours.", "I find a body, box out, and go get it with two hands."],
+  ["I control what I can.", "My effort and my attitude are always up to me."],
+  ["I lift my teammates.", "I cheer the loudest when they shine and pick them up when they fall."]
+];
+(async function () {
+  const user = await TEMPO.boot("affirmation");
+  if (!user) return;
+  const esc = TEMPO.esc, $ = TEMPO.$;
+  $("#list").innerHTML = AFF.map(([h, t], i) => `<li id="af${i}"><span class="n">${i + 1}</span><span><b>${esc(h)}</b>${esc(t)}</span></li>`).join("");
+  async function done() {
+    $("#saidIt").disabled = true; $("#saidIt").textContent = "Done today ✓";
+    await TEMPO.logActivity("affirm");
+    $("#msg").innerHTML = '<div class="msg ok">Affirmation checked off for today. You are TEMPO!</div>';
+  }
+  try {
+    const today = TEMPO.dayKey(), a = (await TEMPO.myActivity()).find((x) => x.date === today);
+    if (a && a.affirm) { $("#saidIt").disabled = true; $("#saidIt").textContent = "Done today ✓"; }
+  } catch (e) {}
+  $("#saidIt").onclick = done;
+  let step = -1;
+  $("#sayBtn").onclick = () => {
+    document.querySelectorAll(".aff li").forEach((c) => c.classList.remove("on"));
+    step++;
+    if (step >= AFF.length) { step = -1; $("#sayBtn").textContent = "Say it again ↺"; done(); return; }
+    const el = $("#af" + step); el.classList.add("on"); el.scrollIntoView({ behavior: "smooth", block: "center" });
+    $("#sayBtn").textContent = step === AFF.length - 1 ? "Finish ✓" : `Next line ▶ (${step + 2}/${AFF.length})`;
+  };
+})();
+</script>
+</body>
+</html>

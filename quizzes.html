@@ -94,7 +94,7 @@
         : `<span class="pill b">Not taken yet</span>`;
       return `<div class="card accent topic">
         <span class="pill">${setInfo(wk).label}</span> <span class="small muted">6 questions</span>
-        <h3>${esc(t.name)}</h3><p class="muted" style="margin:0">${esc(t.blurb)}</p>
+        <h3>${esc(t.name)}</h3>
         <div class="status">${status}</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button data-start="${t.key}">${r ? "Try again" : "Start quiz"}</button>

@@ -26,6 +26,12 @@
   .zone:hover { transform: translateY(-2px); border-color: var(--blue); }
   .zone span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--blue-soft); font-size: 16px; flex: none; }
   .zone.done { border-color: var(--good); }
+  .aff-mini { display: block; text-decoration: none; color: inherit; transition: transform .12s; }
+  .aff-mini:hover { transform: translateY(-2px); }
+  .aff-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .aff-row h3 { margin: 4px 0 4px; }
+  .aff-row p { margin: 0; font-size: 17px; font-weight: 600; }
+  .aff-go { display: flex; align-items: center; gap: 10px; }
   .aff ol { counter-reset: n; list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
   .aff li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; font-size: 16px; }
   .aff li::before { counter-increment: n; content: counter(n); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--blue-soft); color: var(--bordeaux); font-weight: 900; }
@@ -99,23 +105,26 @@
       <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>★ = day complete</span></div>
     </div>
 
+    <a class="card blue aff-mini" href="affirmation.html" style="margin-bottom:22px">
+      <div class="kicker">Daily affirmation</div>
+      <div class="aff-row">
+        <div>
+          <h3>I Am TEMPO</h3>
+          <p id="affLine"></p>
+        </div>
+        <div class="aff-go"><span id="affStatus" class="pill b">Not done today</span><span class="btn">Open →</span></div>
+      </div>
+    </a>
+
     <h2 style="color:var(--bordeaux)">Study zones</h2>
     <div class="zones" style="margin-bottom:26px">
       <a class="zone" href="court.html"><span>1</span>The Court</a>
       <a class="zone" href="refs.html"><span>2</span>Referee Signals</a>
       <a class="zone" href="rules.html"><span>3</span>Rules</a>
       <a class="zone" href="fundamentals.html"><span>4</span>Fundamentals</a>
-      <a class="zone" href="culture.html"><span>5</span>Team Culture</a>
-      <a class="zone" href="stories.html"><span>6</span>Stories</a>
-    </div>
-
-    <div class="card blue aff" style="margin-bottom:22px">
-      <div class="kicker">Daily affirmation</div>
-      <h3>I Am TEMPO</h3>
-      <ol id="affirmList"></ol>
-      <p class="aff-close">Today I will be a little better than I was yesterday.<br>I am TEMPO. We set the pace.</p>
-      <button id="saidIt">I said it! ✓</button>
-      <span id="saidMsg" class="small muted" style="margin-left:8px"></span>
+      <a class="zone" href="plays.html"><span>5</span>Plays</a>
+      <a class="zone" href="culture.html"><span>6</span>Team Culture</a>
+      <a class="zone" href="stories.html"><span>7</span>Motivational Stories</a>
     </div>
 
     <div class="card accent">
@@ -167,17 +176,17 @@
     const wk = T.weekNumber();
     $("#wk").textContent = wk; $("#wkDates").textContent = T.weekDates(wk);
 
-    const AFF = [
-      ["I belong.", "I have unique characteristics, and my team needs what I bring."],
-      ["Mistakes make me better.", "I try, I learn, I grow. A mistake is just practice for getting it right — next play!"],
-      ["Together we are more.", "My best plus your best adds up to something bigger than any of us alone."],
-      ["My defense wears down anyone.", "I stay low, I talk, I contest every shot. Even the best scorer gets tired of seeing me."],
-      ["I share the ball.", "The extra pass shows I trust my teammates — and they trust me."],
-      ["Every rebound is ours.", "I find a body, box out, and go get it with two hands."],
-      ["I control what I can.", "My effort and my attitude are always up to me."],
-      ["I lift my teammates.", "I cheer the loudest when they shine and pick them up when they fall."]
+    const LINES = [
+      "I belong. My team needs what I bring.",
+      "Mistakes make me better. Next play!",
+      "Together we are more.",
+      "My defense wears down anyone.",
+      "I share the ball.",
+      "Every rebound is ours.",
+      "I control what I can.",
+      "I lift my teammates."
     ];
-    $("#affirmList").innerHTML = AFF.map(([h, t]) => `<li><span><b>${T.esc(h)}</b> ${T.esc(t)}</span></li>`).join("");
+    $("#affLine").textContent = "Today: " + LINES[Math.floor(Date.now() / 86400000) % LINES.length] + " …";
 
     let activity = [];
     async function renderWeek() {
@@ -194,14 +203,8 @@
       }).join("");
       $("#weekCount").textContent = `${full} of 5 days complete`;
       const t = activity.find((x) => x.date === today) || {};
-      if (t.affirm) { $("#saidIt").disabled = true; $("#saidIt").textContent = "Done today ✓"; }
+      if (t.affirm) { $("#affStatus").className = "pill g"; $("#affStatus").textContent = "Done today ✓"; }
     }
-    $("#saidIt").onclick = async () => {
-      $("#saidIt").disabled = true;
-      await T.logActivity("affirm");
-      $("#saidMsg").textContent = "Nice! Affirmation checked off for today.";
-      renderWeek();
-    };
     renderWeek();
 
     try {
