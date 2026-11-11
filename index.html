@@ -186,16 +186,7 @@
     const wk = T.weekNumber();
     $("#wk").textContent = wk; $("#wkDates").textContent = T.weekDates(wk);
 
-    const LINES = [
-      "I belong. My team needs what I bring.",
-      "Mistakes make me better. Next play!",
-      "Together we are more.",
-      "My defense wears down anyone.",
-      "I share the ball.",
-      "Every rebound is ours.",
-      "I control what I can.",
-      "I lift my teammates."
-    ];
+    const LINES = ["I belong.", "Mistakes make me better.", "Together we are more.", "I defend every play.", "I share the ball.", "Every rebound is ours.", "I control what I can.", "I lift my teammates."];
     $("#affLine").textContent = "Today: " + LINES[Math.floor(Date.now() / 86400000) % LINES.length] + " …";
 
     let activity = [];

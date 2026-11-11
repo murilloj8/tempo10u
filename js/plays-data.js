@@ -4,7 +4,7 @@
 window.TEMPO_PLAYS = {
   /* ===================== PLAY 1: SCREEN & CUT (with read) ===================== */
   "screen-cut": {
-    title: "Play 1 · Screen & Cut",
+    title: "Motion",
     sub: "Two-guard front vs. man-to-man. #3 cuts off #5's screen — read it: is she open?",
     tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball and run the option.",
     start: {
@@ -111,7 +111,7 @@ window.TEMPO_PLAYS = {
 
   /* ===================== BANANA SPLIT (baseline out of bounds) ===================== */
   "banana-split": {
-    title: "Banana Split · Baseline Out of Bounds",
+    title: "Banana Split",
     sub: "Box set under our basket. #2 and #3 split to the corners, #4 screens for #5, and #5 curls to the rim.",
     tips: "#1 (inbounder): slap the ball to start, then read: #5 on the curl → #4 on the dive → the corner. You have 5 seconds! #4: set the screen on X5 and hold it, then dive to the rim. #5: wait for the screen and curl tight off #4's shoulder. #2 and #3: sprint to the corners to pull your defenders away from the basket.",
     oob: true,

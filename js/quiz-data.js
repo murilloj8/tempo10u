@@ -290,20 +290,20 @@ window.TEMPO_QUIZ = {
         { q: "How does our huddle break end?", o: ["\"Go team!\"", "\"1 · 2 · 3 — TEMPO!\"", "\"Win!\"", "Silence"], a: 1, why: "\"1 · 2 · 3 — TEMPO!\"" }
       ],
       [ // Set 4 — affirmations
-        { q: "\"I belong\" means…", o: ["Only stars belong", "I have unique characteristics, and my team needs what I bring", "I can skip practice", "I'm better than others"], a: 1, why: "Your team needs what YOU bring." },
-        { q: "\"Mistakes make me better\" — what do you say after a mistake?", o: ["\"I quit\"", "\"Next play!\"", "\"Not my fault\"", "Nothing"], a: 1, why: "Next play!" },
-        { q: "\"Together we are more\" means…", o: ["My best plus your best adds up to something bigger", "I can do it alone", "More players on the court", "Bigger uniforms"], a: 0, why: "Our best together is bigger than any of us alone." },
-        { q: "\"My defense wears down anyone\" — what do I do?", o: ["Reach for steals", "Stay low, talk, contest every shot", "Rest on defense", "Foul a lot"], a: 1, why: "Low, talk, contest." },
-        { q: "\"I control what I can.\" What two things are always up to me?", o: ["The refs and the score", "My effort and my attitude", "The weather and the gym", "My teammates and coach"], a: 1, why: "Effort and attitude." },
-        { q: "\"I lift my teammates\" means…", o: ["Carry them around", "Cheer the loudest when they shine and pick them up when they fall", "Tell them what they did wrong", "Only talk to the best players"], a: 1, why: "Cheer and pick them up." }
+        { q: "\"I belong.\" What comes next?", o: ["\"My team needs me.\"", "\"I'm the best.\"", "\"I can skip practice.\"", "\"Only stars belong.\""], a: 0, why: "I belong. My team needs me." },
+        { q: "\"Mistakes make me better.\" What comes next?", o: ["\"I quit.\"", "\"Next play!\"", "\"Not my fault.\"", "\"Try again tomorrow.\""], a: 1, why: "Mistakes make me better. Next play!" },
+        { q: "\"Together we are more.\" What comes next?", o: ["\"I can do it alone.\"", "\"Your best + my best.\"", "\"More players.\"", "\"Bigger uniforms.\""], a: 1, why: "Together we are more. Your best + my best." },
+        { q: "\"I defend every play.\" How?", o: ["Reach for steals", "Low, loud, hands up", "Rest on defense", "Foul a lot"], a: 1, why: "I defend every play. Low, loud, hands up." },
+        { q: "\"I control what I can.\" What two things are always up to me?", o: ["The refs and the score", "My effort. My attitude.", "The weather and the gym", "My teammates and coach"], a: 1, why: "I control what I can. My effort. My attitude." },
+        { q: "\"I lift my teammates.\" What comes next?", o: ["\"Carry them around.\"", "\"Cheer them up, pick them up.\"", "\"Tell them what they did wrong.\"", "\"Only the best players.\""], a: 1, why: "I lift my teammates. Cheer them up, pick them up." }
       ],
       [ // Set 5 — finish the affirmation
-        { q: "\"Today I will be a little better than…\"", o: ["everyone else", "I was yesterday", "my sister", "the other team"], a: 1, why: "\"…than I was yesterday.\"" },
-        { q: "\"I am TEMPO. We set the…\"", o: ["table", "pace", "score", "alarm"], a: 1, why: "\"We set the pace.\"" },
-        { q: "\"A mistake is just practice for…\"", o: ["quitting", "getting it right", "sitting on the bench", "losing"], a: 1, why: "\"…getting it right — next play!\"" },
-        { q: "\"My best plus your best adds up to…\"", o: ["a tie", "something bigger than any of us alone", "two points", "nothing"], a: 1, why: "Together we are more." },
-        { q: "\"Even the best scorer gets tired of…\"", o: ["the bench", "seeing me", "the refs", "the crowd"], a: 1, why: "\"…seeing me.\" — tough defense!" },
-        { q: "\"The extra pass shows I trust my teammates — …\"", o: ["and they trust me", "but I'm the best", "sometimes", "when I'm tired"], a: 0, why: "\"…and they trust me.\"" }
+        { q: "Finish the closing line: \"Better than…\"", o: ["everyone else", "yesterday", "my sister", "the other team"], a: 1, why: "\"Better than yesterday.\"" },
+        { q: "\"I am TEMPO. We set the…\"", o: ["table", "pace", "score", "alarm"], a: 1, why: "\"We set the pace!\"" },
+        { q: "\"I share the ball.\" What comes next?", o: ["\"I trust my team.\"", "\"I shoot every time.\"", "\"When I'm tired.\"", "\"Only to my friends.\""], a: 0, why: "I share the ball. I trust my team." },
+        { q: "\"Every rebound is ours.\" How do we get it?", o: ["Wait for it", "Box out, two hands", "Let the tall players get it", "Run away"], a: 1, why: "Every rebound is ours. Box out, two hands." },
+        { q: "How many lines are in \"I Am TEMPO\" (before the closing)?", o: ["5", "6", "8", "10"], a: 2, why: "Eight short lines — then \"Better than yesterday. I am TEMPO. We set the pace!\"" },
+        { q: "Which is the FIRST line of \"I Am TEMPO\"?", o: ["I share the ball.", "I belong.", "Every rebound is ours.", "I lift my teammates."], a: 1, why: "It starts with \"I belong. My team needs me.\"" }
       ],
       [ // Set 6 — stories
         { q: "Sue Bird was famous for which TEMPO value?", o: ["Pass First", "Own the Boards", "Tough Defense", "Motion"], a: 0, why: "One of the best passers ever." },
@@ -334,7 +334,7 @@ window.TEMPO_QUIZ = {
         { q: "Cutting to the open spot after you pass shows which value?", o: ["Tough Defense", "Motion", "Own the Boards", "Effort"], a: 1, why: "Never stand still." },
         { q: "Yelling \"Ball!\" and \"Help!\" on defense shows which value?", o: ["Tough Defense", "Pass First", "Motion", "Own the Boards"], a: 0, why: "Talk is part of tough defense." },
         { q: "Trusting your teammates with the ball shows which value?", o: ["Pass First", "Own the Boards", "Effort", "Tough Defense"], a: 0, why: "Pass before you dribble, trust teammates." },
-        { q: "You feel you're not as good as others. Which affirmation helps?", o: ["I belong", "Every rebound is ours", "I share the ball", "My defense wears down anyone"], a: 0, why: "Your team needs what you bring." },
+        { q: "You feel you're not as good as others. Which affirmation helps?", o: ["I belong", "Every rebound is ours", "I share the ball", "I defend every play"], a: 0, why: "Your team needs what you bring." },
         { q: "Which story shows that taking care of yourself is strong?", o: ["Simone Biles", "Michael Jordan", "Stephen Curry", "Jim Abbott"], a: 0, why: "She stepped back, cheered her team, and came back stronger." }
       ],
       [ // Set 10 — lessons

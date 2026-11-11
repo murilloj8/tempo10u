@@ -97,7 +97,7 @@
             <button class="pv-play">Play</button>
             <button class="secondary pv-next">Next step ▶</button>
             <button class="ghost pv-restart">Restart</button>
-            <div class="pv-speed"><span>Speed</span><button data-s="0.5">½×</button><button data-s="1" class="on">1×</button></div>
+            <div class="pv-speed"><span>Speed</span><button data-s="0.5" class="on">½×</button><button data-s="1">1×</button></div>
           </div>
         </div>
         <aside class="grid" style="gap:14px">
@@ -144,7 +144,7 @@
       `<li data-id="${it.id}" class="${play.phases[it.id] && play.phases[it.id].decision ? "dec" : ""}">${it.html}</li>`).join("");
 
     // state
-    let pos, holder, phaseId, t, playing = false, speed = 1, last = null, stepMode = false, trails = [], ballAt = null;
+    let pos, holder, phaseId, t, playing = false, speed = 0.5, last = null, stepMode = false, trails = [], ballAt = null;
     const start = () => {
       pos = {}; Object.entries({ ...play.start.off, ...(play.start.def || {}) }).forEach(([k, v]) => pos[k] = v.slice());
       holder = play.start.ball; ballAt = null; trails.forEach((x) => x.el.remove()); trails = [];
@@ -224,8 +224,8 @@
       const ph = play.phases[phaseId];
       if (t >= ph.dur) {
         t = ph.dur; render();
-        const stop = stepMode;
-        if (!advance() || stop) { pause(); return; }
+        if (stepMode) { pause(); return; }          // step finished: wait for the next tap
+        if (!advance()) { pause(); return; }
       }
       render(); requestAnimationFrame(frame);
     }
@@ -242,17 +242,19 @@
       if (play.phases[phaseId].decision) return;
       stepMode = true;
       if ($(".pv-play").textContent === "Replay") { start(); playIt(); return; }
-      if (t >= play.phases[phaseId].dur || t > 0) { t = play.phases[phaseId].dur; render(); if (!advance()) return; }
+      const ph = play.phases[phaseId];
+      const still = !ph.moves && !ph.ball;
+      if (t > 0 || still) { t = ph.dur; render(); if (!advance()) return; }
+      if (play.phases[phaseId].decision) return;
       playIt();
     };
-    $(".pv-restart").onclick = () => { stepMode = false; $(".pv-play").textContent = "Play"; start(); playIt(); };
+    $(".pv-restart").onclick = () => { stepMode = false; pause(); $(".pv-play").textContent = "Play"; start(); };
     $(".yes").onclick = () => answer(true);
     $(".no").onclick = () => answer(false);
     root.querySelectorAll(".pv-speed button").forEach((b) => b.onclick = () => {
       speed = +b.dataset.s; root.querySelectorAll(".pv-speed button").forEach((o) => o.classList.toggle("on", o === b));
     });
-    start();
-    setTimeout(playIt, 600);
+    start();   // starts paused: the player chooses Play or Next step
   }
   window.TEMPO_PLAY = { mount };
 })();
