@@ -5,7 +5,7 @@ window.TEMPO_PLAYS = {
   /* ===================== PLAY 1: SCREEN & CUT (with read) ===================== */
   "screen-cut": {
     title: "Motion",
-    sub: "Two-guard front vs. man-to-man. #3 cuts off #5's screen — read it: is she open?",
+    sub: "Two-guard front vs. man-to-man. Screen, cut, read: is the cutter open? If not, swap, reverse the ball and screen the weak side — the motion never stops.",
     tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball while the guard and wing swap with a screen, reverse it, and run the weak-side screen for the other wing. Still covered? Keep the motion going on the other side — patience creates the open look.",
     start: {
       off: { 1: [416, 403], 2: [78, 212], 3: [572, 212], 4: [234, 403], 5: [436, 104] },
