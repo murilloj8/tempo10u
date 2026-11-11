@@ -6,7 +6,7 @@ window.TEMPO_PLAYS = {
   "screen-cut": {
     title: "Motion",
     sub: "Two-guard front vs. man-to-man. #3 cuts off #5's screen — read it: is she open?",
-    tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball, reverse it to the top, and run the weak-side screen. Still covered? Run Motion again — patience creates the open look.",
+    tips: "#5: set the screen with a wide, still base — no moving screens. #3: wait for the screen, then cut shoulder-to-shoulder past it. #4: <b>read the defense</b> — if X3 is behind #3, pass. If X3 is between #3 and the ball, don't force it: hold the ball while the guard and wing swap with a screen, reverse it, and run the weak-side screen for the other wing. Still covered? Keep the motion going on the other side — patience creates the open look.",
     start: {
       off: { 1: [416, 403], 2: [78, 212], 3: [572, 212], 4: [234, 403], 5: [436, 104] },
       def: { X1: [397, 351], X2: [167, 202], X3: [522, 227], X4: [247, 352], X5: [410, 150] },
@@ -35,7 +35,7 @@ window.TEMPO_PLAYS = {
       },
       read: {
         dur: 0, caption: "<b>Decision:</b> #4, look at #3 on the cut. Is she open?",
-        decision: { question: "Is #3 open on the cut?", hint: "Open = her defender (X3) is behind her. Covered = X3 is between her and the ball.", yes: "hit", no: "denied" }
+        decision: { question: "Is #3 open on the cut?", hint: "Open = her defender (X3) is behind her. Covered = X3 is between her and the ball.", yes: "hit", no: "c0_a1" }
       },
       /* ---- YES: hit the cutter ---- */
       hit: {
@@ -50,78 +50,6 @@ window.TEMPO_PLAYS = {
         moves: { 3: [[0.4, 336, 84]] },
         ball: [{ t0: 0, t1: 0.4, hold: "3" }, { t0: 0.4, t1: 0.85, from: "3", toXY: [325, 68] }]
       },
-      /* ---- NO: screen the screener and reset ---- */
-      denied: {
-        dur: 0.9, caption: "<b>No pass.</b> X3 is denying. #4 holds the ball (be patient!) and #3 clears to the left block.",
-        moves: { 3: [[0.8, 232, 104]], X3: [[0.4, 380, 132], [0.9, 262, 140]] },
-        trails: [{ t0: 0, t1: 0.8, kind: "cut", pts: [[350, 100], [256, 104]] }],
-        next: "screener"
-      },
-      screener: {
-        dur: 1.0, caption: "<b>Option:</b> #1 leaves the top and sets a screen for #5 on the right side.",
-        moves: { 1: [[1.0, 522, 250]], X1: [[1.0, 440, 300]], X5: [[1.0, 505, 185]] },
-        trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[416, 403], [509, 268]] }],
-        next: "toTop"
-      },
-      toTop: {
-        dur: 1.1, caption: "#5 cuts off #1's screen up to the top — #1's old spot.",
-        moves: { 5: [[0.5, 598, 300], [1.1, 440, 400]], X5: [[0.5, 552, 220], [0.8, 590, 290], [1.1, 470, 360]] },
-        trails: [{ t0: 0, t1: 1.1, kind: "cut", pts: [[572, 212], [598, 300], [458, 392]] }],
-        next: "fade"
-      },
-      fade: {
-        dur: 0.8, caption: "#1 fades out to the right wing — #5's old spot.",
-        moves: { 1: [[0.7, 572, 212]], X1: [[0.8, 535, 240]] },
-        trails: [{ t0: 0, t1: 0.7, kind: "cut", pts: [[522, 250], [556, 224]] }],
-        next: "swing"
-      },
-      swing: {
-        dur: 0.8, caption: "<b>Reverse it!</b> #4 swings the ball to #5, who just came up to the top. The ball is on the right now — the left is the <b>weak side</b>.",
-        ball: [{ t0: 0, t1: 0.6, from: "4", to: "5" }],
-        trails: [{ t0: 0, t1: 0.6, kind: "pass", pts: [[249, 388], [432, 390]] }],
-        next: "weakScreen"
-      },
-      weakScreen: {
-        dur: 1.0, caption: "<b>Weak-side screen:</b> #3 steps up from the left block and sets a screen on #2's defender.",
-        moves: { 3: [[1.0, 150, 196]], X3: [[1.0, 196, 168]], X2: [[0.6, 128, 252], [1.0, 124, 236]] },
-        trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[232, 104], [158, 184]] }],
-        next: "crossCut"
-      },
-      crossCut: {
-        dur: 1.9, caption: "#2 cuts off #3's screen, across the lane toward the rim. #3 fades out to the left wing — #2's old spot.",
-        moves: {
-          2: [[0.45, 120, 160], [1.2, 222, 112], [1.7, 300, 100]],
-          X2: [[0.6, 138, 222], [1.0, 150, 214], [1.8, 240, 150]],
-          3: [[0.9, 150, 196], [1.9, 82, 216]],
-          X3: [[1.0, 196, 170], [1.9, 118, 196]]
-        },
-        trails: [{ t0: 0, t1: 1.7, kind: "cut", pts: [[78, 212], [120, 160], [222, 112], [288, 102]] }, { t0: 0.9, t1: 1.9, kind: "cut", pts: [[150, 196], [96, 212]] }],
-        next: "read2"
-      },
-      read2: {
-        dur: 0, caption: "<b>Decision:</b> #5, look at #2 on the cut. Is she open?",
-        decision: { question: "Is #2 open on the cut?", hint: "Open = X2 got stuck on #3's screen and is behind her.", yes: "hit2", no: "reset" }
-      },
-      hit2: {
-        dur: 1.0, caption: "<b>Yes!</b> #5 hits #2 on the cut.",
-        ball: [{ t0: 0, t1: 0.75, from: "5", to: "2" }],
-        trails: [{ t0: 0, t1: 0.75, kind: "pass", pts: [[455, 385], [312, 88]] }],
-        next: "score2"
-      },
-      score2: {
-        dur: 1.2, caption: "<b>Score!</b> #2 finishes the layup. Sprint back on defense!", score: 0.85,
-        moves: { 2: [[0.4, 314, 84]] },
-        ball: [{ t0: 0, t1: 0.4, hold: "2" }, { t0: 0.4, t1: 0.85, from: "2", toXY: [325, 68] }]
-      },
-      reset: {
-        dur: 2.0, caption: "<b>Still covered? Run Motion again!</b> #5 gives the ball to #1 and everyone goes back to their starting spot.",
-        moves: {
-          1: [[0.9, 416, 403]], 5: [[0.8, 452, 330], [2.0, 436, 104]], 2: [[1.6, 78, 212]], 3: [[2.0, 572, 212]],
-          X1: [[1.0, 397, 351]], X2: [[1.6, 167, 202]], X3: [[2.0, 522, 227]], X4: [[1.2, 247, 352]], X5: [[2.0, 410, 150]]
-        },
-        ball: [{ t0: 0, t1: 0.9, hold: "5" }, { t0: 0.9, t1: 1.3, from: "5", to: "1" }],
-        next: "pass"
-      }
     },
     list: [
       { id: "setup", html: "<b>Set up.</b> Two-guard front. #1 has the ball." },
@@ -131,17 +59,13 @@ window.TEMPO_PLAYS = {
       { branch: "If YES" },
       { id: "hit", html: "<b>3.</b> #4 passes to #3." },
       { id: "score", html: "<b>4.</b> #3 scores the layup." },
-      { branch: "If NO — screen the screener" },
-      { id: "denied", html: "<b>3.</b> #4 holds it. #3 clears to the left block." },
-      { id: "screener", html: "<b>4.</b> #1 screens for #5." },
-      { id: "toTop", html: "<b>5.</b> #5 cuts to the top." },
-      { id: "fade", html: "<b>6.</b> #1 fades to the wing." },
-      { id: "swing", html: "<b>7.</b> #4 reverses the ball to #5 at the top." },
-      { id: "weakScreen", html: "<b>8.</b> #3 (weak-side block) screens for #2." },
-      { id: "crossCut", html: "<b>9.</b> #2 cuts across to the rim. #3 fades to the wing." },
-      { id: "read2", html: "<b>Decision:</b> Is #2 open?" },
-      { id: "hit2", html: "Yes → #5 passes to #2, #2 scores." },
-      { id: "reset", html: "No → reset and run Motion again." }
+      { branch: "If NO — keep the motion going" },
+      { id: "c0_a1", html: "<b>3.</b> Ball guard holds. Other guard screens for the wing on her side. Cutter goes to the ball-side block." },
+      { id: "c0_a2", html: "<b>4.</b> Wing cuts up to the guard spot; the screener fills the wing." },
+      { id: "c0_b", html: "<b>5.</b> Reverse the ball to the new guard." },
+      { id: "c0_c1", html: "<b>6.</b> Block player screens for the weak-side wing." },
+      { id: "c0_c2", html: "<b>7.</b> Wing cuts across to the basket; the screener fills the wing." },
+      { id: "c0_d", html: "<b>Decision:</b> Is the cutter open? Yes → pass and score. No → repeat on the other side." }
     ]
   },
 
@@ -237,3 +161,72 @@ window.TEMPO_PLAYS = {
     ]
   }
 };
+
+/* ---- Motion: build the "No" branch. It repeats forever, switching sides each time.
+   Roles: bh = guard with the ball, og = other guard, cw = wing on the side the cutter came from,
+   ow = wing on the ball side, cut = covered cutter in the lane. Coordinates are written for the
+   ball on the LEFT and mirrored when the ball is on the right. ---- */
+(function () {
+  const P = window.TEMPO_PLAYS["screen-cut"];
+  const BASKET = [325, 68];
+  let roles = { bh: "4", og: "1", cw: "5", ow: "2", cut: "3" }, left = true;
+  const CYCLES = 10; // after 10 cycles everyone is back where they started, so it loops forever
+  const mx = (x) => (left ? x : 650 - x);
+  const keys = (ks) => ks.map(([t, x, y]) => [t, mx(x), y]);
+  const pts = (ps) => ps.map(([x, y]) => [mx(x), y]);
+  const D = (id) => "X" + id;
+  function defend(moves, dur) {   // each defender shadows her player, a step toward the basket
+    const out = {};
+    Object.entries(moves).forEach(([id, ks]) => {
+      out[D(id)] = ks.map(([t, x, y]) => [Math.min(dur, t + 0.15), x + (BASKET[0] - x) * 0.16, y + (BASKET[1] - y) * 0.16]);
+    });
+    return { ...moves, ...out };
+  }
+  for (let c = 0; c < CYCLES; c++) {
+    const r = roles, n = (k) => "#" + r[k], id = (k) => `c${c}_${k}`;
+    const L = left ? "left" : "right", R = left ? "right" : "left";
+    const nextStart = c === CYCLES - 1 ? "c0_a1" : `c${c + 1}_a1`;
+    const ph = {};
+    let m;
+    m = { [r.cut]: keys([[0.8, 232, 104]]), [r.og]: keys([[1.0, 522, 250]]) };
+    ph.a1 = { dur: 1.1, listId: "c0_a1", clearTrails: true,
+      caption: `<b>No pass.</b> ${n("bh")} (${L} guard) holds the ball. ${n("og")} (${R} guard) screens for ${n("cw")} (${R} wing). ${n("cut")} goes to the ${L} block — the ball side.`,
+      moves: defend(m, 1.1),
+      trails: [{ t0: 0, t1: 0.8, kind: "cut", pts: pts([[350, 100], [256, 104]]) }, { t0: 0, t1: 1.0, kind: "screen", pts: pts([[416, 403], [509, 268]]) }],
+      next: id("a2") };
+    m = { [r.cw]: keys([[0.5, 598, 300], [1.3, 416, 403]]), [r.og]: keys([[0.6, 522, 250], [1.3, 572, 212]]) };
+    ph.a2 = { dur: 1.3, listId: "c0_a2",
+      caption: `${n("cw")} cuts off the screen up to the ${R} guard spot. ${n("og")} fills the ${R} wing.`,
+      moves: defend(m, 1.3),
+      trails: [{ t0: 0, t1: 1.3, kind: "cut", pts: pts([[572, 212], [598, 300], [430, 396]]) }, { t0: 0.6, t1: 1.3, kind: "cut", pts: pts([[522, 250], [560, 222]]) }],
+      next: id("b") };
+    ph.b = { dur: 0.8, listId: "c0_b",
+      caption: `<b>Reverse it!</b> ${n("bh")} passes to ${n("cw")}, the new ${R} guard. Now the ${L} side is the weak side.`,
+      ball: [{ t0: 0, t1: 0.6, from: r.bh, to: r.cw }],
+      trails: [{ t0: 0, t1: 0.6, kind: "pass", pts: pts([[249, 388], [431, 388]]) }],
+      next: id("c1") };
+    m = { [r.cut]: keys([[1.0, 150, 196]]) };
+    ph.c1 = { dur: 1.0, listId: "c0_c1",
+      caption: `${n("cut")} steps up from the ${L} block and screens for ${n("ow")} (${L} wing).`,
+      moves: defend(m, 1.0),
+      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: pts([[232, 104], [158, 184]]) }],
+      next: id("c2") };
+    m = { [r.ow]: keys([[0.45, 120, 160], [1.2, 222, 112], [1.7, 300, 100]]), [r.cut]: keys([[0.9, 150, 196], [1.9, 82, 216]]) };
+    ph.c2 = { dur: 1.9, listId: "c0_c2",
+      caption: `${n("ow")} cuts across to the basket looking for the ball. ${n("cut")} fills the ${L} wing.`,
+      moves: { ...defend(m, 1.9), [D(r.ow)]: keys([[0.6, 128, 230], [1.1, 170, 190], [1.9, 322, 146]]) },
+      trails: [{ t0: 0, t1: 1.7, kind: "cut", pts: pts([[78, 212], [120, 160], [222, 112], [288, 102]]) }, { t0: 0.9, t1: 1.9, kind: "cut", pts: pts([[150, 196], [96, 212]]) }],
+      next: id("d") };
+    ph.d = { dur: 0, listId: "c0_d", caption: `<b>Decision:</b> ${n("cw")}, look at ${n("ow")} on the cut. Is she open?`,
+      decision: { question: `Is ${n("ow")} open on the cut?`, hint: "Open = her defender is behind her. Covered = her defender is between her and the ball.", yes: id("yes"), no: nextStart } };
+    ph.yes = { dur: 1.0, listId: "hit", caption: `<b>Yes!</b> ${n("cw")} hits ${n("ow")} on the cut.`,
+      ball: [{ t0: 0, t1: 0.75, from: r.cw, to: r.ow }],
+      trails: [{ t0: 0, t1: 0.75, kind: "pass", pts: pts([[431, 388], [312, 88]]) }], next: id("score") };
+    ph.score = { dur: 1.2, listId: "score", caption: `<b>Score!</b> ${n("ow")} finishes the layup. Sprint back on defense!`, score: 0.85,
+      moves: { [r.ow]: keys([[0.4, 314, 84]]) },
+      ball: [{ t0: 0, t1: 0.4, hold: r.ow }, { t0: 0.4, t1: 0.85, from: r.ow, toXY: [325, 68] }] };
+    Object.entries(ph).forEach(([k, v]) => { P.phases[id(k)] = v; });
+    roles = { bh: r.cw, og: r.bh, cw: r.cut, ow: r.og, cut: r.ow };
+    left = !left;
+  }
+})();

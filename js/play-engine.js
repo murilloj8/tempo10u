@@ -166,7 +166,7 @@
       // remember where moves begin
       ph._from = {}; Object.keys(ph.moves || {}).forEach((k) => ph._from[k] = pos[k].slice());
       ph._holder = holder;
-      stepsEl.querySelectorAll("li[data-id]").forEach((li) => li.classList.toggle("on", li.dataset.id === id));
+      stepsEl.querySelectorAll("li[data-id]").forEach((li) => li.classList.toggle("on", li.dataset.id === (ph.listId || id)));
       $(".pv-caption").innerHTML = ph.caption;
       $(".pv-decision").classList.add("hidden");
       if (ph.decision) {
