@@ -117,6 +117,8 @@
     async getTeamCode() { return (this._db().settings || {}).teamCode || CFG.teamCode || null; },
     async setTeamCode(code) { const db = this._db(); db.settings = { teamCode: code }; this._save(db); },
     async checkTeamCode(code) { return code === String((this._db().settings || {}).teamCode || CFG.teamCode).toUpperCase(); },
+    async getStoryPlan() { return this._db().storyPlan || null; },
+    async setStoryPlan(plan) { const db = this._db(); db.storyPlan = plan; this._save(db); },
     async getActivity(id) { return (this._db().activity || {})[id] || null; },
     async setActivity(id, data) { const db = this._db(); db.activity = db.activity || {}; db.activity[id] = data; this._save(db); },
     async myActivity(uid) { return Object.values(this._db().activity || {}).filter((a) => a.uid === uid); },
@@ -202,6 +204,8 @@
     async allResults() { return (await this.F.getDocs(this.F.collection(this.db, "results"))).docs.map((d) => d.data()); },
     async getTeamCode() { const s = await this.F.getDoc(this.F.doc(this.db, "settings", "team")); return s.exists() ? s.data().teamCode : null; },
     async setTeamCode(code) { await this.F.setDoc(this.F.doc(this.db, "settings", "team"), { teamCode: code, updatedAt: Date.now() }); },
+    async getStoryPlan() { const s = await this.F.getDoc(this.F.doc(this.db, "settings", "stories")); return s.exists() ? s.data() : null; },
+    async setStoryPlan(plan) { await this.F.setDoc(this.F.doc(this.db, "settings", "stories"), plan); },
     async getActivity(id) { const s = await this.F.getDoc(this.F.doc(this.db, "activity", id)); return s.exists() ? s.data() : null; },
     async setActivity(id, data) { await this.F.setDoc(this.F.doc(this.db, "activity", id), data); },
     async myActivity(uid) {
@@ -288,6 +292,39 @@
       if (!/^[A-Z0-9]{4,20}$/.test(code)) throw new Error("Use 4–20 letters or numbers, no spaces.");
       await backend.setTeamCode(code);
       return code;
+    },
+    /* Stories: Coach picks the story for each week (settings/stories).
+       plan = { weeks: { "1": storyId, ... }, custom: [ {id, name, who, value, story, lesson, think} ] }
+       A custom story with the same id as a built-in one replaces it. */
+    slug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); },
+    async storyPlan() {
+      if (this._plan) return this._plan;
+      let p = null;
+      try { p = await backend.getStoryPlan(); } catch (e) { console.warn("story plan", e); }
+      this._plan = { weeks: {}, custom: [], ...(p || {}) };
+      return this._plan;
+    },
+    async saveStoryPlan(plan) {
+      const clean = { weeks: {}, custom: [], updatedAt: Date.now() };
+      Object.entries(plan.weeks || {}).forEach(([w, id]) => { if (id) clean.weeks[String(w)] = String(id); });
+      clean.custom = (plan.custom || []).map((s) => ({ id: String(s.id), name: String(s.name || ""), who: String(s.who || ""), value: String(s.value || ""),
+        story: String(s.story || ""), lesson: String(s.lesson || ""), think: String(s.think || "") }));
+      await backend.setStoryPlan(clean);
+      this._plan = clean; return clean;
+    },
+    allStories(plan) {
+      const base = (window.TEMPO_STORIES || []).map((s) => ({ ...s, id: this.slug(s.name), builtIn: true }));
+      (plan && plan.custom || []).forEach((c) => {
+        const i = base.findIndex((b) => b.id === c.id);
+        if (i >= 0) base[i] = { ...c, builtIn: true, edited: true }; else base.push({ ...c, builtIn: false });
+      });
+      return base;
+    },
+    storyForWeek(wk, plan) {
+      const all = this.allStories(plan);
+      const id = plan && plan.weeks && plan.weeks[String(wk)];
+      const base = all.filter((s) => s.builtIn);
+      return all.find((s) => s.id === id) || base[(Math.max(1, wk) - 1) % base.length];
     },
     allUsers() { return backend.allUsers(); },
     allResults() { return backend.allResults(); },

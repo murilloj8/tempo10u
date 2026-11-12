@@ -111,11 +111,11 @@ main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 60px; }
 .btn.ghost:hover, button.ghost:hover { background: var(--bordeaux-soft); }
 button:disabled { opacity: .45; cursor: default; }
 label { display: block; font-weight: 700; margin: 12px 0 4px; }
-input, select {
+input, select, textarea {
   font: inherit; width: 100%; padding: 11px 13px;
   border: 2px solid var(--line); border-radius: 12px; background: #fff;
 }
-input:focus, select:focus { outline: none; border-color: var(--blue-dark); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--blue-dark); }
 .hint { font-size: 13px; color: var(--muted); margin-top: 3px; }
 .msg { padding: 10px 14px; border-radius: 12px; margin: 12px 0; font-weight: 600; }
 .msg.error { background: #FCE8E6; color: var(--bad); }
@@ -188,3 +188,5 @@ ul.bul { padding-left: 22px; margin: 6px 0 14px; }
 ul.bul li { margin: 5px 0; line-height: 1.45; }
 ul.bul li::marker { color: var(--bordeaux); }
 .page-head ul.bul { max-width: 760px; color: var(--muted); font-size: 17px; }
+
+textarea { font: inherit; resize: vertical; line-height: 1.45; }

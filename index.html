@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Team Home</title>
-<link rel="stylesheet" href="css/style.css?v=20261111b">
+<link rel="stylesheet" href="css/style.css?v=20261111c">
 <style>
   /* My week: a ribbon that scrolls sideways so it never runs off the page */
   .week { display: flex; gap: 10px; margin: 14px -4px 10px; padding: 6px 4px 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 4px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
@@ -155,13 +155,12 @@
 
     <h2 style="color:var(--bordeaux);margin-top:30px">Story of the week</h2>
     <div id="storyPreviews" style="max-width:560px"></div>
-    <a class="btn ghost" href="stories.html" style="margin-top:14px">All stories →</a>
   </section>
 </main>
 
-<script src="js/config.js?v=20261111b"></script>
-<script src="js/app.js?v=20261111b"></script>
-<script src="js/stories-data.js?v=20261111b"></script>
+<script src="js/config.js?v=20261111c"></script>
+<script src="js/app.js?v=20261111c"></script>
+<script src="js/stories-data.js?v=20261111c"></script>
 <script>
 (async function () {
   const T = window.TEMPO, $ = T.$;
@@ -225,15 +224,14 @@
     }
     renderWeek();
 
-    // Motivational stories: story of the week + next two
-    const S = window.TEMPO_STORIES || [];
-    const slug = (n) => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    const teaser = (t) => { const m = t.match(/^.*?[.!?](\s|$)/); return m ? m[0].trim() : t.slice(0, 120); };
-    $("#storyPreviews").innerHTML = [0].map((k) => S[(wk - 1 + k) % S.length]).map((st, k) => `
-      <a class="sp" href="story.html#${slug(st.name)}">
-        <div><span class="pill b">${T.esc(st.value)}</span></div>
-        <h3>${T.esc(st.name)}</h3><div class="who">${T.esc(st.who)}</div>
-        <p>${T.esc(teaser(st.story))}</p><span class="more">Read more →</span></a>`).join("");
+    // Story of the week (Coach picks it on the Coach page)
+    const teaser = (t) => { const m = String(t).match(/^.*?[.!?](\s|$)/); return m ? m[0].trim() : String(t).slice(0, 120); };
+    const st = T.storyForWeek(wk, await T.storyPlan());
+    $("#storyPreviews").innerHTML = `
+      <a class="sp" href="stories.html">
+        ${st.value ? `<div><span class="pill b">${T.esc(st.value)}</span></div>` : ""}
+        <h3>${T.esc(st.name)}</h3><div class="who">${T.esc(st.who || "")}</div>
+        <p>${T.esc(teaser(st.story))}</p><span class="more">Read the story →</span></a>`;
 
     try {
       const res = await T.myResults();

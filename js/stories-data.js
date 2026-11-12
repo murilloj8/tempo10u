@@ -1,4 +1,4 @@
-/* Motivational stories (shared by stories.html and story.html). */
+/* Built-in motivational stories. Coach picks the story for each week (and can write new ones) on the Coach page. */
 window.TEMPO_STORIES = [
   { name: "Michael Jordan", who: "Basketball · 6-time NBA champion", value: "Mistakes make me better",
     story: "When Michael was a sophomore in high school, he tried out for the varsity team — and didn't make it. He played on the junior varsity team instead. He was disappointed, but he used it as fuel. He practiced before school, after school and on weekends. The next year he was the star of the varsity team. He became one of the greatest players of all time.",

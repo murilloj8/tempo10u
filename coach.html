@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Coach Dashboard</title>
-<link rel="stylesheet" href="css/style.css?v=20261111b">
+<link rel="stylesheet" href="css/style.css?v=20261111c">
 <style>
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
   .stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
@@ -64,6 +64,41 @@
   </div>
 
   <div class="section">
+    <h2>Story of the week</h2>
+    <p class="muted" style="max-width:760px">Players only see the story you pick for the current week (on Home and the Stories page). Weeks you leave on <b>Automatic</b> use the built-in rotation.</p>
+    <div class="grid grid-2" style="align-items:start">
+      <div class="card">
+        <h3 style="margin-top:0">Weekly schedule</h3>
+        <div class="table-wrap" style="max-height:440px;overflow:auto"><table id="storyWeeks"></table></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap"><button id="saveWeeks">Save schedule</button><span id="weeksMsg"></span></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Write or edit a story</h3>
+        <label for="stPick">Story</label>
+        <select id="stPick"></select>
+        <label for="stValue">Subject (value)</label>
+        <input id="stValue" list="stSubjects" maxlength="60" placeholder="e.g. Mistakes make me better">
+        <datalist id="stSubjects"></datalist>
+        <label for="stName">Title or person</label>
+        <input id="stName" maxlength="60" placeholder="e.g. Michael Jordan">
+        <label for="stWho">Short description (optional)</label>
+        <input id="stWho" maxlength="80" placeholder="e.g. Basketball · 6-time NBA champion">
+        <label for="stStory">Story</label>
+        <textarea id="stStory" rows="7" maxlength="1500" placeholder="Write short sentences. Each sentence shows as its own bullet."></textarea>
+        <label for="stLesson">The lesson</label>
+        <input id="stLesson" maxlength="200">
+        <label for="stThink">Think about it (a question)</label>
+        <input id="stThink" maxlength="200">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+          <button id="stSave">Save story</button>
+          <button class="ghost" id="stDelete">Delete</button>
+        </div>
+        <div id="stMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
     <h2>Roster &amp; accounts</h2>
     <div class="card" style="margin-bottom:14px">
       <b>How players join:</b> share the website link and the team code (see <b>Team code</b> above). They tap <b>New player</b>, pick a username and password, and type the code.
@@ -73,9 +108,10 @@
   </div>
 </main>
 
-<script src="js/config.js?v=20261111b"></script>
-<script src="js/app.js?v=20261111b"></script>
-<script src="js/quiz-data.js?v=20261111b"></script>
+<script src="js/config.js?v=20261111c"></script>
+<script src="js/app.js?v=20261111c"></script>
+<script src="js/quiz-data.js?v=20261111c"></script>
+<script src="js/stories-data.js?v=20261111c"></script>
 <script>
 (async function () {
   const me = await TEMPO.boot("coach", { coachOnly: true });
@@ -180,6 +216,67 @@
     try { await navigator.clipboard.writeText(lines.join("\n")); document.getElementById("copyMsg").textContent = "Copied! Paste into Excel or Google Sheets."; }
     catch (err) { document.getElementById("copyMsg").textContent = "Copy didn't work in this browser."; }
   };
+
+  /* ---------- Story of the week ---------- */
+  let plan = await TEMPO.storyPlan();
+  const SEASON_WEEKS = Math.max(20, curWk + 8);
+  const stMsg = (id, cls, t) => { document.getElementById(id).innerHTML = t ? `<div class="msg ${cls}">${t}</div>` : ""; };
+  const saveErr = (e) => /permission/i.test(String(e && (e.code || e.message))) ?
+    "Saving was blocked by Firebase. Coach needs to publish the updated Firestore rules (see README)." : esc(e.message || "Couldn't save.");
+  function storyOptions(selected, withAuto, w) {
+    const all = TEMPO.allStories(plan), groups = {};
+    all.forEach((s) => (groups[s.value || "Other"] = groups[s.value || "Other"] || []).push(s));
+    const auto = withAuto ? `<option value="">Automatic — ${esc(TEMPO.storyForWeek(w, { weeks: {}, custom: plan.custom }).name)}</option>` : "";
+    return auto + Object.keys(groups).sort().map((g) => `<optgroup label="${esc(g)}">${groups[g].map((s) =>
+      `<option value="${esc(s.id)}" ${s.id === selected ? "selected" : ""}>${esc(s.name)}${s.builtIn ? "" : " (yours)"}</option>`).join("")}</optgroup>`).join("");
+  }
+  function renderWeeks() {
+    document.getElementById("storyWeeks").innerHTML = "<tr><th>Week</th><th>Story</th></tr>" +
+      Array.from({ length: SEASON_WEEKS }, (_, i) => i + 1).map((w) => `<tr${w === curWk ? ' style="background:var(--blue-soft)"' : ""}>
+        <td style="white-space:nowrap"><b>Week ${w}</b>${w === curWk ? ' <span class="pill b">this week</span>' : ""}<div class="small muted">${TEMPO.weekDates(w)}</div></td>
+        <td><select data-w="${w}" style="min-width:200px">${storyOptions(plan.weeks[String(w)] || "", true, w)}</select></td></tr>`).join("");
+  }
+  function renderEditor(id) {
+    const all = TEMPO.allStories(plan);
+    document.getElementById("stPick").innerHTML = `<option value="__new">+ New story</option>` + storyOptions(id, false);
+    document.getElementById("stSubjects").innerHTML = [...new Set(all.map((s) => s.value).filter(Boolean))].map((v) => `<option value="${esc(v)}">`).join("");
+    const s = all.find((x) => x.id === id) || {};
+    document.getElementById("stPick").value = s.id || "__new";
+    ["value", "name", "who", "story", "lesson", "think"].forEach((k) => document.getElementById("st" + k[0].toUpperCase() + k.slice(1)).value = s[k] || "");
+    const del = document.getElementById("stDelete");
+    del.style.display = !s.id || (s.builtIn && !s.edited) ? "none" : "";
+    del.textContent = s.edited ? "Undo my edits" : "Delete story";
+  }
+  document.getElementById("stPick").onchange = (e) => { stMsg("stMsg"); renderEditor(e.target.value); };
+  document.getElementById("saveWeeks").onclick = async () => {
+    const weeks = {};
+    document.querySelectorAll("#storyWeeks select").forEach((x) => { if (x.value) weeks[x.dataset.w] = x.value; });
+    try { plan = await TEMPO.saveStoryPlan({ ...plan, weeks }); stMsg("weeksMsg", "ok", "Saved! Players see this week's story right away."); }
+    catch (e) { stMsg("weeksMsg", "error", saveErr(e)); }
+  };
+  document.getElementById("stSave").onclick = async () => {
+    const v = (k) => document.getElementById(k).value.trim();
+    const pick = document.getElementById("stPick").value;
+    const st = { value: v("stValue"), name: v("stName"), who: v("stWho"), story: v("stStory"), lesson: v("stLesson"), think: v("stThink") };
+    if (!st.name || !st.story) return stMsg("stMsg", "error", "Add a title and the story.");
+    let id = pick;
+    if (pick === "__new") {
+      id = TEMPO.slug(st.name) || "story"; const ids = TEMPO.allStories(plan).map((s) => s.id);
+      let n = 2, base = id; while (ids.includes(id)) id = `${base}-${n++}`;
+    }
+    const custom = (plan.custom || []).filter((c) => c.id !== id).concat([{ id, ...st }]);
+    try { plan = await TEMPO.saveStoryPlan({ ...plan, custom }); renderWeeks(); renderEditor(id); stMsg("stMsg", "ok", "Story saved. Pick it in the weekly schedule."); }
+    catch (e) { stMsg("stMsg", "error", saveErr(e)); }
+  };
+  document.getElementById("stDelete").onclick = async () => {
+    const id = document.getElementById("stPick").value, s = TEMPO.allStories(plan).find((x) => x.id === id);
+    if (!s || !confirm(s.edited ? `Undo your edits to "${s.name}"?` : `Delete "${s.name}"? Weeks using it go back to Automatic.`)) return;
+    const custom = (plan.custom || []).filter((c) => c.id !== id), weeks = { ...plan.weeks };
+    if (!s.builtIn) Object.keys(weeks).forEach((w) => { if (weeks[w] === id) delete weeks[w]; });
+    try { plan = await TEMPO.saveStoryPlan({ ...plan, custom, weeks }); renderWeeks(); renderEditor(s.builtIn ? id : "__new"); stMsg("stMsg", "ok", s.edited ? "Back to the original story." : "Story deleted."); }
+    catch (e) { stMsg("stMsg", "error", saveErr(e)); }
+  };
+  renderWeeks(); renderEditor(TEMPO.storyForWeek(curWk, plan).id);
   load();
 })();
 </script>
