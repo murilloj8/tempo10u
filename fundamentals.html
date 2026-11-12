@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Fundamentals</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 <style>
   .why { color: var(--muted); font-size: 15px; }
   .cue { font-family: var(--display); font-style: italic; color: var(--bordeaux); background: var(--bordeaux-soft); border-radius: 10px; padding: 8px 12px; margin: 10px 0; font-size: 16px; text-align: center; letter-spacing: .02em; }
@@ -19,7 +19,7 @@
   <div class="page-head">
     <span class="kicker">Fundamentals</span>
     <h1>Stances, Footwork &amp; Skills</h1>
-    <p>Great players do the simple things right every single time. Go one skill at a time: look at the picture, read the steps, say the cue words out loud, and try the at-home drill. Check the box when you've practiced it this week!</p>
+    <ul class="bul"><li>Great players do the simple things right — every time.</li><li>Look at the picture and read the steps.</li><li>Say the cue words out loud.</li><li>Try the at-home drill, then check the box!</li></ul>
   </div>
   <div class="card" style="margin-bottom:18px">
     <b>This week I practiced <span id="pCount">0</span> of <span id="pTotal">0</span> skills</b>
@@ -28,10 +28,10 @@
   <div id="deck"></div>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/pictures.js?v=20261111a"></script>
-<script src="js/deck.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/pictures.js?v=20261111b"></script>
+<script src="js/deck.js?v=20261111b"></script>
 <script>
 const SKILLS = [
   { id: "ready", cat: "Stances", name: "Athletic (ready) stance",
@@ -48,12 +48,12 @@ const SKILLS = [
     drill: "Toss the ball to yourself, catch, and snap into triple threat. Hold it and check: ball at hip, knees bent, eyes on the rim. Do 20." },
   { id: "defense", cat: "Stances", name: "Defensive stance",
     why: "TOUGH DEFENSE — every stop starts with me! A good stance keeps you between your player and the basket.",
-    steps: ["Feet wide, knees bent, butt down, back straight.", "One hand up to bother passes and shots, the other hand out to the side.", "Stay ball-you-basket: you stand between your player and our basket.", "Slide your feet — step and slide, never cross your feet.", "Talk! Say \"Ball!\" when you guard the ball handler."],
+    steps: ["Feet wide, knees bent, butt down, back straight.", "One hand up, one hand out to the side.", "Stay between your player and our basket.", "Slide your feet — step and slide, never cross your feet.", "Talk! Say \"Ball!\" when you guard the ball handler."],
     cue: "Low · wide · slide · talk",
     mistake: "Reaching for the ball with your hands instead of moving your feet. Reaching = fouls.",
     drill: "Defensive slides across a room: 5 slides left, 5 slides right, staying low the whole time. 3 rounds." },
   { id: "jumpstop", cat: "Footwork", name: "Jump stop (land on both feet)",
-    why: "Landing on both feet at the same time keeps you balanced and lets you use EITHER foot as your pivot foot. It's the best way to avoid traveling.",
+    why: "Landing on both feet keeps you balanced. You can pivot on EITHER foot — no traveling!",
     steps: ["As the pass comes, take a small hop toward the ball.", "Catch the ball in the air with two hands.", "Land on BOTH feet at the same time, knees bent, feet shoulder-width.", "Chin the ball (elbows out) and look at the basket."],
     cue: "Hop · catch · land on two · balance",
     mistake: "Landing one foot then the other (1-2 step) and then switching pivot feet. That's a travel!",
@@ -66,7 +66,7 @@ const SKILLS = [
     drill: "Hold a ball and do 10 front pivots and 10 reverse pivots on each foot. Keep your eyes up!" },
   { id: "jab", cat: "Footwork", name: "Jab step",
     why: "A quick fake step that makes the defender move — then you take what she gives you.",
-    steps: ["Start in triple threat with your pivot foot planted.", "Take a short, quick step straight at the defender with your other foot (about one shoe length).", "Read her: if she backs up → shoot. If she doesn't move → drive right past her with that same foot. If she jumps toward the jab → cross over and drive the other way.", "Keep your pivot foot planted the whole time."],
+    steps: ["Start in triple threat with your pivot foot planted.", "Take a quick, short step at the defender (one shoe long).", "She backs up? → Shoot.", "She doesn't move? → Drive past her.", "She jumps at you? → Cross over and drive the other way.", "Keep your pivot foot planted the whole time."],
     cue: "Jab · read · go",
     mistake: "Taking a giant jab step. You lose your balance and your speed.",
     drill: "Jab, come back to triple threat. Jab, then drive (one dribble). Jab, then crossover step. 10 of each." },
@@ -90,13 +90,13 @@ const SKILLS = [
     drill: "Put a cup or sock on the floor as the 2/3 spot. Bounce-pass off the wall hitting the spot 20 times." },
   { id: "shoot", cat: "Shooting", name: "Shooting form (B.E.E.F.)",
     why: "Good form = a shot that goes in again and again. Shoot with confidence when you're open!",
-    steps: ["B — Balance: feet shoulder-width, toes to the rim, knees bent.", "E — Eyes: lock onto the rim before, during and after the shot.", "E — Elbow: shooting elbow in, under the ball. Ball on your finger pads, not your palm. Guide hand on the side.", "F — Follow-through: push up and out, snap your wrist, hold your hand like you're reaching into a cookie jar on a high shelf until the ball hits the rim."],
+    steps: ["B — Balance: feet shoulder-width, toes to the rim, knees bent.", "E — Eyes: lock onto the rim before, during and after the shot.", "E — Elbow: elbow in, under the ball. Ball on your fingertips. Other hand on the side.", "F — Follow-through: snap your wrist. Hold it like you're reaching into a cookie jar!"],
     cue: "Balance · Eyes · Elbow · Follow-through",
     mistake: "Elbow sticking out to the side or shooting with two hands pushing. Guide hand only guides!",
     drill: "Form shooting: lie on your back and shoot the ball straight up to yourself 25 times with perfect follow-through." },
   { id: "layup", cat: "Shooting", name: "Layup",
     why: "The closest, highest-percentage shot in basketball. Use the backboard!",
-    steps: ["From the right side: last steps go RIGHT foot, LEFT foot, then jump off your LEFT foot.", "Drive your RIGHT knee up as you jump.", "Shoot with your RIGHT hand, aiming at the top corner of the small square on the backboard.", "From the left side, flip it: jump off your RIGHT foot and shoot with your LEFT hand."],
+    steps: ["Right side: step RIGHT, LEFT, then jump off your LEFT foot.", "Drive your RIGHT knee up as you jump.", "Shoot with your RIGHT hand. Aim for the top corner of the square.", "Left side: flip it! Jump off your RIGHT foot, shoot LEFT-handed."],
     cue: "Right-left-UP (right side) · Left-right-UP (left side)",
     mistake: "Jumping off the wrong foot or running under the basket. Jump up, not forward.",
     drill: "No ball needed: practice the footwork — \"right, left, UP!\" 10 times each side, then add a ball." },

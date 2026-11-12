@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Story</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 <style>
   .story { max-width: 760px; margin: 0 auto; }
   .story .hero { margin-bottom: 20px; }
   .story .who { color: var(--blue); font-weight: 700; }
-  .story .body p { font-size: 19px; line-height: 1.65; }
+  .story .body p, .story .body li { font-size: 19px; line-height: 1.6; }
   .lesson { background: var(--blue-soft); border-left: 5px solid var(--blue-dark); border-radius: 12px; padding: 14px 18px; font-size: 17px; margin: 18px 0; }
   .think { background: var(--bordeaux-soft); border-left: 5px solid var(--bordeaux); border-radius: 12px; padding: 14px 18px; font-size: 17px; font-style: italic; }
   .pager { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
@@ -20,9 +20,9 @@
   <article class="story" id="story"></article>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/stories-data.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/stories-data.js?v=20261111b"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("stories", { study: true });
@@ -40,7 +40,7 @@
         <h1>${esc(s.name)}</h1>
         <div class="who">${esc(s.who)}</div>
       </div>
-      <div class="body"><p>${esc(s.story)}</p></div>
+      <div class="body"><ul class="bul">${s.story.split(/(?<=[.!?])\s+(?=[A-Z])/).map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>
       <div class="lesson"><b>The lesson:</b> ${esc(s.lesson)}</div>
       <div class="think"><b>Think about it:</b> ${esc(s.think)}</div>
       <div class="pager no-print">

@@ -4,10 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Team Home</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 <style>
-  .week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 14px 0 10px; }
-  .day { border: 2px solid var(--line); border-radius: 14px; padding: 10px 6px; text-align: center; background: #fff; }
+  /* My week: a ribbon that scrolls sideways so it never runs off the page */
+  .week { display: flex; gap: 10px; margin: 14px -4px 10px; padding: 6px 4px 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 4px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+  .week::-webkit-scrollbar { height: 6px; } .week::-webkit-scrollbar-thumb { background: var(--line); border-radius: 6px; }
+  .day { flex: 0 0 clamp(96px, calc((100% - 40px) / 5), 220px); scroll-snap-align: start; border: 2px solid var(--line); border-radius: 14px; padding: 10px 6px; text-align: center; background: #fff; }
+  .week-wrap { position: relative; }
+  .week-hint { display: none; font-size: 12px; color: var(--muted); text-align: right; margin-top: -4px; }
+  @media (max-width: 600px) { .day { flex-basis: 104px; } .week-hint { display: block; } }
   .day.today { border-color: var(--bordeaux); box-shadow: 0 0 0 3px var(--bordeaux-soft); }
   .day.full { background: #CDEBD6; border-color: var(--good); box-shadow: 0 0 0 3px #E6F4EA; }
   .day.full-past { background: #F3F8F4; border-color: #D5E6DA; }
@@ -49,7 +54,7 @@
   .aff li b { color: var(--bordeaux); }
   .aff-close { font-style: italic; font-weight: 700; color: var(--bordeaux); text-align: center; font-size: 17px; margin: 14px 0; }
   @media (max-width: 700px) { .zones { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 12px; } }
-  @media (max-width: 480px) { .week { gap: 5px; } .ic { width: 20px; height: 20px; font-size: 10px; } .day .icons { gap: 3px; } }
+  @media (max-width: 480px) { .ic { width: 20px; height: 20px; font-size: 10px; } .day .icons { gap: 3px; } }
 </style>
 </head>
 <body>
@@ -117,7 +122,7 @@
         <h3 style="margin:0">My week</h3>
         <span class="small muted" id="weekCount"></span>
       </div>
-      <div class="week" id="week"></div>
+      <div class="week" id="week" tabindex="0" aria-label="My week — scroll sideways"></div><div class="week-hint">Swipe to see the whole week →</div>
       <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>✓ = day complete</span></div>
     </div>
 
@@ -154,9 +159,9 @@
   </section>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/stories-data.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/stories-data.js?v=20261111b"></script>
 <script>
 (async function () {
   const T = window.TEMPO, $ = T.$;
@@ -212,6 +217,8 @@
           <div class="icons"><i class="ic s ${a.study ? "on" : ""}" title="Study zone"></i><i class="ic q ${a.quiz ? "on" : ""}" title="Quiz"></i><i class="ic a ${a.affirm ? "on" : ""}" title="Affirmation"></i></div>
           <div class="star">${all ? "✓" : ""}</div></div>`;
       }).join("");
+      const td = $("#week .day.today"), wk = $("#week");
+      if (td && wk.scrollWidth > wk.clientWidth) wk.scrollLeft = Math.max(0, td.offsetLeft - wk.offsetLeft - (wk.clientWidth - td.offsetWidth) / 2);
       $("#weekCount").textContent = `${full} of 5 days complete`;
       const t = activity.find((x) => x.date === today) || {};
       if (t.affirm) { $("#affStatus").className = "pill g"; $("#affStatus").textContent = "Done today ✓"; }

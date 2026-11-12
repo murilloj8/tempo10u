@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Motivational Stories</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 <style>
   .feature { display: block; text-decoration: none; background: linear-gradient(120deg, var(--bordeaux), var(--bordeaux-dark)); color: #fff; border-radius: 22px; padding: 24px; margin-bottom: 26px; transition: transform .12s; }
   .feature:hover { transform: translateY(-2px); }
@@ -25,15 +25,15 @@
   <div class="page-head">
     <span class="kicker">Stories</span>
     <h1>Motivational Stories</h1>
-    <p>Real people who faced hard things — and kept going. Tap a story to read it, then talk about the question with your family or a teammate.</p>
+    <ul class="bul"><li>Real people who faced hard things — and kept going.</li><li>Tap a story to read it.</li><li>Talk about the question with your family or a teammate.</li></ul>
   </div>
   <a class="feature" id="feature" href="#"></a>
   <div class="grid grid-3" id="stories"></div>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/stories-data.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/stories-data.js?v=20261111b"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("stories", { study: true });

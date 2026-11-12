@@ -182,3 +182,9 @@ footer b { color: var(--bordeaux); }
 /* ----- Return Home ----- */
 .return-home { display: flex; justify-content: center; margin: 34px 0 10px; }
 .return-home .btn { padding: 13px 26px; font-size: 17px; }
+
+/* Short bulleted statements (easy reading) */
+ul.bul { padding-left: 22px; margin: 6px 0 14px; }
+ul.bul li { margin: 5px 0; line-height: 1.45; }
+ul.bul li::marker { color: var(--bordeaux); }
+.page-head ul.bul { max-width: 760px; color: var(--muted); font-size: 17px; }

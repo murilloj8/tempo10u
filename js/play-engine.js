@@ -109,7 +109,7 @@
             <svg width="40" height="24"><line x1="2" y1="12" x2="30" y2="12" stroke="${INK}" stroke-width="3" stroke-dasharray="6 5"/><path d="M28 6 L38 12 L28 18 Z" fill="${INK}"/></svg><span>Pass</span>
             <svg width="40" height="24"><line x1="2" y1="12" x2="32" y2="12" stroke="${B}" stroke-width="3"/><rect x="32" y="1" width="4" height="22" fill="${B}"/></svg><span>Screen</span>
           </div></div>
-          ${play.tips ? `<div class="card accent"><h3>Coaching points</h3><p style="margin:0;font-size:15px">${play.tips}</p></div>` : ""}
+          ${play.tips ? `<div class="card accent"><h3>Coaching points</h3>${Array.isArray(play.tips) ? `<ul class="bul" style="margin:0;font-size:15px">${play.tips.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p style="margin:0;font-size:15px">${play.tips}</p>`}</div>` : ""}
         </aside>
       </div>`;
     const $ = (s) => root.querySelector(s);

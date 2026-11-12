@@ -4,60 +4,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Rules of the Game</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 </head>
 <body>
 <main>
   <div class="page-head">
     <span class="kicker">Rules</span>
     <h1>Rules of the Game</h1>
-    <p>Learn the basic rules of basketball, then the special rules of our league: SBMSA Junior Girls, <b>National League</b>. One rule at a time. When you've seen every rule in a group today, its button turns <b style="color:var(--good)">green</b>.</p>
+    <ul class="bul"><li>First the basic rules, then our league's special rules (SBMSA Girls, <b>National League</b>).</li><li>One rule at a time.</li><li>See every rule in a group today and its button turns <b style="color:var(--good)">green</b>.</li></ul>
   </div>
 
   <div id="deck"></div>
 
-  <div class="coach-note" style="margin-top:22px"><b>Coach note:</b> Our league rules come from the SBMSA 2024–25 rule book for the Junior League (National League). The book lists the free-throw distance as "13 feet for Junior League girls and 14 feet for National League" — Coach will confirm which line we use and update anything that changes in the 2026–27 rule book.</div>
+  <div class="coach-note" style="margin-top:22px"><b>Coach note:</b> These rules come from our league's rule book (SBMSA). Coach will tell us if anything changes this season.</div>
   <p class="small muted">Sources: <a href="https://sbmsa.org/wp-content/uploads/2024/12/Final-Basketball-Rules-2024-2025.pdf" target="_blank" rel="noopener">SBMSA Basketball Rules 2024–2025</a> · <a href="https://sbmsa.org/basketball-home/" target="_blank" rel="noopener">SBMSA Basketball</a> · High-school rules: <a href="https://www.nfhs.org/" target="_blank" rel="noopener">NFHS</a>.</p>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/signals.js?v=20261111a"></script>
-<script src="js/pictures.js?v=20261111a"></script>
-<script src="js/deck.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/signals.js?v=20261111b"></script>
+<script src="js/pictures.js?v=20261111b"></script>
+<script src="js/deck.js?v=20261111b"></script>
 <script>
 const B = "Basic rules", L = "Our league (SBMSA)";
 const RULES = [
-  { id: "teams", group: B, big: "5 v 5", title: "The teams", text: "Five players per team on the court. The goal: score in your basket and stop the other team from scoring in theirs.", tip: "Everyone on the court has a job on every play — offense AND defense." },
-  { id: "scoring", group: B, big: "1 · 2 · 3", title: "Scoring", text: "A basket inside the 3-point line is worth 2 points. A basket from behind the 3-point line is worth 3. Each made free throw is worth 1.", tip: "If your foot is touching the 3-point line, it's a 2." },
-  { id: "start", group: B, big: "TIP", title: "Starting the game", text: "A jump ball in the center circle starts the game. After that, the possession arrow at the scorer's table decides who gets the ball on held balls.", tip: "On a held ball, look at the arrow to know if we're on offense or defense." },
-  { id: "dribble", group: B, big: "DRIBBLE", title: "Moving with the ball", text: "You must dribble to move with the ball. When you stop, keep your pivot foot on the floor — you can pivot all you want.", tip: "Land on two feet (jump stop) so you can pick either foot as your pivot." },
-  { id: "double", group: B, big: "1 HAND", title: "One dribble at a time", text: "Dribble with one hand at a time. Once you stop dribbling and hold the ball, you can't dribble again — pass or shoot.", tip: "Don't pick up your dribble until you know where you're passing." },
-  { id: "oob", group: B, big: "LINE = OUT", title: "Out of bounds", text: "The lines are out of bounds. If the ball, or the player holding it, touches the line or the floor outside it, the other team gets the ball.", tip: "Ball goes to the team that did NOT touch it last." },
-  { id: "three", group: B, big: "3 SEC", title: "3 seconds in the lane", text: "On offense, you can't stay in the paint for more than 3 seconds in a row.", tip: "Count 1, 2, 3 — OUT! Then cut back in. MOTION — never stand still." },
-  { id: "backcourt", group: B, big: "OVER & BACK", title: "Backcourt violation", text: "Once your team brings the ball across half court, you can't take it back into the backcourt.", tip: "Use the half-court line like a wall behind you." },
-  { id: "five", group: B, big: "5 SEC", title: "5-second rules", text: "When inbounding, you have 5 seconds to pass the ball in. When you're holding the ball and a defender is guarding you closely, you must pass, shoot or dribble within 5 seconds.", tip: "Pivot, find your teammate, pass. Don't freeze!" },
-  { id: "ft", group: B, big: "AND-ONE", title: "Free throws", text: "Fouled while shooting? You get free throws: 2 for a 2-point try, 3 for a 3-point try. If your shot went in anyway, it counts and you get 1 free throw — an \"and-one\"!", tip: "Nobody can guard you on a free throw. Same routine every time." },
-  { id: "foulout", group: B, big: "5 FOULS", title: "Fouling out", text: "A player who gets 5 fouls must leave the game.", tip: "Play defense with your feet, not your hands." },
-  { id: "sport", group: B, big: "RESPECT", title: "Sportsmanship", text: "Shake hands, respect the refs, and help opponents up. Arguing or taunting can get a technical foul.", tip: "Control what you can — your effort and your attitude." },
+  { id: "teams", group: B, big: "5 v 5", title: "The teams", text: ["5 players per team on the court.", "Score in your basket.", "Stop them from scoring in theirs."], tip: "Everyone on the court has a job on every play — offense AND defense." },
+  { id: "scoring", group: B, big: "1 · 2 · 3", title: "Scoring", text: ["Inside the 3-point line = 2 points.", "Behind the 3-point line = 3 points.", "Free throw = 1 point."], tip: "If your foot is touching the 3-point line, it's a 2." },
+  { id: "start", group: B, big: "TIP", title: "Starting the game", text: ["A jump ball in the center circle starts the game.", "After that, the possession arrow decides who gets held balls."], tip: "On a held ball, look at the arrow to know if we're on offense or defense." },
+  { id: "dribble", group: B, big: "DRIBBLE", title: "Moving with the ball", text: ["Dribble to move with the ball.", "When you stop, keep your pivot foot down.", "You can pivot as much as you want."], tip: "Land on two feet (jump stop) so you can pick either foot as your pivot." },
+  { id: "double", group: B, big: "1 HAND", title: "One dribble at a time", text: ["Dribble with one hand at a time.", "Once you stop dribbling, you can't dribble again.", "Pass or shoot!"], tip: "Don't pick up your dribble until you know where you're passing." },
+  { id: "oob", group: B, big: "LINE = OUT", title: "Out of bounds", text: ["The lines are OUT of bounds.", "Ball or player with the ball touches the line? Out!", "The other team gets the ball."], tip: "Ball goes to the team that did NOT touch it last." },
+  { id: "three", group: B, big: "3 SEC", title: "3 seconds in the lane", text: ["On offense, don't stay in the paint more than 3 seconds.", "Count 1, 2, 3 — then get out!"], tip: "Count 1, 2, 3 — OUT! Then cut back in. MOTION — never stand still." },
+  { id: "backcourt", group: B, big: "OVER & BACK", title: "Backcourt violation", text: ["Once your team brings the ball over half court...", "...you can't take it back."], tip: "Use the half-court line like a wall behind you." },
+  { id: "five", group: B, big: "5 SEC", title: "5-second rules", text: ["Inbounding: pass it in within 5 seconds.", "Guarded closely: pass, shoot or dribble within 5 seconds."], tip: "Pivot, find your teammate, pass. Don't freeze!" },
+  { id: "ft", group: B, big: "AND-ONE", title: "Free throws", text: ["Fouled while shooting a 2? You get 2 free throws.", "Fouled on a 3? You get 3.", "Shot went in anyway? It counts + 1 free throw. That's an \"and-one\"!"], tip: "Nobody can guard you on a free throw. Same routine every time." },
+  { id: "foulout", group: B, big: "5 FOULS", title: "Fouling out", text: ["5 fouls and you're out of the game."], tip: "Play defense with your feet, not your hands." },
+  { id: "sport", group: B, big: "RESPECT", title: "Sportsmanship", text: ["Shake hands. Respect the refs. Help opponents up.", "Arguing or taunting = technical foul."], tip: "Control what you can — your effort and your attitude." },
 
-  { id: "goal", group: L, big: "10 FT", title: "Basket & ball", text: "We play on a 10-foot goal (same as high school and the pros) with a 28.5\" ball (size 6).", tip: "Use your legs on your shot — power comes from the ground up." },
-  { id: "ftline", group: L, big: "13 FT", title: "Free-throw line", text: "Junior League girls shoot free throws from 13 feet — closer than the 15-foot line painted on most courts. The ref will show you where to stand.", tip: "Coach will confirm this with the league (the rule book also mentions 14 feet for the National League)." },
-  { id: "length", group: L, big: "4 × 12", title: "Game length", text: "Four 12-minute quarters with a running clock. The clock stops for timeouts, free-throw lineups and technical fouls. In the second half of the 4th quarter it also stops for free throws, and in the last minute of the 2nd and 4th quarters it stops on every whistle.", tip: "A running clock means hustle back — the time keeps going!" },
-  { id: "breaks", group: L, big: "2 · 5", title: "Breaks", text: "2 minutes between quarters and 5 minutes at halftime. A team that isn't ready to play on time gets a technical foul.", tip: "Get water fast and get back to the huddle." },
-  { id: "timeouts", group: L, big: "4 T.O.", title: "Timeouts", text: "Each team gets 4 timeouts per game (no more than 2 in each half). Each timeout is 1 minute.", tip: "In a timeout: eyes on Coach, listen, then break with TEMPO!" },
-  { id: "ot", group: L, big: "OT", title: "Overtime", text: "Regular season: one 2-minute overtime, and if it's still tied the game ends in a tie. Playoffs: keep playing 2-minute overtimes until someone wins.", tip: "In overtime, substitutions are open and fouls carry over." },
-  { id: "playing", group: L, big: "1.5 QTRS", title: "Playing time", text: "Everyone plays! The starting five play the whole 1st quarter, the other five play the 2nd quarter, the 3rd quarter is split into two halves, and the 4th quarter has free substitution. Every player plays at least 1.5 quarters.", tip: "Be ready when it's your turn — the bench brings energy!" },
-  { id: "m2m", group: L, big: "MAN-TO-MAN", title: "Defense: man-to-man only", text: "Our league plays man-to-man defense only. Zone defense is not allowed. Switching who you guard is allowed any time.", tip: "Know your player. Talk: \"I've got 23!\"" },
-  { id: "double2", group: L, big: "2 ON BALL", title: "Double-teams", text: "You may only double-team the player WITH the ball. Double-teaming the ball handler is always allowed inside the paint. No \"chaser\" defense, and inside the 3-point line guard your player from a reasonable distance (the ref decides).", tip: "Help on the ball, then recover to your own player." },
-  { id: "inbound", group: L, big: "SET UP", title: "Inbounds plays", text: "Before the other team throws the ball in, our defense must be set up man-to-man.", tip: "Find your player and get between her and the basket." },
-  { id: "press", group: L, big: "NO PRESS", title: "No backcourt defense", text: "You can't guard the ball handler in her backcourt (no full-court press). Exception: in the last 60 seconds of the game, a team that is NOT ahead by 10 or more may defend in the backcourt.", tip: "On defense, sprint back and pick up your player at half court." },
-  { id: "iso", group: L, big: "NO ISO", title: "No isolation plays", text: "A team can't clear out so one player goes one-on-one. Plays like that are against the rules.", tip: "Share the ball — PASS FIRST! The extra pass is the best pass." },
-  { id: "warning", group: L, big: "WARN → T", title: "Breaking a special rule", text: "For our special rules (zone defense, backcourt defense, isolation plays): the first time is a warning, after that it's a technical foul.", tip: "Learn the rules so we never give away free points." },
-  { id: "bonus", group: L, big: "5TH FOUL", title: "Bonus free throws", text: "Starting with the other team's 5th team foul of each quarter, we shoot 2 free throws on every foul. Players foul out on their 5th personal foul.", tip: "Smart defense = fewer fouls = fewer free throws for them." },
-  { id: "tech", group: L, big: "T = 2 + BALL", title: "Technical fouls", text: "A technical foul gives the other team 2 free throws plus the ball. Two conduct technicals on a player or coach means ejection.", tip: "Respect the ref, respect the game." },
-  { id: "mercy", group: L, big: "+20", title: "Big lead", text: "If a team is ahead by 20 or more in the second half of the 4th quarter, the clock keeps running (it doesn't stop for free throws).", tip: "Win or lose, play the right way to the final buzzer." },
-  { id: "uniform", group: L, big: "TUCK IN", title: "Uniform", text: "League jersey and shorts at every game, jersey tucked in, gym shoes. Undershirts must all be the same solid color.", tip: "Look like a team, play like a team." }
+  { id: "goal", group: L, big: "10 FT", title: "Basket & ball", text: ["The basket is 10 feet high.", "We use a size 6 ball (28.5 inches)."], tip: "Use your legs on your shot — power comes from the ground up." },
+  { id: "ftline", group: L, big: "13 FT", title: "Free-throw line", text: ["We shoot free throws from 13 feet.", "That's closer than the line painted on most courts.", "The ref will show you where to stand."], tip: "Use the same routine every time: breathe, bounce, shoot." },
+  { id: "length", group: L, big: "4 × 12", title: "Game length", text: ["4 quarters, 12 minutes each.", "The clock keeps running most of the time.", "It stops for timeouts and some free throws.", "In the last minute of each half, it stops on every whistle."], tip: "A running clock means hustle back — the time keeps going!" },
+  { id: "breaks", group: L, big: "2 · 5", title: "Breaks", text: ["2 minutes between quarters.", "5 minutes at halftime.", "Not ready on time = technical foul."], tip: "Get water fast and get back to the huddle." },
+  { id: "timeouts", group: L, big: "4 T.O.", title: "Timeouts", text: ["4 timeouts per game.", "No more than 2 in each half.", "Each timeout is 1 minute."], tip: "In a timeout: eyes on Coach, listen, then break with TEMPO!" },
+  { id: "ot", group: L, big: "OT", title: "Overtime", text: ["Tied in the regular season? One 2-minute overtime. Still tied = tie game.", "Playoffs: keep playing 2-minute overtimes until someone wins."], tip: "In overtime, fouls from the game still count." },
+  { id: "playing", group: L, big: "1.5 QTRS", title: "Playing time", text: ["Everyone plays!", "Starting five play the 1st quarter.", "The other five play the 2nd quarter.", "The 3rd quarter is split in two.", "Anyone can sub in the 4th quarter.", "Everyone plays at least 1½ quarters."], tip: "Be ready when it's your turn — the bench brings energy!" },
+  { id: "m2m", group: L, big: "MAN-TO-MAN", title: "Defense: man-to-man only", text: ["We play man-to-man defense only.", "Zone defense is not allowed.", "You can switch who you guard any time."], tip: "Know your player. Talk: \"I've got 23!\"" },
+  { id: "double2", group: L, big: "2 ON BALL", title: "Double-teams", text: ["You may double-team only the player WITH the ball.", "Inside the paint, double-teaming the ball is always OK.", "Don't chase players who don't have the ball."], tip: "Help on the ball, then recover to your own player." },
+  { id: "inbound", group: L, big: "SET UP", title: "Inbounds plays", text: ["Before the other team inbounds, our defense must be set up man-to-man."], tip: "Find your player and get between her and the basket." },
+  { id: "press", group: L, big: "NO PRESS", title: "No backcourt defense", text: ["No guarding the ball handler in her backcourt (no full-court press).", "Exception: the last 60 seconds, if a team isn't ahead by 10 or more."], tip: "On defense, sprint back and pick up your player at half court." },
+  { id: "iso", group: L, big: "NO ISO", title: "No isolation plays", text: ["No clearing out so one player goes 1-on-1.", "Those plays are against the rules."], tip: "Share the ball — PASS FIRST! The extra pass is the best pass." },
+  { id: "warning", group: L, big: "WARN → T", title: "Breaking a special rule", text: ["Breaking a special rule (zone, press, isolation)?", "First time = warning.", "After that = technical foul."], tip: "Learn the rules so we never give away free points." },
+  { id: "bonus", group: L, big: "5TH FOUL", title: "Bonus free throws", text: ["From the other team's 5th foul in a quarter...", "...we shoot 2 free throws on every foul."], tip: "Smart defense = fewer fouls = fewer free throws for them." },
+  { id: "tech", group: L, big: "T = 2 + BALL", title: "Technical fouls", text: ["A technical = 2 free throws + the ball for the other team.", "Two conduct technicals = you must leave the game."], tip: "Respect the ref, respect the game." },
+  { id: "mercy", group: L, big: "+20", title: "Big lead", text: ["Ahead by 20+ late in the 4th quarter?", "The clock keeps running, even on free throws."], tip: "Win or lose, play the right way to the final buzzer." },
+  { id: "uniform", group: L, big: "TUCK IN", title: "Uniform", text: ["League jersey and shorts every game.", "Jersey tucked in. Gym shoes on.", "Undershirts must all be the same color."], tip: "Look like a team, play like a team." }
 ];
 (async function () {
   if (!(await TEMPO.boot("rules", { study: true }))) return;
@@ -71,7 +71,7 @@ const RULES = [
     body: (r) => `
       <span class="pill ${r.group === L ? "b" : ""}">${esc(r.group)}</span>
       <h2>${esc(r.title)}</h2>
-      <p>${esc(r.text)}</p>
+      <ul class="bul">${[].concat(r.text).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
       <div class="home-drill"><b>Coach tip:</b> ${esc(r.tip)}</div>`
   });
 })();

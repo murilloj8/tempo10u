@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Weekly Quizzes</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 <style>
   .topic h3 { margin: 6px 0 4px; }
   .topic .status { margin: 10px 0 14px; }
@@ -31,7 +31,7 @@
     <div class="page-head">
       <span class="kicker">Week <span id="wk"></span> · <span id="wkDates"></span></span>
       <h1>Weekly Quizzes</h1>
-      <p>A new quiz on every topic each Monday — and each week's set is a little harder than the last (Set 1 Rookie → Set 10 MVP). Retake it as many times as you want; Coach sees your best score for the week.</p>
+      <ul class="bul"><li>New quizzes every Monday.</li><li>Each week gets a little harder (Rookie → MVP).</li><li>Retake as many times as you want.</li><li>Coach sees your best score.</li></ul>
     </div>
     <div class="grid grid-2" id="topics"></div>
     <div class="section">
@@ -49,9 +49,9 @@
   </section>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/quiz-data.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/quiz-data.js?v=20261111b"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("quizzes");

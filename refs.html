@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Referee Signals</title>
-<link rel="stylesheet" href="css/style.css?v=20261111a">
+<link rel="stylesheet" href="css/style.css?v=20261111b">
 <style>
   .tag { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
   .tag.foul { background: #FCE8E6; color: var(--bad); }
@@ -22,17 +22,17 @@
   <div class="page-head">
     <span class="kicker">Referee signals</span>
     <h1>Read the Ref</h1>
-    <p>Every whistle comes with a hand signal. Go through the signals one at a time. When you've seen every signal in a group today, its button turns <b style="color:var(--good)">green</b>.</p>
+    <ul class="bul"><li>Every whistle comes with a hand signal.</li><li>Learn them one at a time.</li><li>See every signal in a group today and its button turns <b style="color:var(--good)">green</b>.</li></ul>
   </div>
 
   <div class="fv" style="margin-bottom:24px">
     <div class="card" style="border-top:6px solid var(--bad)">
       <h3 style="color:var(--bad)">Foul = illegal CONTACT</h3>
-      <p style="margin:0">Pushing, holding, hitting arms, running into a set defender. The ref first raises a <b>closed fist</b>.</p>
+      <ul class="bul" style="margin:0"><li>Pushing, holding, hitting arms, running into a defender.</li><li>The ref raises a <b>closed fist</b>.</li></ul>
     </div>
     <div class="card" style="border-top:6px solid var(--gold)">
       <h3 style="color:#8A5A00">Violation = breaking a RULE</h3>
-      <p style="margin:0">Traveling, double dribble, 3 seconds, stepping out of bounds. The ref first raises an <b>open hand</b>.</p>
+      <ul class="bul" style="margin:0"><li>Traveling, double dribble, 3 seconds, stepping out.</li><li>The ref raises an <b>open hand</b>.</li></ul>
     </div>
   </div>
 
@@ -52,10 +52,10 @@
   <p class="small muted">Signals follow the <a href="https://www.nfhs.org/" target="_blank" rel="noopener">NFHS</a> official signal chart.</p>
 </main>
 
-<script src="js/config.js?v=20261111a"></script>
-<script src="js/app.js?v=20261111a"></script>
-<script src="js/signals.js?v=20261111a"></script>
-<script src="js/deck.js?v=20261111a"></script>
+<script src="js/config.js?v=20261111b"></script>
+<script src="js/app.js?v=20261111b"></script>
+<script src="js/signals.js?v=20261111b"></script>
+<script src="js/deck.js?v=20261111b"></script>
 <script>
 (async function () {
   if (!(await TEMPO.boot("refs", { study: true }))) return;
@@ -71,7 +71,7 @@
     body: (s) => `
       <span class="tag ${s.kind}">${kindLabel[s.kind]}</span>
       <h2>${esc(s.name)}</h2>
-      <p>${esc(s.means)}</p>
+      <ul class="bul">${[].concat(s.means).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
       ${s.after ? `<p><b>Then:</b> ${esc(s.after)}</p>` : ""}
       ${s.avoid ? `<div class="home-drill"><b>How to avoid it:</b> ${esc(s.avoid)}</div>` : ""}`
   });
@@ -81,7 +81,7 @@
   function showCard() { document.getElementById("flFig").innerHTML = figure(deck[fi % deck.length]); document.getElementById("flAns").innerHTML = hint; }
   document.getElementById("flShow").onclick = () => {
     const s = deck[fi % deck.length];
-    document.getElementById("flAns").innerHTML = `<h3 style="color:var(--bordeaux);margin-top:8px">${esc(s.name)}</h3><p class="small">${esc(s.means)}</p>`;
+    document.getElementById("flAns").innerHTML = `<h3 style="color:var(--bordeaux);margin-top:8px">${esc(s.name)}</h3><ul class="bul small">${[].concat(s.means).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
   };
   document.getElementById("flNext").onclick = () => { fi++; if (fi % deck.length === 0) deck = TEMPO.shuffle(SIGNALS); showCard(); };
   showCard();
