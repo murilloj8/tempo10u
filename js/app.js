@@ -118,6 +118,10 @@
     async setTeamCode(code) { const db = this._db(); db.settings = { teamCode: code }; this._save(db); },
     async checkTeamCode(code) { return code === String((this._db().settings || {}).teamCode || CFG.teamCode).toUpperCase(); },
     async getStoryPlan() { return this._db().storyPlan || null; },
+    async getPractice(id) { return (this._db().practice || {})[id] || null; },
+    async setPractice(id, data) { const db = this._db(); db.practice = db.practice || {}; db.practice[id] = data; this._save(db); },
+    async deletePractice(id) { const db = this._db(); if (db.practice) delete db.practice[id]; this._save(db); },
+    async listPractices() { return Object.entries(this._db().practice || {}).map(([id, d]) => ({ id, ...d })); },
     async setStoryPlan(plan) { const db = this._db(); db.storyPlan = plan; this._save(db); },
     async getActivity(id) { return (this._db().activity || {})[id] || null; },
     async setActivity(id, data) { const db = this._db(); db.activity = db.activity || {}; db.activity[id] = data; this._save(db); },
@@ -204,6 +208,10 @@
     async allResults() { return (await this.F.getDocs(this.F.collection(this.db, "results"))).docs.map((d) => d.data()); },
     async getTeamCode() { const s = await this.F.getDoc(this.F.doc(this.db, "settings", "team")); return s.exists() ? s.data().teamCode : null; },
     async setTeamCode(code) { await this.F.setDoc(this.F.doc(this.db, "settings", "team"), { teamCode: code, updatedAt: Date.now() }); },
+    async getPractice(id) { const s = await this.F.getDoc(this.F.doc(this.db, "practice", id)); return s.exists() ? s.data() : null; },
+    async setPractice(id, data) { await this.F.setDoc(this.F.doc(this.db, "practice", id), data); },
+    async deletePractice(id) { await this.F.deleteDoc(this.F.doc(this.db, "practice", id)); },
+    async listPractices() { return (await this.F.getDocs(this.F.collection(this.db, "practice"))).docs.map((d) => ({ id: d.id, ...d.data() })); },
     async getStoryPlan() { const s = await this.F.getDoc(this.F.doc(this.db, "settings", "stories")); return s.exists() ? s.data() : null; },
     async setStoryPlan(plan) { await this.F.setDoc(this.F.doc(this.db, "settings", "stories"), plan); },
     async getActivity(id) { const s = await this.F.getDoc(this.F.doc(this.db, "activity", id)); return s.exists() ? s.data() : null; },
@@ -326,6 +334,11 @@
       const base = all.filter((s) => s.builtIn);
       return all.find((s) => s.id === id) || base[(Math.max(1, wk) - 1) % base.length];
     },
+    /* Practice planning (coach only): practice/_bank = drill bank, practice/YYYY-MM-DD = a plan. */
+    getPractice(id) { return backend.getPractice(id); },
+    setPractice(id, data) { return backend.setPractice(id, { ...data, updatedAt: Date.now() }); },
+    deletePractice(id) { return backend.deletePractice(id); },
+    listPractices() { return backend.listPractices(); },
     allUsers() { return backend.allUsers(); },
     allResults() { return backend.allResults(); },
     removePlayer(uid) { return backend.removePlayer(uid); },
