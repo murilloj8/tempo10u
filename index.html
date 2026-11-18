@@ -30,11 +30,18 @@
   .legend .ic.s { background: var(--blue-dark); } .legend .ic.q { background: var(--bordeaux); } .legend .ic.a { background: var(--gold); }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; }
   .day .star { font-size: 18px; color: var(--good); min-height: 22px; }
+  /* Step headings + menu-style tiles (Study Zone and Quiz Zone) */
+  .step-head { display: flex; align-items: baseline; gap: 12px; margin: 30px 0 12px; }
+  .step-head h2 { margin: 0; color: var(--bordeaux); }
+  .step { flex: none; font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--blue-dark); padding: 4px 10px; border-radius: 999px; position: relative; top: -3px; }
   .zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .zone { display: flex; align-items: center; gap: 12px; padding: 18px 16px; background: #fff; border: 2px solid var(--line); border-radius: 14px;
-          text-decoration: none; color: var(--bordeaux); font-family: var(--display); font-size: 18px; box-shadow: var(--shadow); transition: transform .12s, border-color .12s; }
+  .zone { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; min-height: 118px; padding: 16px 12px; background: #fff; border: 2px solid var(--line); border-radius: 16px;
+          text-decoration: none; color: var(--bordeaux); font-family: var(--display); font-size: 18px; line-height: 1.15; box-shadow: var(--shadow); transition: transform .12s, border-color .12s; }
   .zone:hover { transform: translateY(-2px); border-color: var(--blue); }
-  .zone span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--blue-soft); font-size: 16px; flex: none; }
+  .zone .zi { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--blue-soft); font-size: 26px; }
+  .zone.quiz .zi { background: var(--bordeaux-soft); }
+  #quizStatus { grid-template-columns: repeat(4, 1fr); }
+  .zone .pill { font-family: var(--body); font-size: 12px; }
   .zone.done { border-color: var(--good); }
   .sp { display: flex; flex-direction: column; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--line); border-top: 6px solid var(--bordeaux); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); transition: transform .12s; }
   .sp:hover { transform: translateY(-3px); }
@@ -53,7 +60,7 @@
   .aff li::before { counter-increment: n; content: counter(n); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--blue-soft); color: var(--bordeaux); font-weight: 900; }
   .aff li b { color: var(--bordeaux); }
   .aff-close { font-style: italic; font-weight: 700; color: var(--bordeaux); text-align: center; font-size: 17px; margin: 14px 0; }
-  @media (max-width: 700px) { .zones { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 12px; } }
+  @media (max-width: 700px) { .zones, #quizStatus { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 10px; min-height: 108px; } .zone .zi { width: 42px; height: 42px; font-size: 22px; } }
   @media (max-width: 480px) { .ic { width: 20px; height: 20px; font-size: 10px; } .day .icons { gap: 3px; } }
 </style>
 </head>
@@ -111,47 +118,44 @@
       <h1>Welcome back, <span id="hiName"></span>!</h1>
       <p style="margin-bottom:6px">Every school day:</p>
       <ul class="hero-list">
+        <li>Say your affirmation</li>
         <li>Study one zone</li>
         <li>Take a quiz</li>
-        <li>Say your affirmation</li>
       </ul>
     </div>
 
     <div class="card accent" style="margin-bottom:22px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <h3 style="margin:0">My week</h3>
+        <h3 style="margin:0">My Week</h3>
         <span class="small muted" id="weekCount"></span>
       </div>
-      <div class="week" id="week" tabindex="0" aria-label="My week — scroll sideways"></div><div class="week-hint">Swipe to see the whole week →</div>
+      <div class="week" id="week" tabindex="0" aria-label="My Week — scroll sideways"></div><div class="week-hint">Swipe to see the whole week →</div>
       <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>✓ = day complete</span></div>
     </div>
 
-    <a class="card blue aff-mini" href="affirmation.html" style="margin-bottom:22px">
-      <div class="kicker">Daily affirmation</div>
+    <div class="step-head"><span class="step">Step 1</span><h2>Daily Affirmation</h2></div>
+    <a class="card blue aff-mini" href="affirmation.html">
       <div class="aff-row">
         <div>
           <h3>I Am TEMPO</h3>
           <p id="affLine"></p>
         </div>
-        <div class="aff-go"><span id="affStatus" class="pill b">Not done today</span><span class="btn">Open →</span></div>
+        <div class="aff-go"><span class="btn">Open →</span><span id="affStatus" class="pill b">Not done today</span></div>
       </div>
     </a>
 
-    <h2 style="color:var(--bordeaux)">Study zones</h2>
-    <div class="zones" style="margin-bottom:26px">
-      <a class="zone" href="court.html"><span>1</span>The Court</a>
-      <a class="zone" href="refs.html"><span>2</span>Referee Signals</a>
-      <a class="zone" href="rules.html"><span>3</span>Rules</a>
-      <a class="zone" href="fundamentals.html"><span>4</span>Fundamentals</a>
-      <a class="zone" href="plays.html"><span>5</span>Plays</a>
-      <a class="zone" href="culture.html"><span>6</span>Team Culture</a>
+    <div class="step-head"><span class="step">Step 2</span><h2>Study Zone</h2></div>
+    <div class="zones">
+      <a class="zone" href="court.html"><span class="zi" aria-hidden="true">🏟️</span>The Court</a>
+      <a class="zone" href="refs.html"><span class="zi" aria-hidden="true">🦓</span>Referee Signals</a>
+      <a class="zone" href="rules.html"><span class="zi" aria-hidden="true">📘</span>Rules</a>
+      <a class="zone" href="fundamentals.html"><span class="zi" aria-hidden="true">🏀</span>Fundamentals</a>
+      <a class="zone" href="plays.html"><span class="zi" aria-hidden="true">📋</span>Plays</a>
+      <a class="zone" href="culture.html"><span class="zi" aria-hidden="true">💪</span>Team Culture</a>
     </div>
 
-    <div class="card accent">
-      <h3>This week's quizzes</h3>
-      <div id="quizStatus" class="muted">Loading…</div>
-      <a class="btn" href="quizzes.html" style="margin-top:12px">Go to quizzes</a>
-    </div>
+    <div class="step-head"><span class="step">Step 3</span><h2>Quiz Zone</h2></div>
+    <div class="zones" id="quizStatus"><div class="muted">Loading…</div></div>
 
     <h2 style="color:var(--bordeaux);margin-top:30px">Story of the week</h2>
     <div id="storyPreviews" style="max-width:560px"></div>
@@ -235,13 +239,15 @@
 
     try {
       const res = await T.myResults();
-      const topics = [["rules", "Rules & Signals"], ["court", "The Court"], ["fundamentals", "Fundamentals"], ["culture", "Team Culture"]];
-      $("#quizStatus").innerHTML = topics.map(([k, label]) => {
+      const topics = [["rules", "Rules & Signals", "📘"], ["court", "The Court", "🏟️"], ["fundamentals", "Fundamentals", "🏀"], ["culture", "Team Culture", "💪"]];
+      $("#quizStatus").innerHTML = topics.map(([k, label, icon]) => {
         const r = res.find((x) => x.topic === k && x.week === wk);
-        return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line)">
-          <span>${label}</span>${r ? `<span class="pill g">Best ${r.best}/${r.total}</span>` : '<span class="pill b">Not taken</span>'}</div>`;
+        const last = r ? (r.last != null ? r.last : r.best) : null;      // most recent try
+        const pct = r && r.total ? Math.round((100 * last) / r.total) : null;
+        return `<a class="zone quiz" href="quizzes.html#${k}"><span class="zi" aria-hidden="true">${icon}</span>${label}
+          ${r ? `<span class="pill ${pct >= 80 ? "g" : ""}">Last score ${pct}%</span>` : '<span class="pill b">Not taken</span>'}</a>`;
       }).join("");
-    } catch (e) { $("#quizStatus").textContent = "Could not load your scores."; }
+    } catch (e) { $("#quizStatus").innerHTML = '<div class="muted">Could not load your scores.</div>'; }
   }
 })();
 </script>
