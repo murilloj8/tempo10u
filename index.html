@@ -25,9 +25,9 @@
   .day .icons { display: flex; justify-content: center; gap: 6px; margin: 8px 0 4px; }
   .ic { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-style: normal; font-weight: 900; font-size: 12px; background: var(--line); color: #fff; }
   .ic.s::after { content: "S"; } .ic.q::after { content: "Q"; } .ic.a::after { content: "A"; }
-  .ic.on.s { background: var(--blue-dark); } .ic.on.q { background: var(--bordeaux); } .ic.on.a { background: var(--gold); }
+  .ic.on { background: var(--good); }
   .legend .ic { width: 18px; height: 18px; font-size: 9px; vertical-align: -4px; }
-  .legend .ic.s { background: var(--blue-dark); } .legend .ic.q { background: var(--bordeaux); } .legend .ic.a { background: var(--gold); }
+  .legend .ic { background: var(--good); }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; }
   .day .star { font-size: 18px; color: var(--good); min-height: 22px; }
   /* Step headings + menu-style tiles (Study Zone and Quiz Zone) */
@@ -38,8 +38,9 @@
   .zone { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; min-height: 118px; padding: 16px 12px; background: #fff; border: 2px solid var(--line); border-radius: 16px;
           text-decoration: none; color: var(--bordeaux); font-family: var(--display); font-size: 18px; line-height: 1.15; box-shadow: var(--shadow); transition: transform .12s, border-color .12s; }
   .zone:hover { transform: translateY(-2px); border-color: var(--blue); }
-  .zone .zi { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--blue-soft); font-size: 26px; }
-  .zone.quiz .zi { background: var(--bordeaux-soft); }
+  .zone .zi { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--blue-soft); color: var(--blue-dark); }
+  .zone .zi svg { width: 32px; height: 32px; }
+  .zone.quiz .zi { background: var(--bordeaux-soft); color: var(--bordeaux); }
   #quizStatus { grid-template-columns: repeat(4, 1fr); }
   .zone .pill { font-family: var(--body); font-size: 12px; }
   .zone.done { border-color: var(--good); }
@@ -60,7 +61,7 @@
   .aff li::before { counter-increment: n; content: counter(n); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--blue-soft); color: var(--bordeaux); font-weight: 900; }
   .aff li b { color: var(--bordeaux); }
   .aff-close { font-style: italic; font-weight: 700; color: var(--bordeaux); text-align: center; font-size: 17px; margin: 14px 0; }
-  @media (max-width: 700px) { .zones, #quizStatus { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 10px; min-height: 108px; } .zone .zi { width: 42px; height: 42px; font-size: 22px; } }
+  @media (max-width: 700px) { .zones, #quizStatus { grid-template-columns: repeat(2, 1fr); } .zone { font-size: 15px; padding: 14px 10px; min-height: 108px; } .zone .zi { width: 46px; height: 46px; } .zone .zi svg { width: 28px; height: 28px; } }
   @media (max-width: 480px) { .ic { width: 20px; height: 20px; font-size: 10px; } .day .icons { gap: 3px; } }
 </style>
 </head>
@@ -146,12 +147,12 @@
 
     <div class="step-head"><span class="step">Step 2</span><h2>Study Zone</h2></div>
     <div class="zones">
-      <a class="zone" href="court.html"><span class="zi" aria-hidden="true">🏟️</span>The Court</a>
-      <a class="zone" href="refs.html"><span class="zi" aria-hidden="true">🦓</span>Referee Signals</a>
-      <a class="zone" href="rules.html"><span class="zi" aria-hidden="true">📘</span>Rules</a>
-      <a class="zone" href="fundamentals.html"><span class="zi" aria-hidden="true">🏀</span>Fundamentals</a>
-      <a class="zone" href="plays.html"><span class="zi" aria-hidden="true">📋</span>Plays</a>
-      <a class="zone" href="culture.html"><span class="zi" aria-hidden="true">💪</span>Team Culture</a>
+      <a class="zone" href="court.html" data-icon="court"><span class="zi"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="2" fill="currentColor" fill-opacity=".18"/><rect x="5" y="11" width="38" height="26" rx="2"/><path d="M24 11v26"/><circle cx="24" cy="24" r="4.5"/><path d="M5 19h7v10H5M43 19h-7v10h7"/><path d="M12 19a5 5 0 0 1 0 10M36 19a5 5 0 0 0 0 10" stroke-dasharray="0"/></svg></span>The Court</a>
+      <a class="zone" href="refs.html" data-icon="refs"><span class="zi"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l-9 5 3 9 5-2v20h16V20l5 2 3-9-9-5c-1 3-4 5-7 5s-6-2-7-5z" fill="#fff"/><path d="M21 12.5V40M27 12.5V40M16 20v20M32 20v20" stroke-width="3"/><path d="M17 8l-9 5 3 9 5-2v20h16V20l5 2 3-9-9-5c-1 3-4 5-7 5s-6-2-7-5z"/></svg></span>Referee Signals</a>
+      <a class="zone" href="rules.html" data-icon="rules"><span class="zi"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 13c-5-3-11-4-17-3v26c6-1 12 0 17 3 5-3 11-4 17-3V10c-6-1-12 0-17 3z" fill="currentColor" fill-opacity=".18"/><path d="M24 13c-5-3-11-4-17-3v26c6-1 12 0 17 3 5-3 11-4 17-3V10c-6-1-12 0-17 3zM24 13v26"/><path d="M11 17c3-.4 6 0 9 1M11 23c3-.4 6 0 9 1M11 29c3-.4 6 0 9 1M28 18l3 3 6-6"/></svg></span>Rules</a>
+      <a class="zone" href="fundamentals.html" data-icon="fundamentals"><span class="zi"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="16" fill="currentColor" fill-opacity=".18"/><circle cx="24" cy="24" r="16"/><path d="M8 24h32M24 8v32M12.5 12.5c5 4 5 19 0 23M35.5 12.5c-5 4-5 19 0 23"/></svg></span>Fundamentals</a>
+      <a class="zone" href="plays.html" data-icon="plays"><span class="zi"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="9" width="28" height="33" rx="3" fill="currentColor" fill-opacity=".18"/><rect x="10" y="9" width="28" height="33" rx="3"/><rect x="18" y="6" width="12" height="6" rx="2" fill="#fff"/><path d="M15 18l5 5M20 18l-5 5"/><circle cx="31" cy="34" r="3.2"/><path d="M19 26c2 7 6 9 9 8.5" /><path d="M24.5 31.5l3.7 3-1.4 4.2"/></svg></span>Plays</a>
+      <a class="zone" href="culture.html" data-icon="culture"><span class="zi"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="15" r="5" fill="currentColor" fill-opacity=".18"/><circle cx="24" cy="15" r="5"/><path d="M15 38v-3a9 9 0 0 1 18 0v3" fill="currentColor" fill-opacity=".18"/><path d="M15 38v-3a9 9 0 0 1 18 0v3"/><circle cx="11" cy="20" r="4"/><path d="M4 38v-2a7 7 0 0 1 10-6.3"/><circle cx="37" cy="20" r="4"/><path d="M44 38v-2a7 7 0 0 0-10-6.3"/></svg></span>Team Culture</a>
     </div>
 
     <div class="step-head"><span class="step">Step 3</span><h2>Quiz Zone</h2></div>
@@ -239,12 +240,13 @@
 
     try {
       const res = await T.myResults();
-      const topics = [["rules", "Rules & Signals", "📘"], ["court", "The Court", "🏟️"], ["fundamentals", "Fundamentals", "🏀"], ["culture", "Team Culture", "💪"]];
+      const ICON = (k) => document.querySelector(`.zone[data-icon="${k}"] .zi`).innerHTML;
+      const topics = [["rules", "Rules & Signals", ICON("rules")], ["court", "The Court", ICON("court")], ["fundamentals", "Fundamentals", ICON("fundamentals")], ["culture", "Team Culture", ICON("culture")]];
       $("#quizStatus").innerHTML = topics.map(([k, label, icon]) => {
         const r = res.find((x) => x.topic === k && x.week === wk);
         const last = r ? (r.last != null ? r.last : r.best) : null;      // most recent try
         const pct = r && r.total ? Math.round((100 * last) / r.total) : null;
-        return `<a class="zone quiz" href="quizzes.html#${k}"><span class="zi" aria-hidden="true">${icon}</span>${label}
+        return `<a class="zone quiz" href="quizzes.html#${k}"><span class="zi">${icon}</span>${label}
           ${r ? `<span class="pill ${pct >= 80 ? "g" : ""}">Last score ${pct}%</span>` : '<span class="pill b">Not taken</span>'}</a>`;
       }).join("");
     } catch (e) { $("#quizStatus").innerHTML = '<div class="muted">Could not load your scores.</div>'; }
