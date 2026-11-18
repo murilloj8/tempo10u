@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Coach Dashboard</title>
-<link rel="stylesheet" href="css/style.css?v=20261117a">
+<link rel="stylesheet" href="css/style.css?v=20261117b">
 <style>
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
   .stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
@@ -72,6 +72,14 @@
   </div>
 
   <div class="section">
+    <h2>Lineups</h2>
+    <div class="card" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;max-width:760px">
+      <div style="flex:1;min-width:240px">Keep the full roster in one place and build 1st-team and 2nd-team lineups from it. Save as many lineups as you need.</div>
+      <a class="btn" href="lineups.html">Open lineups →</a>
+    </div>
+  </div>
+
+  <div class="section">
     <h2>Story of the week</h2>
     <p class="muted" style="max-width:760px">Players only see the story you pick for the current week (on Home and the Stories page). Weeks you leave on <b>Automatic</b> use the built-in rotation.</p>
     <div class="grid grid-2" style="align-items:start">
@@ -116,10 +124,10 @@
   </div>
 </main>
 
-<script src="js/config.js?v=20261117a"></script>
-<script src="js/app.js?v=20261117a"></script>
-<script src="js/quiz-data.js?v=20261117a"></script>
-<script src="js/stories-data.js?v=20261117a"></script>
+<script src="js/config.js?v=20261117b"></script>
+<script src="js/app.js?v=20261117b"></script>
+<script src="js/quiz-data.js?v=20261117b"></script>
+<script src="js/stories-data.js?v=20261117b"></script>
 <script>
 (async function () {
   const me = await TEMPO.boot("coach", { coachOnly: true });
