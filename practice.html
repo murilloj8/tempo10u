@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Practice Planning</title>
-<link rel="stylesheet" href="css/style.css?v=20261118a">
+<link rel="stylesheet" href="css/style.css?v=20261118b">
 <style>
   .planner { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 22px; align-items: start; }
   @media (max-width: 820px) { .planner { grid-template-columns: 1fr; } }
@@ -93,7 +93,7 @@
     <h1>Practice Planning</h1>
     <ul class="bul">
       <li>Add drills to the staging area (name, minutes, type). Open <b>Objectives, instructions &amp; court diagram</b> to add details.</li>
-      <li>Drag them into the 2-hour practice (or tap <b>＋</b>). Drag blocks to reorder.</li>
+      <li>Drag them into the 2-hour practice (or tap <b>+</b>). Drag blocks to reorder.</li>
       <li>Pick the date and <b>Save plan</b>. Saved plans are listed at the bottom.</li>
     </ul>
   </div>
@@ -154,9 +154,9 @@
         <div class="no-print" style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 4px;align-items:center">
           <button id="savePlan">Save plan</button>
           <button class="secondary" id="newPlan">New plan</button>
-          <button class="ghost" id="printPlan">Print</button>
-          <button class="ghost" id="imgPlan">Download image</button>
-          <button class="ghost" id="pdfPlan">Print with instructions</button>
+          <button class="ghost" id="printPlan"><i data-ico="printer" data-size="18" class="inl-ico"></i>Print</button>
+          <button class="ghost" id="imgPlan"><i data-ico="image" data-size="18" class="inl-ico"></i>Image</button>
+          <button class="ghost" id="pdfPlan" title="Print with instructions (PDF)"><i data-ico="file" data-size="18" class="inl-ico"></i>With instructions</button>
           <button class="ghost" id="clearPlan">Clear drills</button>
           <span id="dirty" class="small muted"></span>
         </div>
@@ -177,10 +177,10 @@
   </div>
 </main>
 
-<script src="js/config.js?v=20261118a"></script>
-<script src="js/app.js?v=20261118a"></script>
-<script src="js/drill-diagram.js?v=20261118a"></script>
-<script src="js/pdf-lite.js?v=20261118a"></script>
+<script src="js/config.js?v=20261118b"></script>
+<script src="js/app.js?v=20261118b"></script>
+<script src="js/drill-diagram.js?v=20261118b"></script>
+<script src="js/pdf-lite.js?v=20261118b"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("coach", { coachOnly: true });
@@ -202,7 +202,7 @@
     $("#dgArea").innerHTML = formDiagram.length
       ? `<div class="dg-thumb" id="dgThumb" title="Edit diagram">${TEMPO_DIAGRAM.svg(formDiagram, 'style="width:100%;height:auto;display:block;border-radius:10px"')}</div>
          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" id="dgEdit" type="button">Edit diagram</button><button class="ghost" id="dgRemove" type="button">Remove</button></div>`
-      : `<button class="secondary" id="dgEdit" type="button">✏️ Draw court diagram</button><div class="small muted" style="margin-top:4px">Optional — players, defenders, ball, cones and lines.</div>`;
+      : `<button class="secondary" id="dgEdit" type="button">${TEMPO.icon("pencil", 18).replace('class="ico"', 'class="ico inl"')}Draw court diagram</button><div class="small muted" style="margin-top:4px">Optional — players, defenders, ball, cones and lines.</div>`;
   }
   $("#dgArea").addEventListener("click", async (e) => {
     if (e.target.closest("#dgRemove")) { formDiagram = []; return renderDgArea(); }
@@ -233,9 +233,9 @@
         <span class="grip" title="Drag">⠿</span>
         <div class="info"><div class="name">${esc(d.name)}</div><div class="tags">${tags(d)}${(d.obj || d.inst) ? '<span class="has">Notes</span>' : ""}${(d.diagram || []).length ? '<span class="has">Diagram</span>' : ""}</div></div>
         <span class="mins">${d.min}′</span>
-        <button class="ib" data-act="add" title="Add to practice">＋</button>
-        <button class="ib" data-act="edit" title="Edit">✎</button>
-        <button class="ib" data-act="del" title="Remove from staging">×</button>
+        <button class="ib" data-act="add" title="Add to practice" aria-label="Add to practice">${TEMPO.icon("plus", 18)}</button>
+        <button class="ib" data-act="edit" title="Edit" aria-label="Edit">${TEMPO.icon("pencil", 18)}</button>
+        <button class="ib" data-act="del" title="Remove from staging" aria-label="Remove from staging">${TEMPO.icon("x", 18)}</button>
       </div>`).join("") : '<div class="empty">Add your first drill above.</div>';
   }
   async function saveBank() {
@@ -301,7 +301,7 @@
         <div style="flex:1;min-width:0"><div><span class="name">${esc(d.name)}</span> <span class="when">${clock($("#pStart").value, from)} – ${clock($("#pStart").value, t)}</span></div>
           ${d.min * PX >= 72 ? `<div class="tags">${tags(d)}</div>` : ""}</div>
         <input type="number" min="1" max="120" value="${d.min}" data-i="${i}" title="Minutes" aria-label="Minutes">
-        <button class="ib" data-act="rm" data-i="${i}" title="Remove">×</button>
+        <button class="ib" data-act="rm" data-i="${i}" title="Remove" aria-label="Remove">${TEMPO.icon("x", 18)}</button>
       </div>`;
     }).join("");
     const left = TOTAL - t;
@@ -621,9 +621,9 @@
         <span><b>${esc(prettyDate(p.id))}</b>${p.id === t ? ' <span class="pill g">today</span>' : p.id > t ? ' <span class="pill">upcoming</span>' : ""}
           ${p.notes ? `<div class="small muted">${esc(p.notes)}</div>` : ""}</span>
         <span class="small muted" style="white-space:nowrap">${(p.drills || []).length} drills · ${p.total || 0} min
-          <button class="ib" data-img="${p.id}" title="Download image">⬇</button>
-          <button class="ib" data-pdf="${p.id}" title="Print with instructions (PDF)">📄</button>
-          <button class="ib" data-del="${p.id}" title="Delete plan">🗑</button></span>
+          <button class="ib" data-img="${p.id}" title="Download image" aria-label="Download image">${TEMPO.icon("download", 18)}</button>
+          <button class="ib" data-pdf="${p.id}" title="Print with instructions (PDF)" aria-label="Print with instructions (PDF)">${TEMPO.icon("file", 18)}</button>
+          <button class="ib" data-del="${p.id}" title="Delete plan" aria-label="Delete plan">${TEMPO.icon("trash", 18)}</button></span>
       </a>`).join("") : '<div class="empty">No saved plans yet.</div>';
   }
   $("#archive").addEventListener("click", async (e) => {

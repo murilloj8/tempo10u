@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Plays</title>
-<link rel="stylesheet" href="css/style.css?v=20261118a">
+<link rel="stylesheet" href="css/style.css?v=20261118b">
 <style>
   .play { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .12s, box-shadow .12s; }
   .play:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(74,18,40,.14); }
@@ -13,6 +13,8 @@
   .play p { margin: 0 0 8px; color: var(--muted); }
   .play .go { font-weight: 800; color: var(--bordeaux); }
   @media (max-width: 520px) { .play { grid-template-columns: 80px 1fr; } .play .num { height: 80px; font-size: 30px; } }
+  .play-ic { display: inline-grid !important; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--bordeaux); color: #fff !important; margin-top: 8px; padding-left: 3px; }
+  .play:hover .play-ic { background: var(--blue-dark); }
 </style>
 </head>
 <body>
@@ -29,7 +31,7 @@
           <path d="M8 14 L14 22 L23 18"/><path d="M56 50 L50 42 L41 46"/></svg></div>
       <div><span class="pill">Half-court offense</span> <span class="pill b">vs Man-to-man defense</span>
         <h3>Motion</h3>
-        <span class="go">Watch →</span></div>
+        <span class="go play-ic" title="Watch" aria-label="Watch"><i data-ico="play" data-size="22"></i></span></div>
     </a>
     <a class="play" href="play.html#banana-split">
       <div class="num"><svg viewBox="0 0 64 64" width="64%" aria-hidden="true" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
@@ -38,12 +40,12 @@
           <path d="M12 21 L11 11 L21 10"/><path d="M43 10 L53 11 L52 21"/></svg></div>
       <div><span class="pill">Baseline out-of-bounds</span> <span class="pill b">vs Man-to-man defense</span>
         <h3>Banana Split</h3>
-        <span class="go">Watch →</span></div>
+        <span class="go play-ic" title="Watch" aria-label="Watch"><i data-ico="play" data-size="22"></i></span></div>
     </a>
   </div>
 </main>
-<script src="js/config.js?v=20261118a"></script>
-<script src="js/app.js?v=20261118a"></script>
+<script src="js/config.js?v=20261118b"></script>
+<script src="js/app.js?v=20261118b"></script>
 <script>TEMPO.boot("plays", { study: true });</script>
 </body>
 </html>

@@ -89,14 +89,14 @@
             <svg viewBox="0 0 650 611" role="img" aria-label="${esc(play.title)} animation">${COURT}</svg>
             <div class="pv-decision hidden"><div class="box">
               <div class="kicker">Decision</div><h3 class="pv-q"></h3><p class="pv-hint"></p>
-              <div class="row"><button class="yes">Yes</button><button class="no">No</button></div>
+              <div class="row"><button class="yes round" title="Yes" aria-label="Yes">${TEMPO.icon("check", 30)}</button><button class="no round" title="No" aria-label="No">${TEMPO.icon("x", 30)}</button></div>
             </div></div>
           </div>
           <div class="pv-caption" aria-live="polite"></div>
           <div class="pv-controls">
-            <button class="pv-play">Play</button>
-            <button class="secondary pv-next">Next step ▶</button>
-            <button class="ghost pv-restart">Restart</button>
+            <button class="pv-play round sm" data-state="play" title="Play" aria-label="Play">${TEMPO.icon("play", 22)}</button>
+            <button class="secondary pv-next round sm" title="Next step" aria-label="Next step">${TEMPO.icon("next", 22)}</button>
+            <button class="ghost pv-restart round sm" title="Restart" aria-label="Restart">${TEMPO.icon("restart", 22)}</button>
             <div class="pv-speed"><span>Speed</span><button data-s="0.5" class="on">½×</button><button data-s="1">1×</button></div>
           </div>
         </div>
@@ -215,7 +215,7 @@
       const ph = play.phases[phaseId];
       if (ph.decision) return false;
       finishPhase();
-      if (!ph.next) { pause(); $(".pv-play").textContent = "Replay"; return false; }
+      if (!ph.next) { pause(); setPlayBtn("replay"); return false; }
       if (ph.next === "@restart") { start(); return true; }
       enter(ph.next); return true;
     }
@@ -231,8 +231,13 @@
       }
       render(); requestAnimationFrame(frame);
     }
-    function playIt() { if ($(".pv-play").textContent === "Replay") start(); playing = true; last = null; $(".pv-play").textContent = "Pause"; requestAnimationFrame(frame); }
-    function pause() { playing = false; if ($(".pv-play").textContent !== "Replay") $(".pv-play").textContent = "Play"; }
+    function setPlayBtn(state) {
+      const b = $(".pv-play"), lab = { play: "Play", pause: "Pause", replay: "Replay" }[state];
+      b.dataset.state = state; b.title = lab; b.setAttribute("aria-label", lab);
+      b.innerHTML = TEMPO.icon(state === "replay" ? "restart" : state, 22);
+    }
+    function playIt() { if ($(".pv-play").dataset.state === "replay") start(); playing = true; last = null; setPlayBtn("pause"); requestAnimationFrame(frame); }
+    function pause() { playing = false; if ($(".pv-play").dataset.state !== "replay") setPlayBtn("play"); }
     function answer(yes) {
       const d = play.phases[phaseId].decision;
       $(".pv-decision").classList.add("hidden");
@@ -244,14 +249,14 @@
     $(".pv-next").onclick = () => {
       if (play.phases[phaseId].decision) return;
       stepMode = true;
-      if ($(".pv-play").textContent === "Replay") { start(); playIt(); return; }
+      if ($(".pv-play").dataset.state === "replay") { start(); playIt(); return; }
       const ph = play.phases[phaseId];
       const still = !ph.moves && !ph.ball;
       if (t > 0 || still) { t = ph.dur; render(); if (!advance()) return; }
       if (play.phases[phaseId].decision) return;
       playIt();
     };
-    $(".pv-restart").onclick = () => { stepMode = false; pause(); $(".pv-play").textContent = "Play"; start(); };
+    $(".pv-restart").onclick = () => { stepMode = false; pause(); setPlayBtn("play"); start(); };
     $(".yes").onclick = () => answer(true);
     $(".no").onclick = () => answer(false);
     root.querySelectorAll(".pv-speed button").forEach((b) => b.onclick = () => {

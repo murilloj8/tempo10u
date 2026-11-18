@@ -201,3 +201,24 @@ textarea { font: inherit; resize: vertical; line-height: 1.45; }
 .help-box { background: var(--blue-soft); border-left: 5px solid var(--blue-dark); border-radius: 12px; padding: 8px 16px; margin: 4px 0 14px; max-width: 760px; }
 .help-box ul.bul, .page-head .help-box ul.bul { margin: 4px 0; color: var(--ink); }
 .help-box p { margin: 6px 0; }
+
+/* Icons in the top menu and round icon buttons */
+.ico { display: block; flex: none; }
+.nav a { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.1; }
+.nav a .nl { font-size: 12px; }
+.nav a.icon-only { justify-content: center; padding-left: 12px; padding-right: 12px; }
+.nav a.icon-only .nl, .icon-btn .nl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.icon-btn { display: inline-grid; place-items: center; width: 38px; height: 38px; padding: 0 !important; border-radius: 50%; position: relative; }
+.btn.round, button.round { display: inline-grid; place-items: center; width: 58px; height: 58px; padding: 0 !important; border-radius: 50%; }
+button.round.sm, .btn.round.sm { width: 46px; height: 46px; }
+.ib .ico { width: 18px; height: 18px; }
+.btn .ico, button .ico.inl { display: inline-block; vertical-align: -4px; margin-right: 6px; }
+@media (max-width: 1150px) {
+  .nav a { flex-direction: row; gap: 12px; }
+  .nav a .nl { font-size: 16px; }
+  .nav a.icon-only .nl { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+  .nav a.icon-only { justify-content: flex-start; }
+}
+.inl-ico { display: inline-flex; vertical-align: -4px; margin-right: 6px; }
+.ib { display: inline-grid; place-items: center; }
+.ico.inl { display: inline-block; vertical-align: -4px; margin-right: 6px; }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Know Your Court</title>
-<link rel="stylesheet" href="css/style.css?v=20261118a">
+<link rel="stylesheet" href="css/style.css?v=20261118b">
 <style>
   .stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
   .court-box { background: #2B1520; padding: 10px; }
@@ -44,16 +44,16 @@
       <div id="sExtra"></div>
     </div>
     <div class="controls no-print">
-      <button class="ghost" id="prevBtn">← Back</button>
+      <button class="ghost round sm" id="prevBtn" title="Back" aria-label="Back"></button>
       <div class="dots" id="dots"></div>
       <span class="counter" id="counter"></span>
-      <button id="nextBtn">Next →</button>
+      <button class="round sm" id="nextBtn" title="Next" aria-label="Next"></button>
     </div>
   </div>
 </main>
 
-<script src="js/config.js?v=20261118a"></script>
-<script src="js/app.js?v=20261118a"></script>
+<script src="js/config.js?v=20261118b"></script>
+<script src="js/app.js?v=20261118b"></script>
 <script>
 (async function () {
   if (!(await TEMPO.boot("court", { study: true }))) return;
@@ -294,7 +294,9 @@
     document.getElementById("counter").textContent = `${idx + 1} / ${SLIDES.length}`;
     document.getElementById("prevBtn").disabled = idx === 0;
     const nb = document.getElementById("nextBtn");
-    nb.textContent = idx === SLIDES.length - 1 ? "Take the quiz →" : "Next →";
+    document.getElementById("prevBtn").innerHTML = TEMPO.icon("left", 26);
+    if (idx === SLIDES.length - 1) { nb.classList.remove("round", "sm"); nb.textContent = "Take the quiz →"; nb.title = ""; nb.removeAttribute("aria-label"); }
+    else { nb.classList.add("round", "sm"); nb.innerHTML = TEMPO.icon("right", 26); nb.title = "Next"; nb.setAttribute("aria-label", "Next"); }
     document.getElementById("dots").innerHTML = SLIDES.map((_, i) =>
       `<button aria-label="Slide ${i + 1}" class="${i === idx ? "on" : i <= maxSeen ? "done" : ""}" data-i="${i}"></button>`).join("");
   }

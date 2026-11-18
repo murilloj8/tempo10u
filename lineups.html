@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Lineups</title>
-<link rel="stylesheet" href="css/style.css?v=20261118a">
+<link rel="stylesheet" href="css/style.css?v=20261118b">
 <style>
   .lu { display: grid; grid-template-columns: minmax(270px, 340px) 1fr; gap: 22px; align-items: start; }
   @media (max-width: 860px) { .lu { grid-template-columns: 1fr; } }
@@ -111,7 +111,7 @@
           <button class="secondary" id="lNew">New lineup</button>
           <button class="ghost" id="lAuto">Fill from roster</button>
           <button class="ghost" id="lClear">Clear spots</button>
-          <button class="ghost" id="lPrint">Print</button>
+          <button class="ghost" id="lPrint"><i data-ico="printer" data-size="18" class="inl-ico"></i>Print</button>
           <span id="dirty" class="small muted"></span>
         </div>
         <div id="lMsg"></div>
@@ -131,8 +131,8 @@
   </div>
 </main>
 
-<script src="js/config.js?v=20261118a"></script>
-<script src="js/app.js?v=20261118a"></script>
+<script src="js/config.js?v=20261118b"></script>
+<script src="js/app.js?v=20261118b"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("coach", { coachOnly: true });
@@ -162,7 +162,7 @@
       return `<div class="chip ${picked === p.id ? "sel" : ""}" data-pid="${p.id}">
         <span class="grip" title="Drag">⠿</span><span class="num">${esc(p.num || "–")}</span>
         <div class="nm">${esc(p.name)}${(p.pos || []).length ? `<div class="ps">${esc(p.pos.join(" · "))}</div>` : ""}</div>${tag}
-        <button class="ib" data-act="edit" title="Edit">✎</button><button class="ib" data-act="del" title="Remove from roster">×</button></div>`;
+        <button class="ib" data-act="edit" title="Edit" aria-label="Edit">${TEMPO.icon("pencil", 18)}</button><button class="ib" data-act="del" title="Remove from roster" aria-label="Remove from roster">${TEMPO.icon("x", 18)}</button></div>`;
     }).join("") : '<div class="empty">Add your players above, or import them from team accounts.</div>';
   }
   async function saveRoster() { try { await TEMPO.setPractice("_roster", { players: roster }); } catch (e) { msg("#pMsg", "error", errText(e)); } }
@@ -236,7 +236,7 @@
         const p = byId(cur[t][i]);
         return `<div class="slot ${p ? "filled" : ""} ${picked && !p ? "ready" : ""}" data-team="${t}" data-i="${i}">
           <div class="pl">${n}<br>${ab}</div>
-          ${p ? `<span class="num">${esc(p.num || "–")}</span><div class="who" data-pid="${p.id}">${esc(p.name)}</div><button class="ib" data-act="out" title="Take out">×</button>`
+          ${p ? `<span class="num">${esc(p.num || "–")}</span><div class="who" data-pid="${p.id}">${esc(p.name)}</div><button class="ib" data-act="out" title="Take out" aria-label="Take out">${TEMPO.icon("x", 18)}</button>`
               : picked ? `<div class="who"><span class="hint">${esc(full)} — tap to place</span></div>` : `<div class="who">${pickList(ab, full)}</div>`}
         </div>`;
       }).join("");
@@ -344,7 +344,7 @@
       return `<a class="lineup ${l.id === cur.id ? "cur" : ""}" href="#${l.id}">
         <span><b>${esc(l.name)}</b>${l.date ? ` <span class="small muted">· ${esc(prettyDate(l.date))}</span>` : ""}
           <div class="small muted">1st: ${l.first.map((x) => byId(x) ? "#" + (byId(x).num || "?") : "—").join(" ")} &nbsp;|&nbsp; 2nd: ${l.second.map((x) => byId(x) ? "#" + (byId(x).num || "?") : "—").join(" ")}</div></span>
-        <span class="small muted" style="white-space:nowrap">${n}/10 <button class="ib" data-del="${l.id}" title="Delete lineup">🗑</button></span></a>`;
+        <span class="small muted" style="white-space:nowrap">${n}/10 <button class="ib" data-del="${l.id}" title="Delete lineup" aria-label="Delete lineup">${TEMPO.icon("trash", 18)}</button></span></a>`;
     }).join("") : '<div class="empty">No saved lineups yet.</div>';
   }
   $("#savedList").addEventListener("click", async (e) => {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Referee Signals</title>
-<link rel="stylesheet" href="css/style.css?v=20261118a">
+<link rel="stylesheet" href="css/style.css?v=20261118b">
 <style>
   .tag { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
   .tag.foul { background: #FCE8E6; color: var(--bad); }
@@ -45,17 +45,17 @@
       <div class="answer" id="flAns"></div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
         <button class="secondary" id="flShow">Show answer</button>
-        <button id="flNext">Next signal →</button>
+        <button class="round sm" id="flNext" title="Next signal" aria-label="Next signal"><svg></svg></button>
       </div>
     </div>
   </div>
   <p class="small muted">Signals follow the <a href="https://www.nfhs.org/" target="_blank" rel="noopener">NFHS</a> official signal chart.</p>
 </main>
 
-<script src="js/config.js?v=20261118a"></script>
-<script src="js/app.js?v=20261118a"></script>
-<script src="js/signals.js?v=20261118a"></script>
-<script src="js/deck.js?v=20261118a"></script>
+<script src="js/config.js?v=20261118b"></script>
+<script src="js/app.js?v=20261118b"></script>
+<script src="js/signals.js?v=20261118b"></script>
+<script src="js/deck.js?v=20261118b"></script>
 <script>
 (async function () {
   if (!(await TEMPO.boot("refs", { study: true }))) return;
@@ -83,6 +83,7 @@
     const s = deck[fi % deck.length];
     document.getElementById("flAns").innerHTML = `<h3 style="color:var(--bordeaux);margin-top:8px">${esc(s.name)}</h3><ul class="bul small">${[].concat(s.means).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
   };
+  document.getElementById("flNext").innerHTML = TEMPO.icon("right", 26);
   document.getElementById("flNext").onclick = () => { fi++; if (fi % deck.length === 0) deck = TEMPO.shuffle(SIGNALS); showCard(); };
   showCard();
 })();

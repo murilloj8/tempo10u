@@ -48,10 +48,10 @@
         <div class="deck-card"><div class="deck-visual"></div><div class="deck-body" aria-live="polite"></div></div>
         <div class="deck-toast"></div>
         <div class="deck-controls no-print">
-          <button class="ghost deck-prev">← Back</button>
+          <button class="ghost round sm deck-prev" title="Back" aria-label="Back">${TEMPO.icon("left", 26)}</button>
           <div class="deck-dots"></div>
           <span class="deck-count"></span>
-          <button class="deck-next">Next →</button>
+          <button class="round sm deck-next" title="Next" aria-label="Next">${TEMPO.icon("right", 26)}</button>
         </div>
       </div>`;
     const $ = (s) => root.querySelector(s);
@@ -70,7 +70,7 @@
       $(".deck-body").innerHTML = body(it);
       $(".deck-count").textContent = `${idx + 1} / ${L.length}`;
       $(".deck-prev").disabled = idx === 0;
-      $(".deck-next").textContent = idx === L.length - 1 ? "Start over ↺" : "Next →";
+      const last = idx === L.length - 1, nx = $(".deck-next"); nx.innerHTML = TEMPO.icon(last ? "restart" : "right", last ? 22 : 26); nx.title = last ? "Start over" : "Next"; nx.setAttribute("aria-label", nx.title);
       $(".deck-dots").innerHTML = L.map((x, i) => `<button aria-label="Card ${i + 1}" data-i="${i}" class="${i === idx ? "on" : seen[x.id] ? "seen" : ""}"></button>`).join("");
       $(".deck-toast").innerHTML = (!wasDone && nowDone)
         ? `<div class="msg ok">You've seen every card in <b>${group}</b> today — nice work! ✓</div>` : "";

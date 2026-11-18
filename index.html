@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Team Home</title>
-<link rel="stylesheet" href="css/style.css?v=20261118a">
+<link rel="stylesheet" href="css/style.css?v=20261118b">
 <style>
   /* My week: a ribbon that scrolls sideways so it never runs off the page */
   .week { display: flex; gap: 10px; margin: 14px -4px 10px; padding: 6px 4px 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 4px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
@@ -18,13 +18,16 @@
   .day.full-past { background: #F3F8F4; border-color: #D5E6DA; }
   .day.full-past .star { color: #8FB79C; }
   .day.full .star { color: var(--good); font-weight: 900; }
-  .hero-list { margin: 0; padding-left: 22px; font-size: 18px; }
-  .hero-list li { margin: 2px 0; }
+  .hero-steps { display: flex; flex-wrap: wrap; gap: 10px; }
+  .hero-steps .hs { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 999px; background: rgba(255,255,255,.7); font-weight: 800; font-size: 17px; color: var(--bordeaux); }
+  .hero-steps .hs b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--blue-dark); color: #fff; font-size: 14px; }
+  .hero-steps i { display: inline-flex; }
   .day .dn { font-weight: 800; font-size: 14px; }
   .day .dd { font-size: 12px; color: var(--muted); }
   .day .icons { display: flex; justify-content: center; gap: 6px; margin: 8px 0 4px; }
   .ic { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-style: normal; font-weight: 900; font-size: 12px; background: var(--line); color: #fff; }
-  .ic.s::after { content: "S"; } .ic.q::after { content: "Q"; } .ic.a::after { content: "A"; }
+  .ic .ico { width: 16px; height: 16px; }
+  .legend .ic .ico { width: 12px; height: 12px; }
   .ic.on { background: var(--good); }
   .legend .ic { width: 18px; height: 18px; font-size: 9px; vertical-align: -4px; }
   .legend .ic { background: #B9AEB3; }
@@ -117,12 +120,12 @@
       <div class="stripe"></div>
       <div class="kicker" style="color:var(--blue)">Week <span id="wk"></span> · <span id="wkDates"></span></div>
       <h1>Welcome back, <span id="hiName"></span>!</h1>
-      <p style="margin-bottom:6px">Every school day:</p>
-      <ul class="hero-list">
-        <li>Say your affirmation</li>
-        <li>Study one zone</li>
-        <li>Take a quiz</li>
-      </ul>
+      <p style="margin-bottom:8px">Every school day:</p>
+      <div class="hero-steps">
+        <span class="hs"><b>1</b><i data-ico="heart" data-size="22"></i>Affirm</span>
+        <span class="hs"><b>2</b><i data-ico="study" data-size="22"></i>Study</span>
+        <span class="hs"><b>3</b><i data-ico="quiz" data-size="22"></i>Quiz</span>
+      </div>
     </div>
 
     <div class="card accent" style="margin-bottom:22px">
@@ -131,7 +134,7 @@
         <span class="small muted" id="weekCount"></span>
       </div>
       <div class="week" id="week" tabindex="0" aria-label="My Week — scroll sideways"></div><div class="week-hint">Swipe to see the whole week →</div>
-      <div class="legend small muted"><span><i class="ic s"></i> Study zone</span><span><i class="ic q"></i> Quiz</span><span><i class="ic a"></i> Affirmation</span><span>✓ = day complete</span></div>
+      <div class="legend small muted"><span><i class="ic s"><i data-ico="study" data-size="12"></i></i> Study zone</span><span><i class="ic q"><i data-ico="quiz" data-size="12"></i></i> Quiz</span><span><i class="ic a"><i data-ico="heart" data-size="12"></i></i> Affirmation</span><span>✓ = day complete</span></div>
     </div>
 
     <div class="step-head"><span class="step">Step 1</span><h2>Daily Affirmation</h2></div>
@@ -163,9 +166,9 @@
   </section>
 </main>
 
-<script src="js/config.js?v=20261118a"></script>
-<script src="js/app.js?v=20261118a"></script>
-<script src="js/stories-data.js?v=20261118a"></script>
+<script src="js/config.js?v=20261118b"></script>
+<script src="js/app.js?v=20261118b"></script>
+<script src="js/stories-data.js?v=20261118b"></script>
 <script>
 (async function () {
   const T = window.TEMPO, $ = T.$;
@@ -218,7 +221,7 @@
         return `<div class="day ${k === today ? "today" : ""} ${all ? (k === today ? "full" : "full-past") : ""}">
           <div class="dn">${d.toLocaleDateString(undefined, { weekday: "short" })}</div>
           <div class="dd">${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>
-          <div class="icons"><i class="ic s ${a.study ? "on" : ""}" title="Study zone"></i><i class="ic q ${a.quiz ? "on" : ""}" title="Quiz"></i><i class="ic a ${a.affirm ? "on" : ""}" title="Affirmation"></i></div>
+          <div class="icons"><i class="ic s ${a.study ? "on" : ""}" title="Study zone">${T.icon("study", 16)}</i><i class="ic q ${a.quiz ? "on" : ""}" title="Quiz">${T.icon("quiz", 16)}</i><i class="ic a ${a.affirm ? "on" : ""}" title="Affirmation">${T.icon("heart", 16)}</i></div>
           <div class="star">${all ? "✓" : ""}</div></div>`;
       }).join("");
       const td = $("#week .day.today"), wk = $("#week");

@@ -9,16 +9,47 @@
   const CFG = window.TEMPO_CONFIG;
   const FB_VERSION = "10.12.2";
   const NAV = [
-    { href: "index.html", label: "Home", key: "home" },
-    { href: "court.html", label: "Court", key: "court" },
-    { href: "refs.html", label: "Refs", key: "refs" },
-    { href: "rules.html", label: "Rules", key: "rules" },
-    { href: "fundamentals.html", label: "Fundamentals", key: "fundamentals" },
-    { href: "culture.html", label: "Culture", key: "culture" },
-    { href: "stories.html", label: "Stories", key: "stories" },
-    { href: "quizzes.html", label: "Quizzes", key: "quizzes" },
-    { href: "coach.html", label: "Coach", key: "coach", coachOnly: true }
+    { href: "index.html", label: "Home", key: "home", icon: "home", iconOnly: true },
+    { href: "court.html", label: "Court", key: "court", icon: "court" },
+    { href: "refs.html", label: "Refs", key: "refs", icon: "refs" },
+    { href: "rules.html", label: "Rules", key: "rules", icon: "rules" },
+    { href: "fundamentals.html", label: "Fundamentals", key: "fundamentals", icon: "fundamentals" },
+    { href: "culture.html", label: "Culture", key: "culture", icon: "culture" },
+    { href: "stories.html", label: "Stories", key: "stories", icon: "stories" },
+    { href: "quizzes.html", label: "Quizzes", key: "quizzes", icon: "quiz" },
+    { href: "coach.html", label: "Coach", key: "coach", icon: "coach", coachOnly: true }
   ];
+
+  /* Simple flat line icons used across the site (inherit the text color). */
+  const ICONS = {
+    home: 'M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7M9.5 21v-5.5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5V21',
+    logout: 'M14 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-2M9 12h12m-3-3 3 3-3 3',
+    court: 'M3 6h18v12H3zM12 6v12M3 9.5h3.5v5H3M21 9.5h-3.5v5H21M12 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4',
+    refs: 'M8.5 4 4 6.5l1.5 4.5 2-1V20h9V10l2 1L20 6.5 15.5 4c-.6 1.6-2 2.5-3.5 2.5S9.1 5.6 8.5 4zM10.5 6.3V20M13.5 6.3V20',
+    rules: 'M12 6.5C9.5 5 6.5 4.5 3.5 5v13c3-.5 6 0 8.5 1.5 2.5-1.5 5.5-2 8.5-1.5V5c-3-.5-6 0-8.5 1.5zM12 6.5v13',
+    fundamentals: 'M12 4a8 8 0 1 1 0 16 8 8 0 0 1 0-16M4 12h16M12 4v16M6.3 6.3c2.5 2 2.5 9.4 0 11.4M17.7 6.3c-2.5 2-2.5 9.4 0 11.4',
+    culture: 'M12 5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5M7.5 19v-1.5a4.5 4.5 0 0 1 9 0V19M5.5 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4M2 19v-1a3.5 3.5 0 0 1 4.5-3.3M18.5 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4M22 19v-1a3.5 3.5 0 0 0-4.5-3.3',
+    stories: 'M12 4.5l2.3 4.7 5.2.8-3.8 3.6.9 5.2L12 16.4l-4.6 2.4.9-5.2-3.8-3.6 5.2-.8z',
+    quiz: 'M4 20h4L18.5 9.5a2.8 2.8 0 0 0-4-4L4 16v4M13.5 6.5l4 4M15 19l2 2 4-4',
+    coach: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 3h6v4H9zM9 12h6M9 16h4',
+    study: 'M12 6.5C9.5 5 6.5 4.5 3.5 5v13c3-.5 6 0 8.5 1.5 2.5-1.5 5.5-2 8.5-1.5V5c-3-.5-6 0-8.5 1.5zM12 6.5v13',
+    heart: 'M19.5 12.6 12 20l-7.5-7.4A5 5 0 1 1 12 6a5 5 0 1 1 7.5 6.6',
+    left: 'M15 6l-6 6 6 6', right: 'M9 6l6 6-6 6',
+    play: '!M7 4.5v15l12.5-7.5z', pause: '!M6 5h4v14H6zM14 5h4v14h-4z', next: '!M4.5 5v14l10.5-7zM17 5h2.5v14H17z',
+    restart: 'M20 11a8.1 8.1 0 0 0-15.5-2M4 5v4h4M4 13a8.1 8.1 0 0 0 15.5 2M20 19v-4h-4',
+    check: 'M5 12l5 5L20 7', x: 'M18 6 6 18M6 6l12 12', plus: 'M12 5v14M5 12h14',
+    printer: 'M17 17h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2M17 9V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v4M7 14h10v7H7z',
+    image: 'M15 8h.01M12.5 21H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6.5M3 16l5-5c.9-.9 2.1-.9 3 0l4 4M19 15v7m-3-3 3 3 3-3',
+    file: 'M14 3v4a1 1 0 0 0 1 1h4M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2zM9 13h6M9 17h6M9 9h1',
+    pencil: 'M4 20h4L18.5 9.5a2.8 2.8 0 0 0-4-4L4 16v4M13.5 6.5l4 4',
+    trash: 'M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3',
+    download: 'M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12'
+  };
+  // "!" at the start of a path means a filled shape (play / pause / next).
+  function icon(name, size) {
+    const d = ICONS[name] || "", filled = d[0] === "!";
+    return `<svg class="ico" viewBox="0 0 24 24" width="${size || 20}" height="${size || 20}" aria-hidden="true" focusable="false" ${filled ? 'fill="currentColor" stroke="none"' : 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'}><path d="${filled ? d.slice(1) : d}"/></svg>`;
+  }
   const BALL_SVG = '<svg class="ball" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#E8833A" stroke="#fff" stroke-width="2"/><path d="M2 20h36M20 2v36M7 7c7 6 7 20 0 26M33 7c-7 6-7 20 0 26" fill="none" stroke="#4A1228" stroke-width="2"/></svg>';
 
   /* ---------- small helpers ---------- */
@@ -304,6 +335,7 @@
     /* Stories: Coach picks the story for each week (settings/stories).
        plan = { weeks: { "1": storyId, ... }, custom: [ {id, name, who, value, story, lesson, think} ] }
        A custom story with the same id as a built-in one replaces it. */
+    icon,
     slug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); },
     async storyPlan() {
       if (this._plan) return this._plan;
@@ -364,12 +396,12 @@
     if (!bar) { bar = document.createElement("header"); bar.className = "topbar"; document.body.prepend(bar); }
     const u = TEMPO.user;
     const links = u ? NAV.filter((n) => !n.coachOnly || u.isCoach).map((n) =>
-      `<a href="${n.href}" class="${n.key === pageKey ? "active" : ""}">${n.label}</a>`).join("") : "";
+      `<a href="${n.href}" class="${n.key === pageKey ? "active" : ""} ${n.iconOnly ? "icon-only" : ""}" title="${n.label}"${n.iconOnly ? ` aria-label="${n.label}"` : ""}>${icon(n.icon, 22)}<span class="nl">${n.label}</span></a>`).join("") : "";
     bar.innerHTML = `<div class="topbar-inner">
         <a class="brand" href="index.html">${BALL_SVG}<span>${esc(CFG.teamName.toUpperCase())}<small>10U GIRLS · ${esc(CFG.season)}</small></span></a>
         ${u ? '<button class="menu-btn" aria-label="Menu">Menu ☰</button>' : ""}
         <nav class="nav">${links}
-          ${u ? `<span class="userchip">Hi, ${esc(u.displayName)}${u.jersey ? " #" + esc(u.jersey) : ""} <button class="secondary" id="logoutBtn">Log out</button></span>` : ""}
+          ${u ? `<span class="userchip">Hi, ${esc(u.displayName)}${u.jersey ? " #" + esc(u.jersey) : ""} <button class="secondary icon-btn" id="logoutBtn" title="Log out" aria-label="Log out">${icon("logout", 20)}<span class="nl">Log out</span></button></span>` : ""}
         </nav>
       </div>`;
     const mb = $(".menu-btn", bar);
@@ -382,6 +414,8 @@
       });
     }
     const lo = $("#logoutBtn", bar); if (lo) lo.onclick = () => TEMPO.signOut();
+    // Static icon placeholders: <i data-ico="name" data-size="20"></i>
+    document.querySelectorAll("[data-ico]").forEach((el) => { el.innerHTML = icon(el.dataset.ico, +el.dataset.size || 20); el.setAttribute("aria-hidden", "true"); });
     // Page instructions sit behind a "?" help button next to the title (hidden until tapped).
     document.querySelectorAll(".page-head").forEach((head) => {
       const h1 = $("h1", head);
@@ -405,7 +439,7 @@
     if (u && pageKey !== "home" && main && !$(".return-home")) {
       const r = document.createElement("div");
       r.className = "return-home no-print";
-      r.innerHTML = '<a class="btn secondary" href="index.html">Home</a>';
+      r.innerHTML = `<a class="btn round" href="index.html" title="Home" aria-label="Home">${icon("home", 28)}</a>`;
       main.appendChild(r);
     }
   }
