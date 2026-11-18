@@ -401,7 +401,8 @@
         <a class="brand" href="index.html">${BALL_SVG}<span>${esc(CFG.teamName.toUpperCase())}<small>10U GIRLS · ${esc(CFG.season)}</small></span></a>
         ${u ? '<button class="menu-btn" aria-label="Menu">Menu ☰</button>' : ""}
         <nav class="nav">${links}
-          ${u ? `<span class="userchip">Hi, ${esc(u.displayName)}${u.jersey ? " #" + esc(u.jersey) : ""} <button class="secondary icon-btn" id="logoutBtn" title="Log out" aria-label="Log out">${icon("logout", 20)}<span class="nl">Log out</span></button></span>` : ""}
+          ${u ? `<span class="userchip">Hi, ${esc(u.displayName)}${u.jersey ? " #" + esc(u.jersey) : ""} <button class="secondary icon-btn" id="logoutBtn" title="Log out" aria-label="Log out">${icon("logout", 20)}<span class="nl">Log out</span></button></span>
+          <button class="nav-logout" type="button">${icon("logout", 22)}<span class="nl">Log out</span></button>` : ""}
         </nav>
       </div>`;
     const mb = $(".menu-btn", bar);
@@ -413,7 +414,7 @@
         if (nav && !nav.contains(e.target)) nav.classList.remove("open");
       });
     }
-    const lo = $("#logoutBtn", bar); if (lo) lo.onclick = () => TEMPO.signOut();
+    bar.querySelectorAll("#logoutBtn, .nav-logout").forEach((b) => (b.onclick = () => TEMPO.signOut()));
     // Static icon placeholders: <i data-ico="name" data-size="20"></i>
     document.querySelectorAll("[data-ico]").forEach((el) => { el.innerHTML = icon(el.dataset.ico, +el.dataset.size || 20); el.setAttribute("aria-hidden", "true"); });
     // Page instructions sit behind a "?" help button next to the title (hidden until tapped).

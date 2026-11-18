@@ -222,3 +222,21 @@ button.round.sm, .btn.round.sm { width: 46px; height: 46px; }
 .inl-ico { display: inline-flex; vertical-align: -4px; margin-right: 6px; }
 .ib { display: inline-grid; place-items: center; }
 .ico.inl { display: inline-block; vertical-align: -4px; margin-right: 6px; }
+
+/* ----- Main menu: spread across the bar (computer), icon grid (phone) ----- */
+.nav { flex: 1; margin-left: 28px; gap: 4px; }
+.nav a { flex: 1 1 auto; border-radius: 12px; padding: 6px 8px; }
+.userchip { flex: none; margin-left: 14px; }
+.nav-logout { display: none; }
+@media (max-width: 1150px) {
+  .nav { margin-left: 0; }
+  .nav.open { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 12px 14px; box-shadow: 0 12px 24px rgba(0,0,0,.25); }
+  .nav.open a, .nav.open .nav-logout { flex-direction: column; justify-content: center; gap: 6px; padding: 14px 4px; border-radius: 14px; background: rgba(255,255,255,.08); text-align: center; }
+  .nav.open a.active { background: var(--blue); }
+  .nav.open a .nl, .nav.open .nav-logout .nl { font-size: 13px; position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; }
+  .nav.open .ico { width: 28px; height: 28px; }
+  .nav.open .userchip { grid-column: 1 / -1; order: -1; margin: 0 0 2px; padding: 2px 4px; opacity: .9; }
+  .nav.open .userchip #logoutBtn { display: none; }
+  .nav.open .nav-logout { display: flex; align-items: center; color: #fff; border: 0; font-weight: 600; font-family: inherit; cursor: pointer; }
+  .nav.open .nav-logout:hover, .nav.open a:hover { background: rgba(255,255,255,.18); }
+}
