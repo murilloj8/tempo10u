@@ -2,13 +2,20 @@
    Filters turn green once every card in that group has been viewed today. */
 (function () {
   const css = `
-  .deck-filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 16px; }
-  .deck-filters button { background: #fff; color: var(--bordeaux); border: 2px solid var(--bordeaux); padding: 7px 14px; position: relative; }
+  /* Filter ribbon: icon + one word + a progress bar */
+  .deck-filters { display: flex; gap: 6px; margin: 6px 0 16px; padding: 5px; width: max-content; max-width: 100%; overflow-x: auto; background: #EFEAEC; border-radius: 18px; scrollbar-width: none; }
+  .deck-filters::-webkit-scrollbar { display: none; }
+  .deck-filters button { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 76px; padding: 8px 12px 7px; border-radius: 14px; border: 0;
+    background: #fff; color: var(--bordeaux); font-size: 13px; font-weight: 800; line-height: 1.1; box-shadow: none; }
+  .deck-filters button .ico { width: 24px; height: 24px; }
   .deck-filters button.on { background: var(--bordeaux); color: #fff; }
-  .deck-filters button.done { background: #E6F4EA; color: var(--good); border-color: var(--good); }
+  .deck-filters button.done { background: #E6F4EA; color: var(--good); }
   .deck-filters button.done.on { background: var(--good); color: #fff; }
-  .deck-filters button.done::after { content: " ✓"; }
-  .deck-filters .cnt { font-size: 12px; opacity: .75; margin-left: 4px; }
+  .deck-filters .bar { display: block; width: 100%; height: 4px; border-radius: 4px; background: var(--bordeaux-soft); overflow: hidden; }
+  .deck-filters .bar b { display: block; height: 100%; background: var(--good); border-radius: 4px; transition: width .25s; }
+  .deck-filters button.on .bar { background: rgba(255,255,255,.35); }
+  .deck-filters button.done.on .bar b { background: #fff; }
+  .deck-group-name { font-size: 13px; color: var(--muted); margin: -10px 0 12px; font-weight: 700; }
   .deck-stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
   .deck-card { display: grid; grid-template-columns: minmax(200px, 300px) 1fr; min-height: 340px; }
   .deck-visual { background: linear-gradient(180deg, var(--blue-soft), #fff); display: grid; place-items: center; padding: 18px; border-right: 1px solid var(--line); }
@@ -32,7 +39,8 @@
   }`;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
-  function mount({ root, items, groups, storageKey, visual, body, onRender }) {
+  function mount(opts) {
+    const { root, items, groups, storageKey, visual, body, onRender } = opts;
     const T = window.TEMPO;
     const KEY = `tempo_seen_${storageKey}_${T.user ? T.user.uid : "x"}_${T.dayKey()}`;
     let seen = {};
@@ -64,7 +72,9 @@
       $(".deck-filters").innerHTML = groups.map((g) => {
         const n = items.filter((x) => x.group === g);
         const c = n.filter((x) => seen[x.id]).length;
-        return `<button data-g="${g}" class="${g === group ? "on" : ""} ${groupDone(g) ? "done" : ""}">${g}<span class="cnt">${c}/${n.length}</span></button>`;
+        const gi = (opts.groupInfo || {})[g] || {}, label = gi.short || g;
+        return `<button data-g="${g}" class="${g === group ? "on" : ""} ${groupDone(g) ? "done" : ""}" title="${g} — ${c} of ${n.length} seen" aria-label="${g}, ${c} of ${n.length} seen" aria-pressed="${g === group}">
+          ${gi.icon ? TEMPO.icon(gi.icon, 24) : ""}<span>${label}</span><span class="bar"><b style="width:${n.length ? Math.round((100 * c) / n.length) : 0}%"></b></span></button>`;
       }).join("");
       $(".deck-visual").innerHTML = visual(it);
       $(".deck-body").innerHTML = body(it);
