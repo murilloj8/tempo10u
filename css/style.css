@@ -190,3 +190,14 @@ ul.bul li::marker { color: var(--bordeaux); }
 .page-head ul.bul { max-width: 760px; color: var(--muted); font-size: 17px; }
 
 textarea { font: inherit; resize: vertical; line-height: 1.45; }
+
+/* "?" help button next to page titles; instructions hidden until tapped */
+.title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.title-row h1 { margin-bottom: 0; }
+.page-head .title-row { margin-bottom: .4em; }
+.help-btn { flex: none; width: 34px; height: 34px; min-width: 0; padding: 0; border-radius: 50%; display: inline-grid; place-items: center;
+  background: var(--blue-soft); color: var(--blue-dark); border: 2px solid var(--blue); font-weight: 900; font-size: 18px; line-height: 1; cursor: pointer; }
+.help-btn:hover, .help-btn.on { background: var(--blue-dark); color: #fff; border-color: var(--blue-dark); }
+.help-box { background: var(--blue-soft); border-left: 5px solid var(--blue-dark); border-radius: 12px; padding: 8px 16px; margin: 4px 0 14px; max-width: 760px; }
+.help-box ul.bul, .page-head .help-box ul.bul { margin: 4px 0; color: var(--ink); }
+.help-box p { margin: 6px 0; }

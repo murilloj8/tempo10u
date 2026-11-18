@@ -382,6 +382,24 @@
       });
     }
     const lo = $("#logoutBtn", bar); if (lo) lo.onclick = () => TEMPO.signOut();
+    // Page instructions sit behind a "?" help button next to the title (hidden until tapped).
+    document.querySelectorAll(".page-head").forEach((head) => {
+      const h1 = $("h1", head);
+      const help = [...head.children].filter((el) => (el.matches("ul.bul") || (el.matches("p") && !el.id)) && !el.dataset.noHelp);
+      if (!h1 || !help.length || head.querySelector(".help-btn")) return;
+      const box = document.createElement("div");
+      box.className = "help-box"; box.id = "help-" + (pageKey || "page"); box.hidden = true;
+      help.forEach((el) => box.appendChild(el));
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "help-btn no-print"; btn.textContent = "?";
+      btn.title = "How to use this page"; btn.setAttribute("aria-label", "How to use this page");
+      btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-controls", box.id);
+      btn.onclick = () => { box.hidden = !box.hidden; btn.setAttribute("aria-expanded", String(!box.hidden)); btn.classList.toggle("on", !box.hidden); };
+      const row = document.createElement("div"); row.className = "title-row";
+      h1.replaceWith(row); row.append(h1, btn);
+      row.after(box);
+      if (getComputedStyle(head).textAlign === "center") { row.style.justifyContent = "center"; box.style.margin = "4px auto 14px"; }
+    });
     // "Home" button at the bottom of every page except Home
     const main = $("main");
     if (u && pageKey !== "home" && main && !$(".return-home")) {
