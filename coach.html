@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Coach Dashboard</title>
+<style>
+  details.sec.section { margin: 12px 0; }
+  details.sec { border: 2px solid var(--line); border-radius: 16px; background: #fff; padding: 0 18px; }
+  details.sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; user-select: none; }
+  details.sec > summary::-webkit-details-marker { display: none; }
+  details.sec > summary h2 { margin: 0; }
+  details.sec > summary::after { content: "▾"; font-size: 22px; color: var(--bordeaux); transition: transform .2s; }
+  details.sec[open] > summary::after { transform: rotate(180deg); }
+  details.sec[open] { padding-bottom: 18px; }
+  details.sec > summary:hover h2 { color: var(--bordeaux); }
+  .sec-tools { display: flex; justify-content: flex-end; gap: 10px; margin: 14px 0 0; }
+</style>
 <link rel="stylesheet" href="css/style.css?v=20261117b">
 <style>
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
@@ -28,59 +40,65 @@
   <div class="page-head">
     <span class="kicker">Coach only</span>
     <h1>Coach Dashboard</h1>
-    <p>Best quiz scores for each player, by week. Players can retake quizzes; this shows their best score and number of tries.</p>
   </div>
 
   <div id="modeNote"></div>
   <div class="stats" id="stats"></div>
+  <div class="sec-tools"><button class="ghost" id="expandAll" type="button">Expand all</button></div>
 
-  <div class="toolbar">
-    <div><label for="weekSel">Week</label><select id="weekSel"></select></div>
-    <button class="secondary" id="refresh">Refresh</button>
-    <button class="ghost" id="copyCsv">Copy as spreadsheet (CSV)</button>
-    <span id="copyMsg" class="small muted"></span>
-  </div>
-  <div class="table-wrap"><table id="scoreTable"></table></div>
+  <details class="section sec">
+    <summary><h2>Quiz scores</h2></summary>
+    <div class="sec-body">
+    <div class="toolbar">
+      <div><label for="weekSel">Week</label><select id="weekSel"></select></div>
+      <button class="secondary" id="refresh">Refresh</button>
+      <button class="ghost" id="copyCsv">Copy as spreadsheet (CSV)</button>
+      <span id="copyMsg" class="small muted"></span>
+    </div>
+    <div class="table-wrap"><table id="scoreTable"></table></div>
+    </div>
+  </details>
 
-  <div class="section">
-    <h2>Daily check-ins (Mon–Fri)</h2>
+  <details class="section sec">
+    <summary><h2>Daily check-ins (Mon–Fri)</h2></summary>
+    <div class="sec-body">
     <p class="muted">A day is complete when a player opened a study page, finished a quiz <b>and</b> did her affirmation.</p>
     <div class="table-wrap"><table id="checkTable"></table></div>
-  </div>
+    </div>
+  </details>
 
-  <div class="section">
-    <h2>Team code</h2>
+  <details class="section sec">
+    <summary><h2>Team code</h2></summary>
+    <div class="sec-body">
     <div class="card" style="max-width:560px">
       <p style="margin-bottom:6px">Current code: <span class="pill b" id="curCode">…</span></p>
-      <p class="small muted">New players need this code to sign up. Changing it doesn't affect players who already joined.</p>
       <label for="newCode">New team code</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <input id="newCode" maxlength="20" autocapitalize="characters" spellcheck="false" placeholder="e.g. TEMPO2027" style="flex:1;min-width:180px">
         <button id="saveCode">Change code</button>
       </div>
-      <div class="hint">4–20 letters or numbers, no spaces. Players can type it in any case.</div>
       <div id="codeMsg"></div>
     </div>
-  </div>
-
-  <div class="section">
-    <h2>Practice planning</h2>
-    <div class="card" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;max-width:760px">
-      <div style="flex:1;min-width:240px">Build a 2-hour practice: add drills to a staging area, drag them into the timeline, and save the plan for a date. Saved plans are archived by date.</div>
-      <a class="btn" href="practice.html">Open practice planner →</a>
     </div>
-  </div>
+  </details>
 
-  <div class="section">
-    <h2>Lineups</h2>
-    <div class="card" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;max-width:760px">
-      <div style="flex:1;min-width:240px">Keep the full roster in one place and build 1st-team and 2nd-team lineups from it. Save as many lineups as you need.</div>
-      <a class="btn" href="lineups.html">Open lineups →</a>
+  <details class="section sec">
+    <summary><h2>Practice planning</h2></summary>
+    <div class="sec-body">
+    <a class="btn" href="practice.html">Open practice planner →</a>
     </div>
-  </div>
+  </details>
 
-  <div class="section">
-    <h2>Story of the week</h2>
+  <details class="section sec">
+    <summary><h2>Lineups</h2></summary>
+    <div class="sec-body">
+    <a class="btn" href="lineups.html">Open lineups →</a>
+    </div>
+  </details>
+
+  <details class="section sec">
+    <summary><h2>Story of the week</h2></summary>
+    <div class="sec-body">
     <p class="muted" style="max-width:760px">Players only see the story you pick for the current week (on Home and the Stories page). Weeks you leave on <b>Automatic</b> use the built-in rotation.</p>
     <div class="grid grid-2" style="align-items:start">
       <div class="card">
@@ -112,16 +130,15 @@
         <div id="stMsg"></div>
       </div>
     </div>
-  </div>
-
-  <div class="section">
-    <h2>Roster &amp; accounts</h2>
-    <div class="card" style="margin-bottom:14px">
-      <b>How players join:</b> share the website link and the team code (see <b>Team code</b> above). They tap <b>New player</b>, pick a username and password, and type the code.
-      <p class="small muted" style="margin:8px 0 0">Forgot password? Remove the player below, delete their login in Firebase (Authentication → Users), and have them sign up again. Their old scores are removed with them.</p>
     </div>
+  </details>
+
+  <details class="section sec">
+    <summary><h2>Roster &amp; accounts</h2></summary>
+    <div class="sec-body">
     <div class="table-wrap"><table id="rosterTable"></table></div>
-  </div>
+    </div>
+  </details>
 </main>
 
 <script src="js/config.js?v=20261117b"></script>
@@ -294,6 +311,10 @@
   };
   renderWeeks(); renderEditor(TEMPO.storyForWeek(curWk, plan).id);
   load();
+  const secs = () => [...document.querySelectorAll("details.sec")];
+  const syncAll = () => { document.getElementById("expandAll").textContent = secs().every((d) => d.open) ? "Collapse all" : "Expand all"; };
+  document.getElementById("expandAll").onclick = () => { const open = !secs().every((d) => d.open); secs().forEach((d) => (d.open = open)); syncAll(); };
+  secs().forEach((d) => d.addEventListener("toggle", syncAll));
 })();
 </script>
 </body>
