@@ -239,8 +239,8 @@ window.TEMPO_PLAYS = {
    #2 front-left, #3 back-left, #4 front-right, #5 back-right. */
 window.TEMPO_PLAYS["scramble"] = {
   title: "Scramble",
-  sub: "Circle set at the free-throw line. #2 circles around the group to screen X4, #4 cuts to the basket, then #4 screens for #5. Three looks at the rim.",
-  tips: ["#1: slap the ball to start. Look at #4, then #5, then #4 again.", "You have 5 seconds to pass it in!", "#2: run your circle wide and fast — leave your defender behind — then screen the outside of X4.", "Screeners (#2, #4): wide stance, hold still.", "#5: wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
+  sub: "Players run in circles to confuse the defense. #2 circles to screen X4, #4 circles to the basket, then #4 screens for #5. Three looks at the rim.",
+  tips: ["#1: slap the ball to start. Look at #4, then #5, then #4 again.", "You have 5 seconds to pass it in!", "#2: run your circle wide and fast — leave your defender behind — then screen the outside of X4.", "#4: wait for the screen, then run your circle wide and fast and finish at the basket.", "Screeners (#2, #4): wide stance, hold still.", "#5: wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
   oob: true,
   start: {
     off: { 1: [214, -26], 2: [272, 178], 3: [272, 262], 4: [378, 178], 5: [378, 262] },
@@ -261,9 +261,13 @@ window.TEMPO_PLAYS["scramble"] = {
       next: "cut4"
     },
     cut4: {
-      dur: 1.2, caption: "<b>2.</b> #4 cuts to the basket off #2's screen, looking for a shot. X4 is stuck behind #2!",
-      moves: { 4: [[0.5, 352, 140], [1.2, 308, 102]], X4: [[1.2, 364, 152]] },
-      trails: [{ t0: 0, t1: 1.2, kind: "cut", pts: [[378, 178], [352, 140], [314, 108]] }],
+      dur: 3.2,
+      caption: "<b>2.</b> X4 is stuck on #2's screen. #4 runs her own big circle — down the right side, behind #5 and #3, up the left side — and cuts to the basket looking for a shot. Everyone running in circles = confused defense!",
+      moves: {
+        4: [[0.3, 420, 190], [0.6, 450, 226], [0.9, 462, 278], [1.2, 436, 330], [1.5, 380, 360], [1.8, 326, 376], [2.1, 254, 366], [2.35, 206, 332], [2.6, 180, 278], [2.8, 180, 214], [3.0, 216, 150], [3.2, 290, 104]],
+        X4: [[1.2, 364, 152], [3.2, 362, 176]]
+      },
+      trails: [{ t0: 0, t1: 3.2, kind: "cut", pts: [[378, 178], [420, 190], [450, 226], [462, 278], [436, 330], [380, 360], [326, 376], [254, 366], [206, 332], [180, 278], [180, 214], [216, 150], [284, 108]] }],
       next: "read4a"
     },
     read4a: {
@@ -325,7 +329,7 @@ window.TEMPO_PLAYS["scramble"] = {
   list: [
     { id: "setup", html: "<b>Set up.</b> Circle around the free-throw line." },
     { id: "circle2", html: "<b>1.</b> #2 runs a circle around her teammates and screens the outside of #4's defender." },
-    { id: "cut4", html: "<b>2.</b> #4 cuts to the basket for a shot." },
+    { id: "cut4", html: "<b>2.</b> #4 runs her own circle around everyone and cuts to the basket for a shot." },
     { id: "read4a", html: "<b>Decision:</b> Is #4 open? Yes → pass, #4 scores." },
     { branch: "If NO" },
     { id: "pop", html: "<b>3.</b> #2 pops to the ball side, #3 to the weak side (3-point line)." },
