@@ -4,10 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Know Your Court</title>
-<link rel="stylesheet" href="css/style.css?v=20261118f">
+<link rel="stylesheet" href="css/style.css?v=20261118g">
 <style>
   .stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
-  .court-box { background: #2B1520; padding: 10px; }
+  .court-box { background: #2B1520; padding: 58px 10px 34px; position: relative; }
+  .court-arrow { position: absolute; top: 10px; z-index: 2; }
+  #prevBtn.court-arrow { left: 12px; background: #fff; }
+  #nextBtn.court-arrow { right: 12px; box-shadow: 0 0 0 2px #fff; }
+  #nextBtn.court-arrow.quiz { width: auto; height: 46px; border-radius: 999px; padding: 0 18px !important; }
+  .court-arrow:disabled { opacity: .35; }
+  .court-box .dots { position: absolute; left: 10px; right: 10px; bottom: 10px; justify-content: center; }
   #court { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; max-height: 68vh; }
   .slide-info { padding: 20px 24px 8px; min-height: 190px; }
   .slide-info h2 { color: var(--bordeaux); margin-bottom: 6px; }
@@ -35,7 +41,11 @@
   </div>
 
   <div class="stage">
-    <div class="court-box"><svg id="court" viewBox="0 0 840 500" role="img" aria-label="Basketball court diagram"></svg></div>
+    <div class="court-box"><svg id="court" viewBox="0 0 840 500" role="img" aria-label="Basketball court diagram"></svg>
+      <button class="ghost round sm court-arrow no-print" id="prevBtn" title="Back" aria-label="Back"></button>
+      <button class="round sm court-arrow no-print" id="nextBtn" title="Next" aria-label="Next"></button>
+      <div class="dots no-print" id="dots"></div>
+    </div>
     <div class="slide-info" aria-live="polite">
       <div class="kicker" id="sKicker"></div>
       <h2 id="sTitle"></h2>
@@ -43,17 +53,12 @@
       <ul class="bul" id="sText"></ul>
       <div id="sExtra"></div>
     </div>
-    <div class="controls no-print">
-      <button class="ghost round sm" id="prevBtn" title="Back" aria-label="Back"></button>
-      <div class="dots" id="dots"></div>
-      <span class="counter" id="counter"></span>
-      <button class="round sm" id="nextBtn" title="Next" aria-label="Next"></button>
-    </div>
+    <span class="counter hidden" id="counter"></span>
   </div>
 </main>
 
-<script src="js/config.js?v=20261118f"></script>
-<script src="js/app.js?v=20261118f"></script>
+<script src="js/config.js?v=20261118g"></script>
+<script src="js/app.js?v=20261118g"></script>
 <script>
 (async function () {
   if (!(await TEMPO.boot("court", { study: true }))) return;
@@ -295,8 +300,8 @@
     document.getElementById("prevBtn").disabled = idx === 0;
     const nb = document.getElementById("nextBtn");
     document.getElementById("prevBtn").innerHTML = TEMPO.icon("left", 26);
-    if (idx === SLIDES.length - 1) { nb.classList.remove("round", "sm"); nb.textContent = "Take the quiz →"; nb.title = ""; nb.removeAttribute("aria-label"); }
-    else { nb.classList.add("round", "sm"); nb.innerHTML = TEMPO.icon("right", 26); nb.title = "Next"; nb.setAttribute("aria-label", "Next"); }
+    if (idx === SLIDES.length - 1) { nb.classList.add("quiz"); nb.classList.remove("round", "sm"); nb.textContent = "Take the quiz →"; nb.title = ""; nb.removeAttribute("aria-label"); }
+    else { nb.classList.remove("quiz"); nb.classList.add("round", "sm"); nb.innerHTML = TEMPO.icon("right", 26); nb.title = "Next"; nb.setAttribute("aria-label", "Next"); }
     document.getElementById("dots").innerHTML = SLIDES.map((_, i) =>
       `<button aria-label="Slide ${i + 1}" class="${i === idx ? "on" : i <= maxSeen ? "done" : ""}" data-i="${i}"></button>`).join("");
   }

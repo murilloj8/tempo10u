@@ -29,13 +29,22 @@
   .deck-dots button { width: 13px; height: 13px; padding: 0; border-radius: 50%; background: var(--line); }
   .deck-dots button.seen { background: var(--blue); }
   .deck-dots button.on { background: var(--bordeaux); transform: scale(1.3); }
-  .deck-count { font-weight: 800; color: var(--muted); font-size: 14px; min-width: 64px; text-align: center; }
+  /* Arrows sit in the picture's top corners; dots along its bottom edge */
+  .deck-vwrap { position: relative; display: grid; border-right: 1px solid var(--line); }
+  .deck-vwrap .deck-visual { border-right: 0; padding: 58px 18px 40px; }
+  .deck-arrow { position: absolute; top: 12px; z-index: 2; box-shadow: 0 2px 8px rgba(34,22,28,.15); }
+  .deck-arrow.deck-prev { left: 12px; background: #fff; }
+  .deck-arrow.deck-next { right: 12px; }
+  .deck-arrow:disabled { opacity: .35; cursor: default; }
+  .deck-vwrap .deck-dots { position: absolute; left: 10px; right: 10px; bottom: 12px; flex: none; }
+  .deck-dots button { box-shadow: 0 0 0 2px #fff; }
   .deck-toast { margin: 0 24px 14px; }
   @media (max-width: 720px) {
     .deck-card { grid-template-columns: 1fr; }
-    .deck-visual { border-right: 0; border-bottom: 1px solid var(--line); min-height: 200px; }
+    .deck-vwrap { border-right: 0; border-bottom: 1px solid var(--line); }
+    .deck-vwrap .deck-visual { min-height: 220px; padding: 54px 60px 34px; }
     .deck-visual svg { max-width: 180px; }
-    .deck-dots { display: none; }
+    .deck-dots { gap: 5px; } .deck-dots button { width: 10px; height: 10px; }
   }`;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
@@ -53,14 +62,16 @@
     root.innerHTML = `
       <div class="deck-filters no-print"></div>
       <div class="deck-stage">
-        <div class="deck-card"><div class="deck-visual"></div><div class="deck-body" aria-live="polite"></div></div>
-        <div class="deck-toast"></div>
-        <div class="deck-controls no-print">
-          <button class="ghost round sm deck-prev" title="Back" aria-label="Back">${TEMPO.icon("left", 26)}</button>
-          <div class="deck-dots"></div>
-          <span class="deck-count"></span>
-          <button class="round sm deck-next" title="Next" aria-label="Next">${TEMPO.icon("right", 26)}</button>
+        <div class="deck-card">
+          <div class="deck-vwrap">
+            <div class="deck-visual"></div>
+            <button class="ghost round sm deck-arrow deck-prev no-print" title="Back" aria-label="Back">${TEMPO.icon("left", 24)}</button>
+            <button class="round sm deck-arrow deck-next no-print" title="Next" aria-label="Next">${TEMPO.icon("right", 24)}</button>
+            <div class="deck-dots no-print"></div>
+          </div>
+          <div class="deck-body" aria-live="polite"></div>
         </div>
+        <div class="deck-toast"></div>
       </div>`;
     const $ = (s) => root.querySelector(s);
 
@@ -78,9 +89,9 @@
       }).join("");
       $(".deck-visual").innerHTML = visual(it);
       $(".deck-body").innerHTML = body(it);
-      $(".deck-count").textContent = `${idx + 1} / ${L.length}`;
+      $(".deck-vwrap").setAttribute("aria-label", `Card ${idx + 1} of ${L.length}`);
       $(".deck-prev").disabled = idx === 0;
-      const last = idx === L.length - 1, nx = $(".deck-next"); nx.innerHTML = TEMPO.icon(last ? "restart" : "right", last ? 22 : 26); nx.title = last ? "Start over" : "Next"; nx.setAttribute("aria-label", nx.title);
+      const last = idx === L.length - 1, nx = $(".deck-next"); nx.innerHTML = TEMPO.icon(last ? "restart" : "right", last ? 20 : 24); nx.title = last ? "Start over" : "Next"; nx.setAttribute("aria-label", nx.title);
       $(".deck-dots").innerHTML = L.map((x, i) => `<button aria-label="Card ${i + 1}" data-i="${i}" class="${i === idx ? "on" : seen[x.id] ? "seen" : ""}"></button>`).join("");
       $(".deck-toast").innerHTML = (!wasDone && nowDone)
         ? `<div class="msg ok">You've seen every card in <b>${group}</b> today — nice work! ✓</div>` : "";
