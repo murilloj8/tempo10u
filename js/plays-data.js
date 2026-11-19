@@ -239,8 +239,8 @@ window.TEMPO_PLAYS = {
    #2 front-left, #3 back-left, #4 front-right, #5 back-right. */
 window.TEMPO_PLAYS["scramble"] = {
   title: "Scramble",
-  sub: "Circle set at the free-throw line. #2 cuts across the paint to screen X4, #4 circles to the basket, then #4 screens for #5. Three looks at the rim.",
-  tips: ["#1: slap the ball to start. Look at #4, then #5, then #4 again.", "You have 5 seconds to pass it in!", "#4: run tight around the circle — rub your defender off your teammates.", "Screeners (#2, #4): wide stance, hold still.", "#5: wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
+  sub: "Circle set at the free-throw line. #2 circles around the group to screen X4, #4 cuts to the basket, then #4 screens for #5. Three looks at the rim.",
+  tips: ["#1: slap the ball to start. Look at #4, then #5, then #4 again.", "You have 5 seconds to pass it in!", "#2: run your circle wide and fast — leave your defender behind — then screen the outside of X4.", "Screeners (#2, #4): wide stance, hold still.", "#5: wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
   oob: true,
   start: {
     off: { 1: [214, -26], 2: [272, 178], 3: [272, 262], 4: [378, 178], 5: [378, 262] },
@@ -249,20 +249,21 @@ window.TEMPO_PLAYS["scramble"] = {
   },
   first: "setup",
   phases: {
-    setup: { dur: 0.9, caption: "<b>Set up — Circle.</b> #1 inbounds. #2, #3, #4 and #5 make a circle around the free-throw line.", next: "screen24" },
-    screen24: {
-      dur: 1.3, clearTrails: true, caption: "<b>1.</b> #2 cuts across the paint and sets a screen on the OUTSIDE of #4's defender (X4) — between X4 and the way #4 is about to run.",
-      moves: { 2: [[0.6, 322, 128], [1.3, 410, 138]], X2: [[0.6, 298, 128], [1.3, 330, 120]] },
-      trails: [{ t0: 0, t1: 1.3, kind: "screen", pts: [[272, 178], [322, 128], [402, 138]] }],
-      next: "run4"
-    },
-    run4: {
-      dur: 2.4, caption: "<b>2.</b> #4 runs in a circle around her teammates — behind #5 and #3 — then cuts to the basket looking for a shot. X4 is stuck behind #2's screen and #2's defender stays behind in the paint!",
+    setup: { dur: 0.9, caption: "<b>Set up — Circle.</b> #1 inbounds. #2, #3, #4 and #5 make a circle around the free-throw line.", next: "circle2" },
+    circle2: {
+      dur: 2.8, clearTrails: true,
+      caption: "<b>1.</b> #2 runs a big circle around her teammates — down the left side, behind #3 and #5, up the right side — and sets a screen on the OUTSIDE of #4's defender (X4). X2 gets left behind!",
       moves: {
-        4: [[0.4, 438, 222], [0.9, 412, 306], [1.3, 325, 326], [1.7, 226, 298], [2.0, 204, 230], [2.4, 286, 106]],
-        X4: [[1.2, 366, 152], [1.8, 330, 180], [2.4, 300, 196]]
+        2: [[0.35, 226, 196], [0.75, 200, 246], [1.1, 204, 302], [1.45, 246, 338], [1.8, 330, 348], [2.1, 428, 326], [2.35, 478, 272], [2.55, 470, 214], [2.8, 414, 146]],
+        X2: [[0.6, 262, 196], [1.4, 268, 210], [2.8, 316, 200]]
       },
-      trails: [{ t0: 0, t1: 2.4, kind: "cut", pts: [[378, 178], [438, 222], [412, 306], [325, 326], [226, 298], [204, 230], [280, 112]] }],
+      trails: [{ t0: 0, t1: 2.8, kind: "screen", pts: [[272, 178], [226, 196], [200, 246], [204, 302], [246, 338], [330, 348], [428, 326], [478, 272], [470, 214], [418, 150]] }],
+      next: "cut4"
+    },
+    cut4: {
+      dur: 1.2, caption: "<b>2.</b> #4 cuts to the basket off #2's screen, looking for a shot. X4 is stuck behind #2!",
+      moves: { 4: [[0.5, 352, 140], [1.2, 308, 102]], X4: [[1.2, 364, 152]] },
+      trails: [{ t0: 0, t1: 1.2, kind: "cut", pts: [[378, 178], [352, 140], [314, 108]] }],
       next: "read4a"
     },
     read4a: {
@@ -277,7 +278,7 @@ window.TEMPO_PLAYS["scramble"] = {
       dur: 1.6, caption: "<b>3. Covered.</b> #2 pops out to the 3-point line on the ball side. #3 pops out to the 3-point line on the weak side.",
       moves: { 2: [[0.7, 300, 176], [1.5, 96, 214]], X2: [[0.7, 262, 160], [1.6, 132, 206]], 3: [[0.6, 330, 236], [1.6, 600, 150]], X3: [[0.7, 336, 214], [1.6, 560, 168]],
         4: [[1.4, 300, 128]], X4: [[1.4, 300, 168]] },
-      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[410, 138], [300, 176], [110, 214]] }, { t0: 0, t1: 1.6, kind: "cut", pts: [[272, 262], [330, 236], [588, 152]] }],
+      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[414, 146], [300, 176], [110, 214]] }, { t0: 0, t1: 1.6, kind: "cut", pts: [[272, 262], [330, 236], [588, 152]] }],
       next: "screen45"
     },
     screen45: {
@@ -323,8 +324,8 @@ window.TEMPO_PLAYS["scramble"] = {
   },
   list: [
     { id: "setup", html: "<b>Set up.</b> Circle around the free-throw line." },
-    { id: "screen24", html: "<b>1.</b> #2 cuts across the paint and screens the outside of #4's defender." },
-    { id: "run4", html: "<b>2.</b> #4 runs a circle around her teammates to the basket for a shot." },
+    { id: "circle2", html: "<b>1.</b> #2 runs a circle around her teammates and screens the outside of #4's defender." },
+    { id: "cut4", html: "<b>2.</b> #4 cuts to the basket for a shot." },
     { id: "read4a", html: "<b>Decision:</b> Is #4 open? Yes → pass, #4 scores." },
     { branch: "If NO" },
     { id: "pop", html: "<b>3.</b> #2 pops to the ball side, #3 to the weak side (3-point line)." },
