@@ -9,20 +9,20 @@
 <style>
   .story { max-width: 760px; margin: 0 auto; }
   /* A handwritten sticky note on the fridge */
-  .note { position: relative; max-width: 640px; margin: 34px auto 10px; padding: 40px 34px 30px; background-color: #FFF1A8; color: #3A2E1F;
-          transform: rotate(-1deg); box-shadow: 3px 8px 18px rgba(70,50,10,.22); border-radius: 2px 2px 26px 2px;
+  .note { position: relative; max-width: 640px; margin: 34px auto 10px; padding: 40px 34px 30px; background-color: var(--bordeaux-soft); color: var(--ink);
+          transform: rotate(-1deg); box-shadow: 3px 8px 18px rgba(74,18,40,.18); border-radius: 2px 2px 26px 2px;
           font-family: "Patrick Hand", "Comic Sans MS", "Chalkboard SE", cursive;
-          background-image: repeating-linear-gradient(transparent 0 33px, rgba(120,150,200,.28) 33px 34px); background-position: 0 6px; }
-  .note::before { content: ""; position: absolute; top: -14px; left: 50%; width: 140px; height: 30px; transform: translateX(-50%) rotate(-2deg); background: rgba(156,195,230,.75); }
-  .note::after { content: ""; position: absolute; right: 0; bottom: 0; border-width: 0 0 26px 26px; border-style: solid; border-color: transparent transparent #F2DC72 #E9CF5C; }
-  .note .tagline { font-size: 20px; color: #B4462E; }
-  .note h1 { font-family: inherit; font-style: normal; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 42px; line-height: 1.05; color: #2A3F8F; margin: 4px 0 2px; }
-  .note .who { font-size: 20px; color: #6B5A3A; margin-bottom: 12px; }
+          background-image: repeating-linear-gradient(transparent 0 33px, rgba(107,30,58,.13) 33px 34px); background-position: 0 6px; }
+  .note::before { content: ""; position: absolute; top: -14px; left: 50%; width: 140px; height: 30px; transform: translateX(-50%) rotate(-2deg); background: rgba(156,195,230,.8); }
+  .note::after { content: ""; position: absolute; right: 0; bottom: 0; border-width: 0 0 26px 26px; border-style: solid; border-color: transparent transparent #E3CCD6 #D9B9C6; }
+  .note .tagline { font-size: 20px; color: var(--blue-dark); }
+  .note h1 { font-family: inherit; font-style: normal; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 42px; line-height: 1.05; color: var(--bordeaux); margin: 4px 0 2px; }
+  .note .who { font-size: 20px; color: var(--muted); margin-bottom: 12px; }
   .note ul { list-style: none; padding: 0; margin: 0 0 12px; }
   .note li { font-size: 23px; line-height: 34px; padding-left: 26px; position: relative; }
-  .note li::before { content: "~"; position: absolute; left: 4px; color: #B4462E; }
+  .note li::before { content: "~"; position: absolute; left: 4px; color: var(--bordeaux); }
   .note .lesson, .note .think { font-size: 23px; line-height: 34px; margin-top: 10px; }
-  .note .lesson b { color: #2E7D46; font-weight: 400; text-decoration: underline; } .note .think b { color: #B4462E; font-weight: 400; text-decoration: underline; }
+  .note .lesson b { color: var(--blue-dark); font-weight: 400; text-decoration: underline; } .note .think b { color: var(--bordeaux); font-weight: 400; text-decoration: underline; }
   @media (max-width: 600px) { .note { padding: 34px 20px 24px; transform: none; } .note h1 { font-size: 34px; } .note li, .note .lesson, .note .think { font-size: 21px; } }
 </style>
 </head>
