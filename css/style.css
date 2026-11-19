@@ -240,3 +240,41 @@ button.round.sm, .btn.round.sm { width: 46px; height: 46px; }
   .nav.open .nav-logout { display: flex; align-items: center; color: #fff; border: 0; font-weight: 600; font-family: inherit; cursor: pointer; }
   .nav.open .nav-logout:hover, .nav.open a:hover { background: rgba(255,255,255,.18); }
 }
+
+/* ----- Two-tier menu: Study Zone and Quiz Zone open their own sub-menu ----- */
+.nav-group { position: relative; display: flex; flex: 1 1 auto; }
+.nav-top { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.1; background: transparent; color: inherit; border: 0; border-radius: 12px; padding: 6px 8px; font: inherit; font-weight: 700; cursor: pointer; box-shadow: none; color: #fff; opacity: .92; }
+.nav-top .nl { font-size: 12px; }
+.nav-top:hover, .nav-group.open .nav-top, .nav-group.has-active .nav-top { background: rgba(255,255,255,.14); opacity: 1; }
+.nav-group.has-active .nav-top { background: var(--blue); color: var(--ink); }
+.nav-top .chev { display: inline-flex; margin-top: -2px; transition: transform .15s; }
+.nav-top .chev .ico { width: 12px; height: 12px; }
+.nav-group.open .nav-top .chev { transform: rotate(180deg); }
+.nav-top .back-ic { display: none; }
+.nav-group .sub { display: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); z-index: 60; background: var(--bordeaux); border-radius: 16px; padding: 10px;
+  box-shadow: 0 14px 30px rgba(0,0,0,.28); grid-template-columns: repeat(3, 104px); gap: 8px; }
+.nav-group.open .sub { display: grid; }
+.nav .sub a { flex-direction: column; justify-content: center; gap: 6px; padding: 12px 4px; border-radius: 12px; background: rgba(255,255,255,.08); text-align: center; }
+.nav .sub a .nl { font-size: 12px; }
+.nav .sub a:hover { background: rgba(255,255,255,.18); }
+.nav .sub a.active { background: var(--blue); color: var(--ink); }
+@media (max-width: 1150px) {
+  .nav.open .nav-group { display: contents; }
+  .nav.open .nav-top { flex-direction: column; justify-content: center; gap: 6px; padding: 14px 4px; border-radius: 14px; background: rgba(255,255,255,.08); opacity: 1; }
+  .nav.open .nav-top .nl { font-size: 13px; }
+  .nav.open .nav-top .ico { width: 28px; height: 28px; }
+  .nav.open .nav-top .chev { display: none; }
+  .nav.open .nav-group.has-active .nav-top { background: var(--blue); color: var(--ink); }
+  .nav.open[data-tier] .nav-group.open.has-active .nav-top { background: rgba(255,255,255,.14); color: #fff; }
+  .nav.open .nav-group .sub { display: none !important; }
+  /* Second tier: only that group's items, with a back button on top */
+  .nav.open[data-tier] > a, .nav.open[data-tier] > .nav-logout, .nav.open[data-tier] .nav-group:not(.open) { display: none; }
+  .nav.open[data-tier] .nav-group.open { display: contents; }
+  .nav.open[data-tier] .nav-group.open .nav-top { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,.14); }
+  .nav.open[data-tier] .nav-group.open .nav-top .back-ic { display: inline-flex; }
+  .nav.open[data-tier] .nav-group.open .nav-top .ico { width: 22px; height: 22px; }
+  .nav.open[data-tier] .nav-group.open .nav-top .nl { font-size: 16px; }
+  .nav.open[data-tier] .nav-group.open .sub { display: contents !important; position: static; transform: none; box-shadow: none; }
+  .nav.open[data-tier] .sub a .ico { width: 28px; height: 28px; }
+  .nav.open[data-tier] .sub a .nl { font-size: 13px; }
+}

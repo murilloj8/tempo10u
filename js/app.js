@@ -8,15 +8,25 @@
 (function () {
   const CFG = window.TEMPO_CONFIG;
   const FB_VERSION = "10.12.2";
+  // Main menu. Groups open a second tier (Study Zone pages, Quiz Zone subjects).
   const NAV = [
     { href: "index.html", label: "Home", key: "home", icon: "home", iconOnly: true },
-    { href: "court.html", label: "Court", key: "court", icon: "court" },
-    { href: "refs.html", label: "Refs", key: "refs", icon: "refs" },
-    { href: "rules.html", label: "Rules", key: "rules", icon: "rules" },
-    { href: "fundamentals.html", label: "Fundamentals", key: "fundamentals", icon: "fundamentals" },
-    { href: "culture.html", label: "Culture", key: "culture", icon: "culture" },
+    { group: "study", label: "Study Zone", icon: "study", keys: ["court", "refs", "rules", "fundamentals", "plays", "culture"], items: [
+      { href: "court.html", label: "Court", key: "court", icon: "court" },
+      { href: "refs.html", label: "Refs", key: "refs", icon: "refs" },
+      { href: "rules.html", label: "Rules", key: "rules", icon: "rules" },
+      { href: "fundamentals.html", label: "Fundamentals", key: "fundamentals", icon: "fundamentals" },
+      { href: "plays.html", label: "Plays", key: "plays", icon: "plays" },
+      { href: "culture.html", label: "Culture", key: "culture", icon: "culture" }
+    ] },
+    { group: "quiz", label: "Quiz Zone", icon: "quiz", keys: ["quizzes"], items: [
+      { href: "quizzes.html#rules", label: "Rules & Signals", icon: "rules" },
+      { href: "quizzes.html#court", label: "Court", icon: "court" },
+      { href: "quizzes.html#fundamentals", label: "Fundamentals", icon: "fundamentals" },
+      { href: "quizzes.html#culture", label: "Culture", icon: "culture" },
+      { href: "quizzes.html", label: "All quizzes", icon: "quiz", key: "quizzes" }
+    ] },
     { href: "stories.html", label: "Stories", key: "stories", icon: "stories" },
-    { href: "quizzes.html", label: "Quizzes", key: "quizzes", icon: "quiz" },
     { href: "coach.html", label: "Coach", key: "coach", icon: "coach", coachOnly: true }
   ];
 
@@ -31,7 +41,9 @@
     culture: 'M12 5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5M7.5 19v-1.5a4.5 4.5 0 0 1 9 0V19M5.5 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4M2 19v-1a3.5 3.5 0 0 1 4.5-3.3M18.5 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4M22 19v-1a3.5 3.5 0 0 0-4.5-3.3',
     stories: 'M12 4.5l2.3 4.7 5.2.8-3.8 3.6.9 5.2L12 16.4l-4.6 2.4.9-5.2-3.8-3.6 5.2-.8z',
     quiz: 'M4 20h4L18.5 9.5a2.8 2.8 0 0 0-4-4L4 16v4M13.5 6.5l4 4M15 19l2 2 4-4',
-    coach: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 3h6v4H9zM9 12h6M9 16h4',
+    coach: 'M3 13a5 5 0 1 0 10 0 5 5 0 0 0-10 0zM12 10h9v4h-8.5M8 13h.01M6.5 8V4.5h4',
+    plays: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 3h6v4H9zM8 10.5l2.5 2.5M10.5 10.5 8 13M15 17.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M9.5 17c2 0 3.5-1 4.5-3.5',
+    chevron: 'M6 9l6 6 6-6',
     study: 'M12 6.5C9.5 5 6.5 4.5 3.5 5v13c3-.5 6 0 8.5 1.5 2.5-1.5 5.5-2 8.5-1.5V5c-3-.5-6 0-8.5 1.5zM12 6.5v13',
     heart: 'M19.5 12.6 12 20l-7.5-7.4A5 5 0 1 1 12 6a5 5 0 1 1 7.5 6.6',
     left: 'M15 6l-6 6 6 6', right: 'M9 6l6 6-6 6',
@@ -400,8 +412,13 @@
     let bar = $(".topbar");
     if (!bar) { bar = document.createElement("header"); bar.className = "topbar"; document.body.prepend(bar); }
     const u = TEMPO.user;
-    const links = u ? NAV.filter((n) => !n.coachOnly || u.isCoach).map((n) =>
-      `<a href="${n.href}" class="${n.key === pageKey ? "active" : ""} ${n.iconOnly ? "icon-only" : ""}" title="${n.label}"${n.iconOnly ? ` aria-label="${n.label}"` : ""}>${icon(n.icon, 22)}<span class="nl">${n.label}</span></a>`).join("") : "";
+    const link = (n, cls = "") => `<a href="${n.href}" class="${cls} ${n.key && n.key === pageKey ? "active" : ""} ${n.iconOnly ? "icon-only" : ""}" title="${n.label}"${n.iconOnly ? ` aria-label="${n.label}"` : ""}>${icon(n.icon, 22)}<span class="nl">${n.label}</span></a>`;
+    const links = u ? NAV.filter((n) => !n.coachOnly || u.isCoach).map((n) => !n.group ? link(n) :
+      `<div class="nav-group ${n.keys.includes(pageKey) ? "has-active" : ""}" data-g="${n.group}">
+        <button type="button" class="nav-top" aria-expanded="false" aria-haspopup="true" title="${n.label}">
+          <span class="back-ic">${icon("left", 22)}</span>${icon(n.icon, 22)}<span class="nl">${n.label}</span><span class="chev">${icon("chevron", 14)}</span></button>
+        <div class="sub" role="menu">${n.items.map((c) => link(c, "sub-link")).join("")}</div>
+      </div>`).join("") : "";
     bar.innerHTML = `<div class="topbar-inner">
         <a class="brand" href="index.html">${BALL_SVG}<span>${esc(CFG.teamName.toUpperCase())}<small>10U GIRLS · ${esc(CFG.season)}</small></span></a>
         ${u ? '<button class="menu-btn" aria-label="Menu">Menu ☰</button>' : ""}
@@ -411,12 +428,24 @@
         </nav>
       </div>`;
     const mb = $(".menu-btn", bar);
-    if (mb) mb.onclick = (e) => { e.stopPropagation(); $(".nav", bar).classList.toggle("open"); };
+    const navEl = $(".nav", bar);
+    const closeGroups = () => { if (!navEl) return; navEl.querySelectorAll(".nav-group.open").forEach((g) => { g.classList.remove("open"); $(".nav-top", g).setAttribute("aria-expanded", "false"); }); navEl.removeAttribute("data-tier"); };
+    if (mb) mb.onclick = (e) => { e.stopPropagation(); closeGroups(); navEl.classList.toggle("open"); };
+    // Study Zone / Quiz Zone: computer = drop-down panel; phone menu = switch to that tier (with a back button).
+    bar.querySelectorAll(".nav-top").forEach((b) => (b.onclick = (e) => {
+      e.stopPropagation();
+      const g = b.closest(".nav-group"), wasOpen = g.classList.contains("open");
+      closeGroups();
+      if (!wasOpen) { g.classList.add("open"); b.setAttribute("aria-expanded", "true"); navEl.dataset.tier = g.dataset.g; }
+    }));
+    bar.querySelectorAll(".sub-link").forEach((a) => a.addEventListener("click", () => { if (location.pathname.endsWith(a.getAttribute("href").split("#")[0]) && a.hash) setTimeout(() => location.reload(), 0); }));
     if (!window.__tempoMenuClose) {   // tap anywhere outside the open menu to close it
       window.__tempoMenuClose = true;
       document.addEventListener("click", (e) => {
-        const nav = document.querySelector(".topbar .nav.open");
-        if (nav && !nav.contains(e.target)) nav.classList.remove("open");
+        const nav = document.querySelector(".topbar .nav");
+        if (!nav || nav.contains(e.target)) return;
+        nav.classList.remove("open"); nav.removeAttribute("data-tier");
+        nav.querySelectorAll(".nav-group.open").forEach((g) => { g.classList.remove("open"); g.querySelector(".nav-top").setAttribute("aria-expanded", "false"); });
       });
     }
     bar.querySelectorAll("#logoutBtn, .nav-logout").forEach((b) => (b.onclick = () => TEMPO.signOut()));
