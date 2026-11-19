@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Plays</title>
-<link rel="stylesheet" href="css/style.css?v=20261118h">
+<link rel="stylesheet" href="css/style.css?v=20261118i">
 <style>
   .play { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform .12s, box-shadow .12s; }
   .play:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(74,18,40,.14); }
@@ -42,10 +42,29 @@
         <h3>Banana Split</h3>
         <span class="go play-ic" title="Watch" aria-label="Watch"><i data-ico="play" data-size="22"></i></span></div>
     </a>
+    <a class="play" href="play.html#scramble">
+      <div class="num"><svg viewBox="0 0 64 64" width="64%" aria-hidden="true" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="56" x2="58" y2="56" stroke-width="3"/>
+          <circle cx="32" cy="16" r="9" stroke-width="3" stroke-dasharray="4 4"/>
+          <circle cx="32" cy="7" r="4" fill="#fff" stroke="none"/><circle cx="23" cy="16" r="4" fill="#fff" stroke="none"/><circle cx="41" cy="16" r="4" fill="#fff" stroke="none"/><circle cx="32" cy="25" r="4" fill="#fff" stroke="none"/>
+          <path d="M14 50 C16 42 22 36 28 33"/><path d="M21 33 L28 33 L26 40"/></svg></div>
+      <div><span class="pill">Baseline out-of-bounds</span> <span class="pill b">vs Man-to-man defense</span>
+        <h3>Scramble</h3>
+        <span class="go play-ic" title="Watch" aria-label="Watch"><i data-ico="play" data-size="22"></i></span></div>
+    </a>
+    <a class="play" href="play.html#four-out">
+      <div class="num"><svg viewBox="0 0 64 64" width="64%" aria-hidden="true" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="14" cy="44" r="4.5" fill="#fff"/><circle cx="50" cy="44" r="4.5" fill="#fff"/><circle cx="10" cy="20" r="4.5" fill="#fff"/><circle cx="54" cy="20" r="4.5" fill="#fff"/>
+          <circle cx="32" cy="12" r="5" fill="none" stroke-width="3.5"/>
+          <path d="M20 46 H44" stroke-width="3.5"/><path d="M39 41 L44 46 L39 51" stroke-width="3.5"/></svg></div>
+      <div><span class="pill">Half-court offense</span> <span class="pill b">vs Man-to-man defense</span>
+        <h3>4-Out Motion</h3>
+        <span class="go play-ic" title="Watch" aria-label="Watch"><i data-ico="play" data-size="22"></i></span></div>
+    </a>
   </div>
 </main>
-<script src="js/config.js?v=20261118h"></script>
-<script src="js/app.js?v=20261118h"></script>
+<script src="js/config.js?v=20261118i"></script>
+<script src="js/app.js?v=20261118i"></script>
 <script>TEMPO.boot("plays", { study: true });</script>
 </body>
 </html>

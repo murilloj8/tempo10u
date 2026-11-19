@@ -233,3 +233,194 @@ window.TEMPO_PLAYS = {
     left = !left;
   }
 })();
+
+/* ===================== SCRAMBLE (baseline out of bounds) =====================
+   #1 inbounds on the left baseline. #2–#5 stand in a circle around the free-throw line:
+   #2 front-left, #3 back-left, #4 front-right, #5 back-right. */
+window.TEMPO_PLAYS["scramble"] = {
+  title: "Scramble",
+  sub: "Circle set at the free-throw line. #2 screens for #3, then #4 screens for #5. Three looks at the rim.",
+  tips: ["#1: slap the ball to start. Look at #3, then #5, then #4.", "You have 5 seconds to pass it in!", "Screeners (#2, #4): wide stance, hold still.", "Cutters (#3, #5): wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
+  oob: true,
+  start: {
+    off: { 1: [214, -26], 2: [272, 178], 3: [272, 262], 4: [378, 178], 5: [378, 262] },
+    def: { X1: [236, 24], X2: [278, 150], X3: [282, 232], X4: [372, 150], X5: [368, 232] },
+    ball: "1"
+  },
+  first: "setup",
+  phases: {
+    setup: { dur: 0.9, caption: "<b>Set up — Circle.</b> #1 inbounds. #2, #3, #4 and #5 make a circle around the free-throw line.", next: "screen23" },
+    screen23: {
+      dur: 1.0, clearTrails: true, caption: "<b>1.</b> #2 steps back and sets a screen on #3's defender.",
+      moves: { 2: [[1.0, 270, 222]], X2: [[1.0, 290, 170]] },
+      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[272, 178], [271, 214]] }],
+      next: "cut3"
+    },
+    cut3: {
+      dur: 1.6, caption: "<b>2.</b> #3 cuts around #2's screen and goes toward the basket.",
+      moves: { 3: [[0.4, 222, 240], [0.9, 236, 160], [1.5, 296, 104]], X3: [[0.6, 268, 228], [1.6, 312, 168]] },
+      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[272, 262], [222, 240], [236, 160], [290, 110]] }],
+      next: "read3"
+    },
+    read3: {
+      dur: 0, caption: "<b>Decision:</b> #1, look at #3 cutting to the basket.",
+      decision: { question: "Is #3 open on the cut?", hint: "Open = X3 got stuck on #2's screen and is behind her.", yes: "pass3", no: "pop" }
+    },
+    pass3: { dur: 0.9, caption: "<b>Yes!</b> #1 passes to #3.", ball: [{ t0: 0, t1: 0.7, from: "1", to: "3" }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [[226, -36], [292, 96]] }], next: "score3" },
+    score3: { dur: 1.2, caption: "<b>Score!</b> #3 lays it in.", score: 0.85, moves: { 3: [[0.4, 306, 84]] },
+      ball: [{ t0: 0, t1: 0.4, hold: "3" }, { t0: 0.4, t1: 0.85, from: "3", toXY: [325, 68] }] },
+    pop: {
+      dur: 1.6, caption: "<b>3. Covered.</b> #2 pops out to the 3-point line on the ball side. #3 pops out to the 3-point line on the weak side.",
+      moves: { 2: [[1.5, 96, 214]], X2: [[1.6, 132, 206]], 3: [[0.5, 340, 96], [1.6, 600, 150]], X3: [[0.6, 350, 140], [1.6, 560, 168]] },
+      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[270, 222], [110, 214]] }, { t0: 0, t1: 1.6, kind: "cut", pts: [[296, 104], [340, 96], [588, 148]] }],
+      next: "screen45"
+    },
+    screen45: {
+      dur: 1.0, caption: "<b>4.</b> #4 steps back and sets a screen on #5's defender.",
+      moves: { 4: [[1.0, 380, 222]], X4: [[1.0, 362, 170]] },
+      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[378, 178], [379, 214]] }],
+      next: "cut5"
+    },
+    cut5: {
+      dur: 1.6, caption: "<b>5.</b> #5 cuts around #4's screen toward the basket, looking for the pass.",
+      moves: { 5: [[0.4, 428, 240], [0.9, 414, 160], [1.5, 354, 104]], X5: [[0.6, 382, 228], [1.6, 340, 168]] },
+      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[378, 262], [428, 240], [414, 160], [360, 110]] }],
+      next: "read5"
+    },
+    read5: {
+      dur: 0, caption: "<b>Decision:</b> #1, look at #5 cutting to the basket.",
+      decision: { question: "Is #5 open on the cut?", hint: "Open = X5 got stuck on #4's screen and is behind her.", yes: "pass5", no: "dive4" }
+    },
+    pass5: { dur: 0.9, caption: "<b>Yes!</b> #1 passes to #5.", ball: [{ t0: 0, t1: 0.7, from: "1", to: "5" }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [[226, -36], [350, 96]] }], next: "score5" },
+    score5: { dur: 1.2, caption: "<b>Score!</b> #5 finishes at the rim.", score: 0.85, moves: { 5: [[0.4, 340, 86]] },
+      ball: [{ t0: 0, t1: 0.4, hold: "5" }, { t0: 0.4, t1: 0.85, from: "5", toXY: [325, 68] }] },
+    dive4: {
+      dur: 1.2, caption: "<b>6. Last look.</b> X4 helped on #5. #4 — the screener — cuts straight to the basket.",
+      moves: { 4: [[1.2, 388, 104]], X4: [[1.2, 372, 186]], X5: [[0.6, 330, 150], [1.2, 300, 150]] },
+      trails: [{ t0: 0, t1: 1.2, kind: "cut", pts: [[380, 222], [388, 118]] }],
+      next: "read4"
+    },
+    read4: {
+      dur: 0, caption: "<b>Decision:</b> #1, look at #4 on the cut.",
+      decision: { question: "Is #4 open on the cut?", hint: "Is #4 sealed behind X4, close to the rim?", yes: "pass4", no: "safety" }
+    },
+    pass4: { dur: 0.9, caption: "<b>Yes!</b> #1 hits #4.", ball: [{ t0: 0, t1: 0.7, from: "1", to: "4" }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [[226, -36], [384, 92]] }], next: "score4" },
+    score4: { dur: 1.2, caption: "<b>Score!</b> #4 lays it in.", score: 0.85, moves: { 4: [[0.4, 350, 82]] },
+      ball: [{ t0: 0, t1: 0.4, hold: "4" }, { t0: 0.4, t1: 0.85, from: "4", toXY: [325, 68] }] },
+    safety: {
+      dur: 1.3, caption: "<b>7. Safety.</b> All covered — no problem. #1 passes to #2 on the ball-side 3-point line (before 5 seconds!), steps in, and we run our offense.",
+      moves: { 1: [[1.3, 230, 60]], X2: [[1.0, 120, 236]] },
+      ball: [{ t0: 0, t1: 0.7, from: "1", to: "2" }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [[226, -36], [104, 204]] }]
+    }
+  },
+  list: [
+    { id: "setup", html: "<b>Set up.</b> Circle around the free-throw line." },
+    { id: "screen23", html: "<b>1.</b> #2 screens for #3." },
+    { id: "cut3", html: "<b>2.</b> #3 cuts to the basket." },
+    { id: "read3", html: "<b>Decision:</b> Is #3 open? Yes → pass, #3 scores." },
+    { branch: "If NO" },
+    { id: "pop", html: "<b>3.</b> #2 pops to the ball side, #3 to the weak side (3-point line)." },
+    { id: "screen45", html: "<b>4.</b> #4 screens for #5." },
+    { id: "cut5", html: "<b>5.</b> #5 cuts to the basket." },
+    { id: "read5", html: "<b>Decision:</b> Is #5 open? Yes → pass, #5 scores." },
+    { branch: "If NO" },
+    { id: "dive4", html: "<b>6.</b> #4 cuts to the basket." },
+    { id: "read4", html: "<b>Decision:</b> Is #4 open? Yes → pass, #4 scores." },
+    { id: "safety", html: "No → safe pass to #2." }
+  ]
+};
+// "Yes" branches of the decisions highlight their decision row in the steps list.
+["pass3", "score3"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read3"));
+["pass5", "score5"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read5"));
+["pass4", "score4"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read4"));
+
+/* ===================== 4-OUT MOTION =====================
+   Four players spread on the perimeter (two guards, two wings), #5 on a block.
+   Every cycle: swing the ball to the other guard; the passer screens away for her wing;
+   the wing cuts to the basket (read), then fills the guard spot while the screener
+   pops to the wing. #5 rotates to the ball-side block. The next cycle runs the other way. */
+(function () {
+  const SPOT = { tl: [232, 400], tr: [418, 400], lw: [86, 214], rw: [564, 214], lb: [238, 112], rb: [412, 112] };
+  const BASKET = [325, 68];
+  const play = {
+    title: "4-Out Motion",
+    sub: "Four out, one in. Pass, screen away, cut, fill. #5 follows the ball block to block.",
+    tips: ["Spacing: stay 12–15 feet apart on the 3-point line.", "Pass, then screen AWAY from the ball.", "Cutter: wait for the screen, cut hard to the basket, then fill the open spot.", "#5: always move to the block on the ball side.", "Never force it — swing the ball and run it again."],
+    start: {
+      off: { 1: SPOT.tl, 2: SPOT.tr, 3: SPOT.lw, 4: SPOT.rw, 5: SPOT.lb },
+      def: {}, ball: "1"
+    },
+    first: "setup",
+    phases: { setup: { dur: 0.9, caption: "<b>Set up — 4 out.</b> #1 and #2 at the top, #3 and #4 on the wings, #5 on the left block.", next: "c0_a" } },
+    list: [
+      { id: "setup", html: "<b>Set up.</b> Four out, #5 on the block." },
+      { id: "c0_a", html: "<b>1.</b> Swing: pass to the other guard. #5 moves to the ball-side block." },
+      { id: "c0_b", html: "<b>2.</b> The passer screens away for her wing." },
+      { id: "c0_c", html: "<b>3.</b> The wing cuts to the basket." },
+      { id: "c0_d", html: "<b>Decision:</b> Is the cutter open? Yes → pass and score." },
+      { branch: "If NO" },
+      { id: "c0_e", html: "<b>4.</b> Cutter fills the guard spot, screener pops to the wing — then run it the other way." }
+    ]
+  };
+  const toward = ([x, y], k) => [x + (BASKET[0] - x) * k, y + (BASKET[1] - y) * k];
+  const postD = ([x, y]) => [x + (BASKET[0] - x) * 0.45, y + 34];   // #5's defender: inside and a step up, so both stay visible
+  Object.entries(play.start.off).forEach(([id, p]) => { play.start.def["X" + id] = id === "5" ? postD(p) : toward(p, 0.18); });
+
+  let roles = { bh: "1", rec: "2", cw: "3", far: "4", c: "5" }, left = true;
+  const start = JSON.stringify(roles);
+  let c = 0;
+  do {
+    const r = roles, n = (k) => "#" + r[k], id = (k) => `c${c}_${k}`;
+    const mx = (x) => (left ? x : 650 - x), P = ([x, y]) => [mx(x), y];
+    const K = (ks) => ks.map(([t, x, y]) => [t, mx(x), y]);
+    const D = (moves, dur) => {   // defenders shadow a step toward the basket
+      const out = {};
+      Object.entries(moves).forEach(([pid, ks]) => { out["X" + pid] = ks.map(([t, x, y]) => [Math.min(dur, t + 0.15), ...(pid === r.c ? postD([x, y]) : toward([x, y], 0.18))]); });
+      return { ...moves, ...out };
+    };
+    const S = (name) => (left ? name : { left: "right", right: "left" }[name]);
+    const next = (k) => id(k);
+    const ph = {};
+    ph.a = { dur: 1.2, clearTrails: true, listId: "c0_a",
+      caption: `<b>Swing.</b> ${n("bh")} passes to ${n("rec")}. ${n("c")} slides to the ${S("right")} block — the ball side.`,
+      moves: D({ [r.c]: K([[1.2, 412, 112]]) }, 1.2),
+      ball: [{ t0: 0, t1: 0.7, from: r.bh, to: r.rec }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [P([246, 388]), P([404, 388])] }, { t0: 0, t1: 1.2, kind: "cut", pts: [P([238, 112]), P([400, 112])] }],
+      next: next("b") };
+    ph.b = { dur: 1.0, listId: "c0_b",
+      caption: `<b>Screen away.</b> ${n("bh")} — who just passed — screens for ${n("cw")} on the ${S("left")} wing.`,
+      moves: D({ [r.bh]: K([[1.0, 150, 290]]) }, 1.0),
+      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [P([232, 400]), P([158, 300])] }],
+      next: next("c") };
+    ph.c = { dur: 1.5, listId: "c0_c",
+      caption: `<b>Cut!</b> ${n("cw")} cuts off the screen to the basket, looking for the ball.`,
+      moves: { ...D({ [r.cw]: K([[0.4, 120, 250], [0.9, 214, 196], [1.5, 296, 104]]) }, 1.5), ["X" + r.cw]: K([[0.6, 130, 276], [1.5, 236, 208]]) },
+      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [P([86, 214]), P([120, 250]), P([214, 196]), P([290, 110])] }],
+      next: next("d") };
+    ph.d = { dur: 0, listId: "c0_d", caption: `<b>Decision:</b> ${n("rec")}, look at ${n("cw")} on the cut. Is she open?`,
+      decision: { question: `Is ${n("cw")} open on the cut?`, hint: "Open = her defender is behind her. Covered = her defender is between her and the ball.", yes: next("yes"), no: next("e") } };
+    ph.yes = { dur: 0.9, listId: "c0_d", caption: `<b>Yes!</b> ${n("rec")} passes to ${n("cw")}.`,
+      ball: [{ t0: 0, t1: 0.7, from: r.rec, to: r.cw }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [P([404, 388]), P([300, 98])] }], next: next("score") };
+    ph.score = { dur: 1.2, listId: "c0_d", caption: `<b>Score!</b> ${n("cw")} lays it in. Sprint back on defense!`, score: 0.85,
+      moves: { [r.cw]: K([[0.4, 312, 86]]) },
+      ball: [{ t0: 0, t1: 0.4, hold: r.cw }, { t0: 0.4, t1: 0.85, from: r.cw, toXY: [325, 68] }] };
+    ph.e = { dur: 1.6, listId: "c0_e",
+      caption: `<b>Covered — fill the spots.</b> ${n("cw")} comes out to the ${S("left")} guard spot. ${n("bh")} pops out to the ${S("left")} wing. Now run it the other way!`,
+      moves: D({ [r.cw]: K([[0.7, 268, 230], [1.6, 232, 400]]), [r.bh]: K([[1.4, 86, 214]]) }, 1.6),
+      trails: [{ t0: 0, t1: 1.6, kind: "cut", pts: [P([296, 104]), P([268, 230]), P([236, 386])] }, { t0: 0, t1: 1.4, kind: "cut", pts: [P([150, 290]), P([98, 222])] }],
+      next: null };
+    const keysOf = Object.keys(ph);
+    keysOf.forEach((k) => { play.phases[id(k)] = ph[k]; });
+    // New roles, seen from the other side of the floor next time.
+    roles = { bh: r.rec, rec: r.cw, cw: r.far, far: r.bh, c: r.c };
+    left = !left; c++;
+  } while ((JSON.stringify(roles) !== start || !left) && c < 40);
+  const CYC = c;
+  for (let i = 0; i < CYC; i++) play.phases[`c${i}_e`].next = `c${(i + 1) % CYC}_a`;
+  window.TEMPO_PLAYS["four-out"] = play;
+})();
