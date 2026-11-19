@@ -5,7 +5,7 @@
   /* Filter ribbon: icon + one word + a progress bar */
   .deck-filters { display: flex; gap: 6px; margin: 6px 0 16px; padding: 5px; width: max-content; max-width: 100%; overflow-x: auto; background: #EFEAEC; border-radius: 18px; scrollbar-width: none; }
   .deck-filters::-webkit-scrollbar { display: none; }
-  .deck-filters button { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 76px; padding: 8px 12px 7px; border-radius: 14px; border: 0;
+  .deck-filters button { flex: 0 0 96px; width: 96px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 8px 7px; border-radius: 14px; border: 0;
     background: #fff; color: var(--bordeaux); font-size: 13px; font-weight: 800; line-height: 1.1; box-shadow: none; }
   .deck-filters button .ico { width: 24px; height: 24px; }
   .deck-filters button.on { background: var(--bordeaux); color: #fff; }
@@ -15,6 +15,7 @@
   .deck-filters .bar b { display: block; height: 100%; background: var(--good); border-radius: 4px; transition: width .25s; }
   .deck-filters button.on .bar { background: rgba(255,255,255,.35); }
   .deck-filters button.done.on .bar b { background: #fff; }
+  @media (max-width: 480px) { .deck-filters button { flex-basis: 76px; width: 76px; font-size: 12px; padding: 7px 4px 6px; } }
   .deck-group-name { font-size: 13px; color: var(--muted); margin: -10px 0 12px; font-weight: 700; }
   .deck-stage { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; }
   .deck-card { display: grid; grid-template-columns: minmax(200px, 300px) 1fr; min-height: 340px; }
