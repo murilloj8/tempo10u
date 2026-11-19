@@ -14,6 +14,11 @@
   details.sec[open] > summary::after { transform: rotate(180deg); }
   details.sec[open] { padding-bottom: 18px; }
   details.sec > summary:hover h2 { color: var(--bordeaux); }
+  /* Sections that only open another page: the whole bar is the link */
+  a.sec-link.section { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0; padding: 14px 18px; border: 2px solid var(--line); border-radius: 16px; background: #fff; text-decoration: none; color: inherit; }
+  a.sec-link.section > h2 { margin: 0; color: var(--ink); border-bottom: 0; padding-bottom: 0; display: block; }
+  a.sec-link .go { display: inline-flex; color: var(--bordeaux); }
+  a.sec-link:hover { border-color: var(--blue); } a.sec-link.section:hover > h2 { color: var(--bordeaux); }
   .sec-tools { display: flex; justify-content: flex-end; gap: 10px; margin: 14px 0 0; }
 </style>
 <link rel="stylesheet" href="css/style.css?v=20261119e">
@@ -82,19 +87,9 @@
     </div>
   </details>
 
-  <details class="section sec">
-    <summary><h2>Practice planning</h2></summary>
-    <div class="sec-body">
-    <a class="btn" href="practice.html">Open practice planner →</a>
-    </div>
-  </details>
+  <a class="section sec-link" href="practice.html"><h2>Practice planning</h2><span class="go" aria-hidden="true"></span></a>
 
-  <details class="section sec">
-    <summary><h2>Lineups</h2></summary>
-    <div class="sec-body">
-    <a class="btn" href="lineups.html">Open lineups →</a>
-    </div>
-  </details>
+  <a class="section sec-link" href="lineups.html"><h2>Lineups</h2><span class="go" aria-hidden="true"></span></a>
 
   <details class="section sec">
     <summary><h2>Story of the week</h2></summary>
@@ -315,6 +310,7 @@
   const syncAll = () => { document.getElementById("expandAll").textContent = secs().every((d) => d.open) ? "Collapse all" : "Expand all"; };
   document.getElementById("expandAll").onclick = () => { const open = !secs().every((d) => d.open); secs().forEach((d) => (d.open = open)); syncAll(); };
   secs().forEach((d) => d.addEventListener("toggle", syncAll));
+  document.querySelectorAll("a.sec-link .go").forEach((g) => (g.innerHTML = TEMPO.icon("right", 22)));
 })();
 </script>
 </body>
