@@ -353,7 +353,7 @@ window.TEMPO_PLAYS["scramble"] = {
   const play = {
     title: "4-Out Motion",
     sub: "Four out, one in. Pass, screen away, cut, fill. #5 follows the ball block to block.",
-    tips: ["Spacing: stay 12–15 feet apart on the 3-point line.", "Pass, then screen AWAY from the ball.", "Cutter: wait for the screen, cut hard to the basket, then fill the open spot.", "#5: always move to the block on the ball side.", "Never force it — swing the ball and run it again."],
+    tips: ["Spacing: stay 12–15 feet apart on the 3-point line.", "Pass, then screen AWAY from the ball.", "Cutter: wait for the screen, go around the OUTSIDE of the screener, then cut hard to the basket and fill the open spot.", "#5: always move to the block on the ball side.", "Never force it — swing the ball and run it again."],
     start: {
       off: { 1: SPOT.tl, 2: SPOT.tr, 3: SPOT.lw, 4: SPOT.rw, 5: SPOT.lb },
       def: {}, ball: "1"
@@ -364,7 +364,7 @@ window.TEMPO_PLAYS["scramble"] = {
       { id: "setup", html: "<b>Set up.</b> Four out, #5 on the block." },
       { id: "c0_a", html: "<b>1.</b> Swing: pass to the other guard. #5 moves to the ball-side block." },
       { id: "c0_b", html: "<b>2.</b> The passer screens away for her wing." },
-      { id: "c0_c", html: "<b>3.</b> The wing cuts to the basket." },
+      { id: "c0_c", html: "<b>3.</b> The wing runs around the outside of the screen, then cuts to the basket." },
       { id: "c0_d", html: "<b>Decision:</b> Is the cutter open? Yes → pass and score." },
       { branch: "If NO" },
       { id: "c0_e", html: "<b>4.</b> Cutter fills the guard spot, screener pops to the wing — then run it the other way." }
@@ -400,10 +400,11 @@ window.TEMPO_PLAYS["scramble"] = {
       moves: D({ [r.bh]: K([[1.0, 150, 290]]) }, 1.0),
       trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [P([232, 400]), P([158, 300])] }],
       next: next("c") };
-    ph.c = { dur: 1.5, listId: "c0_c",
-      caption: `<b>Cut!</b> ${n("cw")} cuts off the screen to the basket, looking for the ball.`,
-      moves: { ...D({ [r.cw]: K([[0.4, 120, 250], [0.9, 214, 196], [1.5, 296, 104]]) }, 1.5), ["X" + r.cw]: K([[0.6, 130, 276], [1.5, 236, 208]]) },
-      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [P([86, 214]), P([120, 250]), P([214, 196]), P([290, 110])] }],
+    ph.c = { dur: 2.0, listId: "c0_c",
+      caption: `<b>Cut!</b> ${n("cw")} runs around the outside of ${n("bh")}'s screen, then cuts to the basket looking for the ball.`,
+      moves: { ...D({ [r.cw]: K([[0.35, 104, 282], [0.75, 150, 338], [1.1, 204, 306], [1.5, 248, 206], [2.0, 296, 104]]) }, 2.0),
+               ["X" + r.cw]: K([[0.4, 110, 250], [1.0, 128, 268], [2.0, 214, 214]]) },
+      trails: [{ t0: 0, t1: 2.0, kind: "cut", pts: [P([86, 214]), P([104, 282]), P([150, 338]), P([204, 306]), P([248, 206]), P([290, 110])] }],
       next: next("d") };
     ph.d = { dur: 0, listId: "c0_d", caption: `<b>Decision:</b> ${n("rec")}, look at ${n("cw")} on the cut. Is she open?`,
       decision: { question: `Is ${n("cw")} open on the cut?`, hint: "Open = her defender is behind her. Covered = her defender is between her and the ball.", yes: next("yes"), no: next("e") } };
