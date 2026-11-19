@@ -239,8 +239,8 @@ window.TEMPO_PLAYS = {
    #2 front-left, #3 back-left, #4 front-right, #5 back-right. */
 window.TEMPO_PLAYS["scramble"] = {
   title: "Scramble",
-  sub: "Circle set at the free-throw line. #2 screens for #3, then #4 screens for #5. Three looks at the rim.",
-  tips: ["#1: slap the ball to start. Look at #3, then #5, then #4.", "You have 5 seconds to pass it in!", "Screeners (#2, #4): wide stance, hold still.", "Cutters (#3, #5): wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
+  sub: "Circle set at the free-throw line. #4 runs around the circle off #2's screen, then #4 screens for #5. Three looks at the rim.",
+  tips: ["#1: slap the ball to start. Look at #4, then #5, then #4 again.", "You have 5 seconds to pass it in!", "#4: run tight around the circle — rub your defender off your teammates.", "Screeners (#2, #4): wide stance, hold still.", "#5: wait for the screen, then cut shoulder-to-shoulder past it.", "#2 is the safety pass on the ball side."],
   oob: true,
   start: {
     off: { 1: [214, -26], 2: [272, 178], 3: [272, 262], 4: [378, 178], 5: [378, 262] },
@@ -249,37 +249,41 @@ window.TEMPO_PLAYS["scramble"] = {
   },
   first: "setup",
   phases: {
-    setup: { dur: 0.9, caption: "<b>Set up — Circle.</b> #1 inbounds. #2, #3, #4 and #5 make a circle around the free-throw line.", next: "screen23" },
-    screen23: {
-      dur: 1.0, clearTrails: true, caption: "<b>1.</b> #2 steps back and sets a screen on #3's defender.",
-      moves: { 2: [[1.0, 270, 222]], X2: [[1.0, 290, 170]] },
-      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[272, 178], [271, 214]] }],
-      next: "cut3"
+    setup: { dur: 0.9, caption: "<b>Set up — Circle.</b> #1 inbounds. #2, #3, #4 and #5 make a circle around the free-throw line.", next: "screen24" },
+    screen24: {
+      dur: 1.0, clearTrails: true, caption: "<b>1.</b> #2 slides to the left side of the circle and sets a screen for #4.",
+      moves: { 2: [[1.0, 244, 214]], X2: [[1.0, 262, 176]] },
+      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[272, 178], [250, 208]] }],
+      next: "run4"
     },
-    cut3: {
-      dur: 1.6, caption: "<b>2.</b> #3 cuts around #2's screen and goes toward the basket.",
-      moves: { 3: [[0.4, 222, 240], [0.9, 236, 160], [1.5, 296, 104]], X3: [[0.6, 268, 228], [1.6, 312, 168]] },
-      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[272, 262], [222, 240], [236, 160], [290, 110]] }],
-      next: "read3"
+    run4: {
+      dur: 2.4, caption: "<b>2.</b> #4 runs around the outside of the circle — behind #5 and #3 — comes off #2's screen and goes to the basket.",
+      moves: {
+        4: [[0.4, 438, 222], [0.9, 412, 306], [1.3, 325, 326], [1.7, 226, 298], [2.0, 204, 230], [2.4, 286, 106]],
+        X4: [[0.5, 420, 212], [1.0, 400, 290], [1.4, 325, 312], [1.8, 244, 286], [2.4, 232, 236]]
+      },
+      trails: [{ t0: 0, t1: 2.4, kind: "cut", pts: [[378, 178], [438, 222], [412, 306], [325, 326], [226, 298], [204, 230], [280, 112]] }],
+      next: "read4a"
     },
-    read3: {
-      dur: 0, caption: "<b>Decision:</b> #1, look at #3 cutting to the basket.",
-      decision: { question: "Is #3 open on the cut?", hint: "Open = X3 got stuck on #2's screen and is behind her.", yes: "pass3", no: "pop" }
+    read4a: {
+      dur: 0, caption: "<b>Decision:</b> #1, look at #4 coming to the basket.",
+      decision: { question: "Is #4 open on the cut?", hint: "Open = X4 got stuck on #2's screen and is behind her.", yes: "pass4a", no: "pop" }
     },
-    pass3: { dur: 0.9, caption: "<b>Yes!</b> #1 passes to #3.", ball: [{ t0: 0, t1: 0.7, from: "1", to: "3" }],
-      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [[226, -36], [292, 96]] }], next: "score3" },
-    score3: { dur: 1.2, caption: "<b>Score!</b> #3 lays it in.", score: 0.85, moves: { 3: [[0.4, 306, 84]] },
-      ball: [{ t0: 0, t1: 0.4, hold: "3" }, { t0: 0.4, t1: 0.85, from: "3", toXY: [325, 68] }] },
+    pass4a: { dur: 0.9, caption: "<b>Yes!</b> #1 passes to #4.", ball: [{ t0: 0, t1: 0.7, from: "1", to: "4" }],
+      trails: [{ t0: 0, t1: 0.7, kind: "pass", pts: [[226, -36], [284, 98]] }], next: "score4a" },
+    score4a: { dur: 1.2, caption: "<b>Score!</b> #4 lays it in.", score: 0.85, moves: { 4: [[0.4, 306, 84]] },
+      ball: [{ t0: 0, t1: 0.4, hold: "4" }, { t0: 0.4, t1: 0.85, from: "4", toXY: [325, 68] }] },
     pop: {
       dur: 1.6, caption: "<b>3. Covered.</b> #2 pops out to the 3-point line on the ball side. #3 pops out to the 3-point line on the weak side.",
-      moves: { 2: [[1.5, 96, 214]], X2: [[1.6, 132, 206]], 3: [[0.5, 340, 96], [1.6, 600, 150]], X3: [[0.6, 350, 140], [1.6, 560, 168]] },
-      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[270, 222], [110, 214]] }, { t0: 0, t1: 1.6, kind: "cut", pts: [[296, 104], [340, 96], [588, 148]] }],
+      moves: { 2: [[1.5, 96, 214]], X2: [[1.6, 132, 206]], 3: [[0.6, 330, 236], [1.6, 600, 150]], X3: [[0.7, 336, 214], [1.6, 560, 168]],
+        4: [[1.4, 300, 128]], X4: [[1.4, 300, 168]] },
+      trails: [{ t0: 0, t1: 1.5, kind: "cut", pts: [[244, 214], [110, 214]] }, { t0: 0, t1: 1.6, kind: "cut", pts: [[272, 262], [330, 236], [588, 152]] }],
       next: "screen45"
     },
     screen45: {
-      dur: 1.0, caption: "<b>4.</b> #4 steps back and sets a screen on #5's defender.",
-      moves: { 4: [[1.0, 380, 222]], X4: [[1.0, 362, 170]] },
-      trails: [{ t0: 0, t1: 1.0, kind: "screen", pts: [[378, 178], [379, 214]] }],
+      dur: 1.1, caption: "<b>4.</b> #4 comes back up and sets a screen on #5's defender.",
+      moves: { 4: [[1.1, 380, 222]], X4: [[1.1, 362, 176]] },
+      trails: [{ t0: 0, t1: 1.1, kind: "screen", pts: [[300, 128], [376, 214]] }],
       next: "cut5"
     },
     cut5: {
@@ -319,9 +323,9 @@ window.TEMPO_PLAYS["scramble"] = {
   },
   list: [
     { id: "setup", html: "<b>Set up.</b> Circle around the free-throw line." },
-    { id: "screen23", html: "<b>1.</b> #2 screens for #3." },
-    { id: "cut3", html: "<b>2.</b> #3 cuts to the basket." },
-    { id: "read3", html: "<b>Decision:</b> Is #3 open? Yes → pass, #3 scores." },
+    { id: "screen24", html: "<b>1.</b> #2 screens for #4." },
+    { id: "run4", html: "<b>2.</b> #4 runs around the circle to the basket." },
+    { id: "read4a", html: "<b>Decision:</b> Is #4 open? Yes → pass, #4 scores." },
     { branch: "If NO" },
     { id: "pop", html: "<b>3.</b> #2 pops to the ball side, #3 to the weak side (3-point line)." },
     { id: "screen45", html: "<b>4.</b> #4 screens for #5." },
@@ -334,7 +338,7 @@ window.TEMPO_PLAYS["scramble"] = {
   ]
 };
 // "Yes" branches of the decisions highlight their decision row in the steps list.
-["pass3", "score3"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read3"));
+["pass4a", "score4a"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read4a"));
 ["pass5", "score5"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read5"));
 ["pass4", "score4"].forEach((k) => (window.TEMPO_PLAYS.scramble.phases[k].listId = "read4"));
 
