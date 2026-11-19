@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Referee Signals</title>
-<link rel="stylesheet" href="css/style.css?v=20261118d">
+<link rel="stylesheet" href="css/style.css?v=20261118e">
 <style>
   .tag { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
   .tag.foul { background: #FCE8E6; color: var(--bad); }
@@ -49,13 +49,12 @@
       </div>
     </div>
   </div>
-  <p class="small muted">Signals follow the <a href="https://www.nfhs.org/" target="_blank" rel="noopener">NFHS</a> official signal chart.</p>
 </main>
 
-<script src="js/config.js?v=20261118d"></script>
-<script src="js/app.js?v=20261118d"></script>
-<script src="js/signals.js?v=20261118d"></script>
-<script src="js/deck.js?v=20261118d"></script>
+<script src="js/config.js?v=20261118e"></script>
+<script src="js/app.js?v=20261118e"></script>
+<script src="js/signals.js?v=20261118e"></script>
+<script src="js/deck.js?v=20261118e"></script>
 <script>
 (async function () {
   if (!(await TEMPO.boot("refs", { study: true }))) return;
@@ -71,7 +70,6 @@
                  "Clock": { short: "Clock", icon: "clock" }, "Scoring & more": { short: "Scoring", icon: "fundamentals" } },
     visual: (s) => figure(s),
     body: (s) => `
-      <span class="tag ${s.kind}">${kindLabel[s.kind]}</span>
       <h2>${esc(s.name)}</h2>
       <ul class="bul">${[].concat(s.means).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
       ${s.after ? `<p><b>Then:</b> ${esc(s.after)}</p>` : ""}

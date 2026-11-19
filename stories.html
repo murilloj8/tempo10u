@@ -4,24 +4,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Story of the Week</title>
-<link rel="stylesheet" href="css/style.css?v=20261118d">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261118e">
 <style>
   .story { max-width: 760px; margin: 0 auto; }
-  .story .hero { margin-bottom: 20px; }
-  .story .who { color: var(--blue); font-weight: 700; }
-  .story .body li { font-size: 19px; line-height: 1.6; }
-  .lesson { background: var(--blue-soft); border-left: 5px solid var(--blue-dark); border-radius: 12px; padding: 14px 18px; font-size: 17px; margin: 18px 0; }
-  .think { background: var(--bordeaux-soft); border-left: 5px solid var(--bordeaux); border-radius: 12px; padding: 14px 18px; font-size: 17px; font-style: italic; }
+  /* A handwritten sticky note on the fridge */
+  .note { position: relative; max-width: 640px; margin: 34px auto 10px; padding: 40px 34px 30px; background-color: #FFF1A8; color: #3A2E1F;
+          transform: rotate(-1deg); box-shadow: 3px 8px 18px rgba(70,50,10,.22); border-radius: 2px 2px 26px 2px;
+          font-family: "Patrick Hand", "Comic Sans MS", "Chalkboard SE", cursive;
+          background-image: repeating-linear-gradient(transparent 0 33px, rgba(120,150,200,.28) 33px 34px); background-position: 0 6px; }
+  .note::before { content: ""; position: absolute; top: -14px; left: 50%; width: 140px; height: 30px; transform: translateX(-50%) rotate(-2deg); background: rgba(156,195,230,.75); }
+  .note::after { content: ""; position: absolute; right: 0; bottom: 0; border-width: 0 0 26px 26px; border-style: solid; border-color: transparent transparent #F2DC72 #E9CF5C; }
+  .note .tagline { font-size: 20px; color: #B4462E; }
+  .note h1 { font-family: inherit; font-style: normal; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 42px; line-height: 1.05; color: #2A3F8F; margin: 4px 0 2px; }
+  .note .who { font-size: 20px; color: #6B5A3A; margin-bottom: 12px; }
+  .note ul { list-style: none; padding: 0; margin: 0 0 12px; }
+  .note li { font-size: 23px; line-height: 34px; padding-left: 26px; position: relative; }
+  .note li::before { content: "~"; position: absolute; left: 4px; color: #B4462E; }
+  .note .lesson, .note .think { font-size: 23px; line-height: 34px; margin-top: 10px; }
+  .note .lesson b { color: #2E7D46; font-weight: 400; text-decoration: underline; } .note .think b { color: #B4462E; font-weight: 400; text-decoration: underline; }
+  @media (max-width: 600px) { .note { padding: 34px 20px 24px; transform: none; } .note h1 { font-size: 34px; } .note li, .note .lesson, .note .think { font-size: 21px; } }
 </style>
 </head>
 <body>
 <main>
-  <article class="story" id="story"></article>
+  <article id="story"></article>
 </main>
 
-<script src="js/config.js?v=20261118d"></script>
-<script src="js/app.js?v=20261118d"></script>
-<script src="js/stories-data.js?v=20261118d"></script>
+<script src="js/config.js?v=20261118e"></script>
+<script src="js/app.js?v=20261118e"></script>
+<script src="js/stories-data.js?v=20261118e"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("stories", { study: true });
@@ -30,14 +42,14 @@
   const s = TEMPO.storyForWeek(wk, await TEMPO.storyPlan());
   document.title = "Tempo 10U — " + s.name;
   document.getElementById("story").innerHTML = `
-    <div class="hero">
-      <div class="kicker" style="color:var(--blue)">Story of the week · Week ${wk}${s.value ? " · " + esc(s.value) : ""}</div>
+    <div class="note">
+      <div class="tagline">Story of the week${s.value ? " ♥ " + esc(s.value) : ""}</div>
       <h1>${esc(s.name)}</h1>
       ${s.who ? `<div class="who">${esc(s.who)}</div>` : ""}
-    </div>
-    <div class="body"><ul class="bul">${String(s.story).split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean).map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>
-    ${s.lesson ? `<div class="lesson"><b>The lesson:</b> ${esc(s.lesson)}</div>` : ""}
-    ${s.think ? `<div class="think"><b>Think about it:</b> ${esc(s.think)}</div>` : ""}`;
+      <ul>${String(s.story).split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      ${s.lesson ? `<div class="lesson"><b>The lesson:</b> ${esc(s.lesson)}</div>` : ""}
+      ${s.think ? `<div class="think"><b>Think about it:</b> ${esc(s.think)}</div>` : ""}
+    </div>`;
 })();
 </script>
 </body>

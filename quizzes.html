@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tempo 10U — Weekly Quizzes</title>
-<link rel="stylesheet" href="css/style.css?v=20261118d">
+<link rel="stylesheet" href="css/style.css?v=20261118e">
 <style>
   .topic h3 { margin: 6px 0 4px; }
   .topic .status { margin: 10px 0 14px; }
@@ -21,6 +21,7 @@
   .opt.wrong { border-color: var(--bad); background: #FCE8E6; }
   .opt:disabled { opacity: 1; cursor: default; }
   .feedback { margin-top: 14px; }
+  .feedback #nextQ { margin: 12px 0 0 auto; display: grid; }
   .score-big { font-family: var(--display); font-size: 72px; color: var(--bordeaux); line-height: 1; text-align: center; }
   .stars { text-align: center; font-size: 36px; letter-spacing: 6px; color: var(--gold); }
 </style>
@@ -42,16 +43,16 @@
 
   <section id="quizView" class="hidden">
     <div class="quiz-box card">
-      <div class="qhead"><span id="qTopic"></span><span id="qCount"></span></div>
+      <div class="qhead hidden"><span id="qTopic"></span><span id="qCount"></span></div>
       <div class="bar"><div id="qBar"></div></div>
       <div id="qBody"></div>
     </div>
   </section>
 </main>
 
-<script src="js/config.js?v=20261118d"></script>
-<script src="js/app.js?v=20261118d"></script>
-<script src="js/quiz-data.js?v=20261118d"></script>
+<script src="js/config.js?v=20261118e"></script>
+<script src="js/app.js?v=20261118e"></script>
+<script src="js/quiz-data.js?v=20261118e"></script>
 <script>
 (async function () {
   const user = await TEMPO.boot("quizzes");
@@ -71,9 +72,14 @@
   function buildQuiz(topicKey, week) {
     const rand = TEMPO.seededRandom(`${topicKey}-week-${week}`);
     const info = setInfo(week);
+    // 10 questions: this week's set of 6 + 4 review questions from earlier sets
+    // (week 1 borrows a preview from set 2). After week 10: a 10-question challenge mix.
+    const N = (window.TEMPO_CONFIG && TEMPO_CONFIG.questionsPerQuiz) || 10, all = sets[topicKey];
     let picked;
-    if (info.set) picked = sets[topicKey][info.set - 1];
-    else picked = TEMPO.shuffle(sets[topicKey].slice(5).flat(), rand).slice(0, 6);
+    if (info.set) {
+      const extraPool = info.set > 1 ? all.slice(0, info.set - 1).flat() : (all[1] || []);
+      picked = all[info.set - 1].concat(TEMPO.shuffle(extraPool.slice(), rand).slice(0, Math.max(0, N - all[info.set - 1].length)));
+    } else picked = TEMPO.shuffle(all.slice(5).flat(), rand).slice(0, N);
     return TEMPO.shuffle(picked, rand).map((q) => {
       const idx = TEMPO.shuffle(q.o.map((_, i) => i), rand);
       return { q: q.q, why: q.why, o: idx.map((i) => q.o[i]), a: idx.indexOf(q.a) };
@@ -93,8 +99,7 @@
         ? `<span class="pill g">Best: ${r.best}/${r.total}</span> <span class="small muted">· ${r.attempts} ${r.attempts === 1 ? "try" : "tries"}</span>`
         : `<span class="pill b">Not taken yet</span>`;
       return `<div class="card accent topic">
-        <span class="pill">${setInfo(wk).label}</span> <span class="small muted">6 questions</span>
-        <h3>${esc(t.name)}</h3>
+                <h3>${esc(t.name)}</h3>
         <div class="status">${status}</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button data-start="${t.key}">${r ? "Try again" : "Start quiz"}</button>
@@ -141,7 +146,7 @@
       });
       document.getElementById("fb").innerHTML = `
         <div class="msg ${ok ? "ok" : "error"}">${ok ? "Yes! Nice job." : "Not quite — next play!"} <span style="font-weight:500">${esc(q.why)}</span></div>
-        <button id="nextQ">${i === qs.length - 1 ? "See my score" : "Next question →"}</button>`;
+        <button id="nextQ" class="round sm" title="${i === qs.length - 1 ? "See my score" : "Next question"}" aria-label="${i === qs.length - 1 ? "See my score" : "Next question"}">${TEMPO.icon(i === qs.length - 1 ? "check" : "right", 26)}</button>`;
       document.getElementById("nextQ").onclick = () => { i++; i < qs.length ? show() : finish(); };
       document.getElementById("nextQ").focus();
     }
