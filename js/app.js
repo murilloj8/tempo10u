@@ -474,7 +474,10 @@
     if (u && pageKey !== "home" && main && !$(".return-home")) {
       const r = document.createElement("div");
       r.className = "return-home no-print";
-      r.innerHTML = `<a class="btn round" href="index.html" title="Home" aria-label="Home">${icon("home", 28)}</a>`;
+      // Pages inside the Coach section (practice planner, lineups) also get a Coach button, left of Home.
+      const inCoach = pageKey === "coach" && !/coach\.html$/.test(location.pathname);
+      r.innerHTML = (inCoach ? `<a class="btn round secondary" href="coach.html" title="Coach page" aria-label="Coach page">${icon("coach", 28)}</a>` : "") +
+        `<a class="btn round" href="index.html" title="Home" aria-label="Home">${icon("home", 28)}</a>`;
       main.appendChild(r);
     }
   }

@@ -180,7 +180,7 @@ footer b { color: var(--bordeaux); }
 }
 
 /* ----- Return Home ----- */
-.return-home { display: flex; justify-content: center; margin: 34px 0 10px; }
+.return-home { display: flex; justify-content: center; gap: 16px; margin: 34px 0 10px; }
 .return-home .btn { padding: 13px 26px; font-size: 17px; }
 
 /* Short bulleted statements (easy reading) */
